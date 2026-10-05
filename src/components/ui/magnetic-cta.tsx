@@ -47,7 +47,7 @@ export function MagneticCta({
           className={
             variant === "solid"
               ? "group inline-flex h-14 items-center gap-2.5 rounded-full bg-indigo px-9 text-base font-semibold text-[#0A0A0A] transition-colors duration-300 hover:bg-indigo-bright active:scale-[0.98]"
-              : "group inline-flex h-14 items-center gap-2.5 rounded-full border border-white/15 px-9 text-base font-medium text-bone transition-colors duration-300 hover:border-white/30 hover:bg-white/[0.05] active:scale-[0.98]"
+              : "group inline-flex h-14 items-center gap-2.5 rounded-full border border-line-strong px-9 text-base font-medium text-bone transition-colors duration-300 hover:border-bone/40 hover:bg-bone/[0.05] active:scale-[0.98]"
           }
         >
           <RollText>{label}</RollText>

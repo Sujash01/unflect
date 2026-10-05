@@ -89,7 +89,7 @@ export function HomeSections() {
                   >
                     <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line">
                       <GenerativeArt seed={i + 1} />
-                      <span className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 font-mono text-[11px] tracking-[0.03em] text-fog backdrop-blur-md">
+                      <span className="absolute left-4 top-4 rounded-full border border-line bg-black/30 px-3 py-1.5 font-mono text-[11px] tracking-[0.03em] text-fog backdrop-blur-md">
                         0{i + 1} · {study.service}
                       </span>
                       <span className="absolute bottom-4 left-4 font-mono text-[11px] tracking-[0.03em] text-fog/60">

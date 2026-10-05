@@ -18,9 +18,9 @@ export function ServicesView() {
         lede="Three connected disciplines. One goal: remove the gap between the problem your business has and the software it needs."
       />
 
-      <section className="border-b border-white/10 bg-navy-inset/70 py-20 sm:py-28">
+      <section className="border-b border-line bg-navy-inset/70 py-20 sm:py-28">
         <Container>
-          <div className="border-t border-white/10">
+          <div className="border-t border-line">
             {services.map((service, index) => {
               const isActive = active === service.slug;
               const dimmed = active !== null && !isActive;
@@ -28,7 +28,7 @@ export function ServicesView() {
                 <article
                   key={service.slug}
                   className={cn(
-                    "group border-b border-white/10 py-10 transition-opacity duration-500 sm:grid sm:grid-cols-[4rem_1fr] sm:gap-8",
+                    "group border-b border-line py-10 transition-opacity duration-500 sm:grid sm:grid-cols-[4rem_1fr] sm:gap-8",
                     dimmed ? "opacity-40" : "opacity-100",
                   )}
                   onMouseEnter={() => setActive(service.slug)}
@@ -69,7 +69,7 @@ export function ServicesView() {
                 We sell outcomes, not a pile of features.
               </h2>
             </div>
-            <div className="border-y border-white/10">
+            <div className="border-y border-line">
               <div className="grid gap-8 py-7 sm:grid-cols-3">
                 <div><p className="text-sm font-medium">Web</p><p className="mt-2 text-sm leading-6 text-muted">The customer or user-facing experience.</p></div>
                 <div><p className="text-sm font-medium">Systems</p><p className="mt-2 text-sm leading-6 text-muted">The operating layer behind the business.</p></div>

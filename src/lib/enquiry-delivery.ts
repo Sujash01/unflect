@@ -1,43 +1,73 @@
 import { describeEnquiry, type EnquiryInput } from "./enquiry";
+import { insertRow, isSupabaseConfigured } from "./supabase";
 
 /**
  * Enquiry delivery adapter.
  *
- * The form is fully wired end-to-end, but there is no third-party integration
- * configured \u2014 because choosing a provider requires an account, a domain and a
- * data-processing decision that belongs to the business, not to a code change.
+ * Enquiries are stored in Supabase (table `enquiries`, see supabase/schema.sql).
+ * Credentials live in `.env.local`. If they are not filled in yet the adapter
+ * falls back to a structured server-log line, so the site and the contact form
+ * keep working while you are setting things up.
  *
- * Default behaviour: a structured, single-line summary is written to the server
- * log. That is enough to prove the pipeline works and to develop against, and it
- * is the only thing that happens with an enquirer's details today.
+ * The function signature is unchanged, so the route handler and the form need
+ * no changes.
  *
- * TO GO LIVE, replace the body of `deliverEnquiry` with a real transport \u2014
- * one of:
- *   - Transactional email (Resend, Postmark, SES) addressed to an inbox you own.
- *   - A CRM or lead system (HubSpot, Pipedrive) via its API.
- *   - A ticketing or project intake tool.
- *
- * Requirements for that transport:
- *   - Send over TLS to a server-side endpoint. Never expose provider keys with a
- *     NEXT_PUBLIC_ prefix.
- *   - Obtain and record the lawful basis for processing, and publish it.
- *   - Do not log message bodies to a third-party log sink without a decision.
- *   - Treat the enquiry as confidential: it describes a business's weaknesses.
- *
- * The function signature stays the same, so nothing else needs to change.
+ * Notes:
+ *   - Provider keys are server-only. Never expose them with NEXT_PUBLIC_.
+ *   - Treat enquiries as confidential: they describe a business's weaknesses.
+ *   - Message bodies are never written to logs.
  */
 
 export type DeliveryResult =
-  | { delivered: true; via: "log" | "email" | "crm" }
+  | { delivered: true; via: "log" | "database" | "email" | "crm" }
   | { delivered: false; reason: string };
 
 export async function deliverEnquiry(
   enquiry: EnquiryInput,
   reference: string,
 ): Promise<DeliveryResult> {
-  const summary = describeEnquiry({ ...enquiry, details: enquiry.details });
+  const summary = describeEnquiry(enquiry);
 
-  // Single-line, greppable, and free of message bodies.
+  if (isSupabaseConfigured()) {
+    const result = await insertRow("enquiries", {
+      reference,
+      name: enquiry.name,
+      company: enquiry.company,
+      email: enquiry.email,
+      project_type: enquiry.projectType,
+      goal: enquiry.goal,
+      problem: enquiry.problem,
+      timeline: enquiry.timeline,
+      budget: enquiry.budget,
+      details: enquiry.details || null,
+    });
+
+    if (!result.ok) {
+      console.error(
+        JSON.stringify({
+          event: "project_enquiry_store_failed",
+          reference,
+          status: result.status,
+          detail: result.message,
+        }),
+      );
+      return { delivered: false, reason: "database" };
+    }
+
+    console.info(
+      JSON.stringify({
+        event: "project_enquiry",
+        reference,
+        receivedAt: summary.receivedAt,
+        classification: summary.classification,
+        delivery: "supabase",
+      }),
+    );
+    return { delivered: true, via: "database" };
+  }
+
+  // Fallback while Supabase credentials are not set: single-line, greppable,
+  // free of message bodies.
   console.info(
     JSON.stringify({
       event: "project_enquiry",
@@ -55,6 +85,7 @@ export async function deliverEnquiry(
         details: enquiry.details.length,
       },
       delivery: "server-log",
+      note: "Supabase not configured; set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local",
     }),
   );
 

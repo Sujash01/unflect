@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Inter_Tight } from "next/font/google";
 
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -8,7 +9,7 @@ import { SiteDock } from "@/components/layout/site-dock";
 import { SiteEffects } from "@/components/layout/site-effects";
 import { SmoothScroll } from "@/components/fx/smooth-scroll";
 import { ScrollProgress } from "@/components/fx/scroll-progress";
-import { CustomCursor } from "@/components/fx/custom-cursor";
+import { ScrollManager } from "@/components/layout/scroll-manager";
 import { site } from "@/content/site";
 import { services } from "@/content/services";
 import { OG_IMAGE } from "@/lib/seo";
@@ -18,8 +19,8 @@ import "./globals.css";
 /* ==========================================================================
    TYPEFACES
    Three faces, each with a job:
-     Inter Tight \u2014 display. Clean, tight, neutral.
-     Inter         \u2014 body. Neutral and highly legible at small sizes.
+     Inter Tight — display. Clean, tight, neutral.
+     Inter       — body. Neutral and highly legible at small sizes.
      (labels and indices use Inter too, small and in sentence case)
    ========================================================================== */
 
@@ -43,8 +44,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} \u2014 ${site.tagline}`,
-    template: `%s \u00b7 ${site.name}`,
+    default: `${site.name} — ${site.tagline}`,
+    template: `%s · ${site.name}`,
   },
   description: site.description,
   applicationName: site.name,
@@ -67,13 +68,13 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: site.locale,
     url: site.url,
-    title: `${site.name} \u2014 ${site.tagline}`,
+    title: `${site.name} — ${site.tagline}`,
     description: site.description,
     images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} \u2014 ${site.tagline}`,
+    title: `${site.name} — ${site.tagline}`,
     description: site.description,
     images: [OG_IMAGE.url],
   },
@@ -93,14 +94,14 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#0A0A0A",
-  colorScheme: "dark",
+  colorScheme: "dark light",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
 };
 
 /* ==========================================================================
-   ORGANISED DATA \u2014 Organization + Service catalogue.
+   ORGANIZED DATA — Organization + Service catalogue.
    ========================================================================== */
 
 const organizationJsonLd = {
@@ -120,7 +121,7 @@ const organizationJsonLd = {
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",
-        name: `${service.name} \u2014 ${service.summary}`,
+        name: `${service.name} — ${service.summary}`,
         description: service.promise,
         url: `${site.url}/services/${service.slug}`,
       },
@@ -134,29 +135,53 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${heading.variable} ${inter.variable}`}
+      className={`${heading.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-navy font-sans text-bone antialiased">
+        {/* Theme initialization must run before hydration.
+            next/script with beforeInteractive is the correct
+            Next.js mechanism for this. */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`try {
+            const saved = localStorage.getItem("theme");
+            document.documentElement.classList.toggle(
+              "dark",
+              saved !== "light"
+            );
+          } catch (_) {
+            document.documentElement.classList.add("dark");
+          }`}
+        </Script>
+
+        {/* Static, developer-authored JSON-LD — no user input involved. */}
         <script
           type="application/ld+json"
-          // Static, developer-authored JSON-LD \u2014 no user input involved.
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
         />
+
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:border focus:border-indigo focus:bg-navy focus:px-5 focus:py-3 focus:text-[0.875rem] focus:text-indigo"
         >
           Skip to content
         </a>
+
         <SmoothScroll />
+        <ScrollManager />
         <ScrollProgress />
-        <CustomCursor />
         <SiteHeader />
         <SiteEffects />
-        <main id="main" className="relative z-10 pt-[4.75rem] sm:pt-[5rem]">
+
+        <main
+          id="main"
+          className="relative z-10 pt-[4.75rem] sm:pt-[5rem]"
+        >
           <PageTransition>{children}</PageTransition>
         </main>
+
         <SiteFooter />
         <SiteDock />
       </body>

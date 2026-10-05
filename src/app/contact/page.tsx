@@ -13,12 +13,12 @@ export default function ContactPage() {
     <div className="text-bone">
       <EditorialPageHeader section="Contact" title={contactIntro.heading} lede={contactIntro.body} />
 
-      <section className="border-b border-white/10 bg-navy-inset/70 py-16 sm:py-24">
+      <section className="border-b border-line bg-navy-inset/70 py-16 sm:py-24">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:items-start">
             <div className="lg:sticky lg:top-28">
               <p className="text-xs tracking-[0.03em] text-bone/55">What happens next</p>
-              <ul className="mt-7 divide-y divide-white/10 border-y border-white/10">
+              <ul className="mt-7 divide-y divide-white/10 border-y border-line">
                 {contactIntro.expectations.map((item, index) => <li key={item} className="grid gap-4 py-5 sm:grid-cols-[2.5rem_1fr]"><span className="text-xs text-bone/50">0{index + 1}</span><span className="text-sm leading-6 text-bone/55">{item}</span></li>)}
               </ul>
             </div>
@@ -27,11 +27,11 @@ export default function ContactPage() {
         </Container>
       </section>
 
-      <section className="border-b border-white/10 py-20 sm:py-28">
+      <section className="border-b border-line py-20 sm:py-28">
         <Container>
           <div className="max-w-3xl"><p className="font-mono text-[11px] tracking-[0.03em] text-muted">Make the enquiry useful</p><h2 className="mt-4 font-display text-5xl  leading-[0.95] tracking-[-0.02em] sm:text-6xl">The clearer the problem, the faster we can be useful.</h2></div>
-          <div className="mt-12 grid border-t border-white/10 md:grid-cols-4">
-            {contactGuidance.map((item, index) => <div key={item.id} className="border-b border-white/10 py-7 md:border-r md:px-7 md:first:pl-0 md:last:border-r-0"><span className="font-mono text-[11px] text-muted">0{index + 1}</span><h3 className="mt-8 text-base font-medium">{item.title}</h3><p className="mt-3 text-sm leading-6 text-muted">{item.detail}</p></div>)}
+          <div className="mt-12 grid border-t border-line md:grid-cols-4">
+            {contactGuidance.map((item, index) => <div key={item.id} className="border-b border-line py-7 md:border-r md:px-7 md:first:pl-0 md:last:border-r-0"><span className="font-mono text-[11px] text-muted">0{index + 1}</span><h3 className="mt-8 text-base font-medium">{item.title}</h3><p className="mt-3 text-sm leading-6 text-muted">{item.detail}</p></div>)}
           </div>
         </Container>
       </section>

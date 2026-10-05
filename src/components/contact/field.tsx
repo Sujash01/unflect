@@ -147,7 +147,7 @@ export function TextArea({
         placeholder={placeholder}
         aria-invalid={error ? true : undefined}
         aria-describedby={counterId}
-        className={`${controlClasses(error)} resize-y py-3.5 leading-relaxed`}
+        className={`${controlClasses(error)} h-56 max-h-56 resize-none overflow-y-auto py-3.5 leading-relaxed`}
       />
       {maxLength ? (
         <p id={counterId} aria-live="polite" className="label-mono mt-2 text-muted">

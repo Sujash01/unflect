@@ -2,262 +2,196 @@
 
 > A modern digital studio focused on building thoughtful digital experiences, products, and systems.
 
-Unflect is a creative development studio built around the idea that good digital work should feel intentional, useful, and memorable.
+Unflect is a creative software company built around a simple idea: solve the real problem first, then build the right software around it.
 
-The Unflect website brings together the studio's services, selected work, process, story, and contact experience through a highly interactive and responsive interface.
-
----
+The site combines an editorial marketing experience with a lightweight account system powered by Supabase Auth and a server-side enquiry pipeline.
 
 ## ✦ Features
 
-- Modern responsive interface
-- Interactive and animated UI
-- Multi-page website architecture
-- Services showcase
-- Selected work / case studies
-- Process overview
-- About page
-- Contact / enquiry system
-- Responsive navigation
-- Accessible interactions
-- Reduced-motion support
-- SEO-friendly page metadata
-- Custom Unflect branding
-- API-backed enquiry form
-- Form validation
-- Spam protection
-- Analytics-ready architecture
-
----
+- Responsive multi-page studio website
+- Services, work, process, about, and contact experiences
+- Animated editorial interface with motion, custom cursor, smooth scrolling, and magnetic navigation
+- Supabase-backed project enquiries
+- Email/password account creation and sign-in
+- Email verification
+- Password recovery and reset
+- Profile editing
+- Account settings
+- Password and email changes with re-authentication
+- Account data export
+- Permanent account deletion with explicit confirmation
+- Private account activity log
+- Account enquiry history matched to a confirmed email address
+- Terms & Conditions and Privacy Policy pages
+- Security headers
+- Server-side validation, CSRF origin checks, rate limiting, and httpOnly session cookies
+- Reduced-motion, cursor-effect, and smooth-scroll preferences
+- SEO metadata, sitemap, and robots configuration
 
 ## 🧭 Pages
 
-| Route | Description |
+| Route | Purpose |
 |---|---|
-| `/` | Main Unflect landing page |
-| `/services` | Services offered by Unflect |
-| `/services/[slug]` | Individual service pages |
-| `/work` | Selected work and projects |
-| `/work/[slug]` | Individual project pages |
-| `/process` | Unflect's working process |
+| `/` | Main Unflect experience |
+| `/services` | Services overview |
+| `/services/[slug]` | Individual service |
+| `/work` | Selected work |
+| `/work/[slug]` | Individual case study |
+| `/process` | Working process |
 | `/about` | About Unflect |
-| `/contact` | Contact and enquiry form |
+| `/contact` | Project enquiry |
+| `/login` | Sign in |
+| `/signup` | Create an account |
+| `/forgot-password` | Request password recovery |
+| `/reset-password` | Set a new password |
+| `/account` | Account overview and enquiry history |
+| `/profile` | Profile details |
+| `/settings` | Experience, security, and account controls |
+| `/privacy` | Privacy Policy |
+| `/terms` | Terms & Conditions |
 
----
+## 🛠️ Stack
 
-## 🛠️ Tech Stack
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- Motion / Framer Motion
+- Lenis
+- Supabase Auth REST API
+- Supabase PostgREST
 
-- **Next.js**
-- **React**
-- **TypeScript**
-- **Tailwind CSS**
-- **Motion / Framer Motion**
-- **Next.js App Router**
-- **API Routes**
-- **ESLint**
+The application deliberately does not require a Supabase JavaScript SDK. Authentication and database operations are performed from trusted Next.js server routes using Supabase's HTTP APIs.
 
----
-
-## 📁 Project Structure
-
-```text
-unflect-main/
-├── public/
-├── src/
-│   ├── app/
-│   │   ├── about/
-│   │   ├── contact/
-│   │   ├── process/
-│   │   ├── services/
-│   │   ├── work/
-│   │   ├── api/
-│   │   │   └── enquiries/
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   │
-│   ├── components/
-│   │   ├── brand/
-│   │   └── ui/
-│   │
-│   ├── content/
-│   └── lib/
-│
-├── public/
-├── package.json
-├── next.config.mjs
-├── tsconfig.json
-└── README.md
-```
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/Sujash01/unflect.git
-cd unflect
-```
-
-### 2. Install dependencies
+## 🚀 Local development
 
 ```bash
 npm install
-```
-
-### 3. Start the development server
-
-```bash
 npm run dev
 ```
 
-The application will be available at:
-
-```text
-http://localhost:3000
-```
-
----
-
-## 🧪 Development
+Open `http://localhost:3000`.
 
 Useful commands:
 
 ```bash
-# Start development server
 npm run dev
-
-# Create production build
-npm run build
-
-# Start production server
-npm run start
-
-# Run linting
+npm run typecheck
 npm run lint
+npm run build
+npm run start
 ```
 
----
+## 🔐 Environment
 
-## 🔐 Environment Variables
+Copy `.env.example` to `.env.local` and provide the server-only Supabase credentials:
 
-If environment-specific configuration is required, create:
+```env
+SUPABASE_URL=https://YOUR-PROJECT-REF.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+The service-role/secret key must never be exposed to the browser or prefixed with `NEXT_PUBLIC_`.
+
+`.env.local` is intentionally ignored by Git.
+
+## 🗄️ Supabase setup
+
+Run these SQL files in the same Supabase project, in order:
 
 ```text
-.env.local
+supabase/schema.sql
+supabase/accounts.sql
 ```
 
-Keep sensitive credentials and API keys in environment variables.
+`schema.sql` contains the existing `enquiries` table. `accounts.sql` adds:
 
-**Never commit secrets, API keys, credentials, or other sensitive environment variables to GitHub.**
+- `profiles`
+- `account_events`
 
----
+Both account tables have Row Level Security enabled and no browser policies. The application performs authorization in server routes and uses the trusted server key for these operations.
+
+See [`docs/account-setup.md`](docs/account-setup.md) for the complete Auth configuration.
+
+## 🔑 Account architecture
+
+Sessions are stored in secure `httpOnly` cookies:
+
+```text
+Browser
+   │
+   ├── email/password
+   │
+   ▼
+Next.js /api/auth/*
+   │
+   ▼
+Supabase Auth (GoTrue)
+   │
+   ├── access token
+   └── refresh token
+          │
+          ▼
+      httpOnly cookies
+```
+
+Tokens are never stored in `localStorage`.
+
+The public layout remains cookie-independent so the existing marketing pages retain their static-friendly architecture. The header asks `/api/auth/session` from a small client component to decide whether to show Sign in or Account.
 
 ## 📬 Enquiries
 
-The contact experience is connected to a backend enquiry endpoint.
-
-The frontend submits enquiries through:
+The existing enquiry pipeline remains separate from authentication:
 
 ```text
+Contact form
+    ↓
 POST /api/enquiries
+    ↓
+Validation + honeypot + rate limit
+    ↓
+Existing delivery adapter
+    ↓
+Supabase enquiries table
 ```
 
-The enquiry system includes request validation and protection against unwanted or spam submissions.
+Account history only reads enquiries whose submitted email matches the user's **confirmed** account email. It does not change the enquiry submission pipeline.
+
+## 🛡️ Security notes
+
+The account layer includes:
+
+- httpOnly, SameSite cookies
+- Same-origin checks on state-changing API routes
+- Request-size limits
+- Per-route in-memory rate limits
+- Open-redirect-safe account navigation
+- Generic password-recovery responses to reduce account enumeration
+- Re-authentication before password/email changes
+- Explicit `DELETE` confirmation plus password before account deletion
+- Server-side validation
+- No browser access to the service-role key
+- RLS enabled on private account tables
+- Security-focused HTTP headers
+
+For a multi-instance production deployment, move in-memory rate limiting to a shared store.
+
+## ⚖️ Legal pages
+
+The included Terms & Conditions and Privacy Policy are implementation-aware starting points, not legal advice. They should be reviewed by qualified counsel before production use.
+
+## 📱 Accessibility
+
+The interface supports keyboard navigation, visible focus states, semantic controls, responsive layouts, and reduced-motion behavior.
+
+Account settings additionally let signed-in users reduce motion, disable the custom cursor, or disable enhanced smooth scrolling.
+
+## 📌 Status
+
+**Active development.**
+
+Unflect is evolving as new services, projects, account features, and product capabilities are added.
 
 ---
 
-## 🎨 Design Philosophy
-
-Unflect is designed around a balance of:
-
-- Strong typography
-- Intentional whitespace
-- Editorial composition
-- Motion and interaction
-- Clear information hierarchy
-- Restrained visual effects
-- Responsive layouts
-- Distinctive brand identity
-
-Animation is used to reinforce the experience rather than distract from the content.
-
-The goal is to create an interface that feels considered, expressive, and distinctly Unflect rather than like a generic template.
-
----
-
-## 📱 Responsive
-
-The interface is designed to work across:
-
-- Desktop
-- Laptop
-- Tablet
-- Mobile
-
-Interactive elements and navigation adapt to smaller screens while maintaining the core Unflect experience.
-
----
-
-## ♿ Accessibility
-
-The project aims to provide:
-
-- Keyboard-friendly interactions
-- Semantic HTML
-- Accessible navigation
-- Appropriate focus states
-- Reduced-motion support
-- Responsive touch targets
-
-Users who prefer reduced motion should receive a less animation-heavy experience.
-
----
-
-## 🔄 Git Workflow
-
-The repository uses Git for version control.
-
-Typical workflow:
-
-```bash
-# Get the latest changes
-git pull
-
-# Make your changes
-
-# Stage changes
-git add .
-
-# Commit changes
-git commit -m "Describe your changes"
-
-# Push changes
-git push
-```
-
-For larger changes, use a feature branch:
-
-```bash
-git checkout -b feature/new-section
-```
-
-Then commit and push the branch.
-
----
-
-## 📌 Project Status
-
-**Active Development**
-
-Unflect is continuously evolving as new experiences, interactions, projects, and capabilities are added.
-
----
-
-## © Unflect
-
-Built with intention.
-
-**Unflect**
+© Unflect

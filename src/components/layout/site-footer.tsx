@@ -20,7 +20,7 @@ export function SiteFooter() {
           <SplitText text="Let's build something that works." accent={["works"]} />
         </h2>
 
-        <div className="mt-16 grid gap-12 sm:grid-cols-[1fr_auto_auto] sm:gap-20">
+        <div className="mt-16 grid gap-12 sm:grid-cols-[1fr_auto_auto_auto] sm:gap-16">
           <div className="flex flex-col items-start gap-6">
             <Link href="/" aria-label={`${site.name} — home`} className="inline-flex w-fit rounded-[14px] p-1">
               <Wordmark size={26} />
@@ -28,7 +28,7 @@ export function SiteFooter() {
             <p className="max-w-xs text-sm leading-6 text-muted">{site.positioning}</p>
             <Link
               href="/contact"
-              className="group inline-flex items-center gap-2.5 rounded-full border border-line-strong px-5 py-2.5 text-sm transition-colors hover:border-bone/50 hover:bg-white/[0.04]"
+              className="group inline-flex items-center gap-2.5 rounded-full border border-line-strong px-5 py-2.5 text-sm transition-colors hover:border-bone/50 hover:bg-bone/[0.04]"
             >
               <span className="u-link">Open to new projects</span>
             </Link>
@@ -49,6 +49,17 @@ export function SiteFooter() {
             <p className="label-mono text-muted">Services</p>
             <div className="mt-5 flex flex-col gap-3">
               {footerNavigation.services.map((item) => (
+                <Link key={item.href} href={item.href} className="group w-fit text-sm text-muted-strong transition-colors hover:text-bone">
+                  <span className="u-link">{item.label}</span>
+                </Link>
+              ))}
+            </div>
+          </nav>
+
+          <nav aria-label="Legal links">
+            <p className="label-mono text-muted">Legal</p>
+            <div className="mt-5 flex flex-col gap-3">
+              {footerNavigation.legal.map((item) => (
                 <Link key={item.href} href={item.href} className="group w-fit text-sm text-muted-strong transition-colors hover:text-bone">
                   <span className="u-link">{item.label}</span>
                 </Link>

@@ -93,7 +93,7 @@ export function EnquiryForm() {
         setStatus("error");
         setFormError(
           response.status === 429
-            ? "Too many submissions from this connection. Please try again shortly, or email us directly."
+            ? "Too many submissions from this connection. Please try again shortly."
             : "Something went wrong sending your enquiry. Please try again in a moment.",
         );
         analytics.formSubmitError(Object.keys(serverErrors), "server");
@@ -153,8 +153,8 @@ export function EnquiryForm() {
           </p>
         ) : null}
         <p className="mt-6 text-[0.9375rem] leading-relaxed text-muted-strong">
-          If it is urgent, or the problem is time-critical, reply to the confirmation
-          email with that context.
+          We will review the brief and reply with a considered next step. If you need
+          to follow up, keep your reference number handy.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Button

@@ -24,10 +24,10 @@ export function ProcessView() {
         }
       />
 
-      <section className="border-b border-white/10 bg-navy-inset/70 py-20 sm:py-28">
+      <section className="border-b border-line bg-navy-inset/70 py-20 sm:py-28">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-            <ol className="border-t border-white/10">
+            <ol className="border-t border-line">
               {processStages.map((stage) => {
                 const isActive = (active ?? processStages[0].id) === stage.id;
                 return (
@@ -40,13 +40,13 @@ export function ProcessView() {
                       onMouseLeave={() => setActive(null)}
                       aria-current={isActive ? "step" : undefined}
                       className={cn(
-                        "group flex w-full items-baseline gap-5 border-b border-white/10 py-6 text-left transition-all duration-500",
+                        "group flex w-full items-baseline gap-5 border-b border-line py-6 text-left transition-all duration-500",
                         isActive ? "opacity-100" : "opacity-40 hover:opacity-80",
                       )}
                     >
                       <span className={cn("font-mono text-[11px] tracking-[0.03em]", isActive ? "text-indigo" : "text-muted")}>{stage.index}</span>
                       <span className="font-display text-3xl  tracking-[-0.035em]">{stage.name}</span>
-                      <span className={cn("ml-auto h-1.5 w-1.5 rounded-full transition-all", isActive ? "bg-indigo shadow-[0_0_10px_rgba(78,140,163,0.8)]" : "bg-white/15")} />
+                      <span className={cn("ml-auto h-1.5 w-1.5 rounded-full transition-all", isActive ? "bg-indigo shadow-[0_0_10px_rgba(78,140,163,0.8)]" : "bg-bone/15")} />
                     </button>
                   </li>
                 );
@@ -54,10 +54,10 @@ export function ProcessView() {
             </ol>
 
             <div className="lg:sticky lg:top-28 lg:self-start">
-              <div key={current.id} className="border-t border-white/10 pt-8">
+              <div key={current.id} className="border-t border-line pt-8">
                 <h2 className="font-display text-4xl  tracking-[-0.02em]">{current.name}</h2>
                 <p className="mt-5 max-w-lg text-base leading-7 text-muted-strong">{current.detail}</p>
-                <div className="mt-7 border-t border-white/10 pt-6">
+                <div className="mt-7 border-t border-line pt-6">
                   <p className="text-sm text-muted">Output</p>
                   <p className="mt-3 max-w-lg text-sm leading-7 text-bone">{current.output}</p>
                 </div>
@@ -76,9 +76,9 @@ export function ProcessView() {
                 A process only matters if it changes something.
               </h2>
             </div>
-            <div className="border-t border-white/10">
+            <div className="border-t border-line">
               {processPrinciples.map((item, index) => (
-                <article key={item.id} className="grid gap-5 border-b border-white/10 py-7 sm:grid-cols-[4rem_1fr]">
+                <article key={item.id} className="grid gap-5 border-b border-line py-7 sm:grid-cols-[4rem_1fr]">
                   <span className="font-mono text-[11px] text-muted">0{index + 1}</span>
                   <div>
                     <h3 className="font-display text-2xl  tracking-[-0.02em]">{item.title}</h3>

@@ -68,6 +68,10 @@ export const footerNavigation = {
     { label: "Systems", href: "/services/systems" },
     { label: "Integrations", href: "/services/integrations" },
   ],
+  legal: [
+    { label: "Privacy", href: "/privacy" },
+    { label: "Terms", href: "/terms" },
+  ],
 } as const;
 
 export const brandStatements = {

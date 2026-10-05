@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import * as React from "react";
 import {
   motion,
   motionValue,
@@ -20,7 +20,7 @@ export const finePointerQuery = "(pointer: fine)";
 
 /** Call once at the root. Owns the only pointermove listener. */
 export function usePointerSystem() {
-  useEffect(() => {
+  React.useEffect(() => {
     if (!window.matchMedia(finePointerQuery).matches) return;
 
     let active = false;
@@ -31,8 +31,6 @@ export function usePointerSystem() {
         active = true;
         pointerActive.set(1);
       }
-      document.documentElement.style.setProperty("--px", `${event.clientX}px`);
-      document.documentElement.style.setProperty("--py", `${event.clientY}px`);
     };
     const onLeave = () => pointerActive.set(0);
 
@@ -48,12 +46,20 @@ export function usePointerSystem() {
 /** Ambient blue light that lags the cursor. Very low opacity by design. */
 export function AmbientLight() {
   const reduceMotion = useReducedMotion();
+  const [enabled, setEnabled] = React.useState(true);
   const sx = useSpring(pointerX, { damping: 30, stiffness: 60, mass: 1.4 });
   const sy = useSpring(pointerY, { damping: 30, stiffness: 60, mass: 1.4 });
   const x = useTransform(sx, (v) => v - 320);
   const y = useTransform(sy, (v) => v - 320);
 
-  if (reduceMotion) return null;
+  React.useEffect(() => {
+    const sync = () => setEnabled(document.documentElement.dataset.cursorEffects !== "false");
+    sync();
+    window.addEventListener("unflect:preferences", sync);
+    return () => window.removeEventListener("unflect:preferences", sync);
+  }, []);
+
+  if (reduceMotion || !enabled) return null;
 
   return (
     <motion.div

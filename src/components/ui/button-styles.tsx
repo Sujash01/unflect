@@ -37,7 +37,7 @@ export function buttonStyles({
     primary:
       "border border-indigo bg-indigo text-[#0A0A0A] hover:border-indigo-bright hover:bg-indigo-bright",
     outline:
-      "border border-white/15 bg-transparent text-bone hover:border-white/30 hover:bg-white/[0.05]",
+      "border border-line-strong bg-transparent text-bone hover:border-bone/40 hover:bg-bone/[0.05]",
     ghost:
       "border border-transparent bg-transparent text-muted-strong hover:border-line hover:text-bone",
     quiet:

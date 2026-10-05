@@ -33,7 +33,7 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-grid opacity-[0.09] [mask-image:radial-gradient(ellipse_at_50%_30%,black,transparent_72%)]"
       />
 
-      <motion.div style={reduce ? undefined : { y: contentY, opacity: contentOpacity }} className="container-page relative grid min-h-[100dvh] items-center gap-10 pb-32 pt-28 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] lg:gap-6">
+      <motion.div style={reduce ? undefined : { y: contentY, opacity: contentOpacity }} className="container-page relative grid min-h-[100svh] items-center gap-10 pb-28 pt-24 sm:pb-32 sm:pt-28 lg:grid-cols-[minmax(0,1.08fr)_minmax(19rem,0.92fr)] lg:gap-8">
         <div>
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 10 }}
@@ -44,7 +44,7 @@ export function Hero() {
             <span className="label-mono text-muted-strong">Custom software · Remote-first</span>
           </motion.div>
 
-          <h1 className="mt-8 max-w-4xl font-display text-[clamp(3rem,7.4vw,6.6rem)] leading-[0.98] tracking-[-0.025em]">
+          <h1 className="mt-8 max-w-4xl font-display text-[clamp(2.8rem,6.1vw,5.7rem)] leading-[0.98] tracking-[-0.025em]">
             <SplitText text="Software for the way your business actually works." mode="mount" delay={0.15} accent={["actually"]} />
           </h1>
 

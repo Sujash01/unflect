@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { glassPointer } from "@/lib/pointer";
 import { RollText } from "@/components/fx/roll-text";
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
+import { AccountHeaderButton } from "@/components/account/account-header-button";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -23,7 +24,7 @@ export function SiteHeader() {
       const y = window.scrollY;
       setScrolled(y > 80);
       // Tuck away while reading down, return the moment the reader turns back.
-      setHidden(y > 360 && y > lastY.current + 4 ? true : y < lastY.current - 4 ? false : hidden);
+      setHidden((current) => (y > 360 && y > lastY.current + 4 ? true : y < lastY.current - 4 ? false : current));
       lastY.current = y;
     };
     onScroll();
@@ -44,7 +45,7 @@ export function SiteHeader() {
         onPointerMove={glassPointer}
         className={cn(
           "mx-auto flex h-16 w-full max-w-[76rem] items-center justify-between gap-6 rounded-full border px-4 py-2 backdrop-blur-xl transition-all duration-700 sm:h-[68px] sm:px-6",
-          scrolled ? "glass border-white/[0.1]" : "border-transparent bg-transparent",
+          scrolled ? "glass border-line" : "border-transparent bg-transparent",
         )}
       >
         <Link
@@ -61,10 +62,11 @@ export function SiteHeader() {
               {section}
             </motion.span>
           </span>
-          <AnimatedThemeToggler className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-bone transition-colors hover:bg-white/[0.09]" />
+          <AccountHeaderButton />
+          <AnimatedThemeToggler className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-bone/[0.04] text-bone transition-colors hover:bg-bone/[0.09]" />
           <Link
             href="/contact"
-            className="group relative inline-flex h-11 items-center gap-1.5 overflow-hidden rounded-full bg-indigo px-5 text-[13px] font-semibold text-[#0A0A0A] transition-colors duration-300 hover:bg-indigo-bright sm:px-6"
+            className="group relative inline-flex h-11 items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-full bg-indigo px-5 text-[13px] font-semibold text-[#0A0A0A] transition-colors duration-300 hover:bg-indigo-bright sm:px-6"
           >
             <span className="relative"><RollText>Start a project</RollText></span>
             <ArrowUpRight className="relative h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

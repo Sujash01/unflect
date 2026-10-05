@@ -105,6 +105,12 @@ html:not(.dark) {
   --color-line-strong: rgba(26, 25, 22, 0.18);
   --color-edge: rgba(26, 25, 22, 0.12);
   --color-edge-strong: rgba(26, 25, 22, 0.22);
+  --color-indigo: #285C70;
+  --color-indigo-bright: #285C70;
+  --color-indigo-ink: #F6F3ED;
+  --color-indigo-wash: rgba(40, 92, 112, 0.12);
+  --color-steel: #527383;
+  --color-fog: #3F4A4A;
 }
 
 html:not(.dark) .glass,
@@ -633,9 +639,6 @@ html:not(.dark) .text-shimmer { background-image: linear-gradient(100deg, #285C7
 @keyframes uf-ring { 0% { transform: scale(0.6); opacity: 0.7; } 100% { transform: scale(2.2); opacity: 0; } }
 .uf-ring { transform-origin: center; transform-box: fill-box; animation: uf-ring 3.6s ease-out infinite; }
 
-/* Cursor */
-.uf-cursor-ring { transition: width 280ms var(--ease-precision), height 280ms var(--ease-precision), background-color 280ms ease, border-color 280ms ease; }
-
 @media (prefers-reduced-motion: reduce) {
   body::after { animation: none; }
   .aurora-blob, .marquee-track, .text-shimmer, .uf-float, .uf-dash, .uf-ring { animation: none !important; }
@@ -646,3 +649,40 @@ html:not(.dark) .text-shimmer { background-image: linear-gradient(100deg, #285C7
 .text-shimmer { animation: none; background: none; color: var(--color-indigo-bright); -webkit-text-fill-color: currentColor; }
 html:not(.dark) .text-shimmer { color: var(--color-indigo-panel); }
 @layer components { .font-display { font-weight: 500; } }
+
+/* Account/legal editorial prose */
+.prose-unflect h2 { color: var(--color-bone); font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; letter-spacing: -0.02em; }
+.prose-unflect a { color: var(--color-bone); text-decoration: underline; text-underline-offset: 4px; }
+.prose-unflect a:hover { color: var(--color-indigo-bright); }
+
+html[data-reduced-motion="true"] *,
+html[data-reduced-motion="true"] *::before,
+html[data-reduced-motion="true"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Route transitions stay visible in server-rendered HTML. The previous
+   Framer Motion transition applied a permanent blur style to the page. */
+@keyframes uf-page-enter {
+  from {
+    opacity: 0.01;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.page-enter {
+  animation: uf-page-enter 480ms var(--ease-precision) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+}
