@@ -19,23 +19,19 @@ export async function POST(request: NextRequest) {
   const origin = new URL(request.url).origin;
   const result = await signUp(email, password, name, `${origin}/auth/callback`);
   if (!result.ok) {
-  console.error(
-    "SIGNUP RESULT:",
-    JSON.stringify(result, null, 2),
-  );
+    console.error("[signup] Supabase error:", { status: result.status, message: result.message });
+    const message =
+      result.status === 422
+        ? "That email address is already registered or cannot be used."
+        : result.status === 503
+          ? "Authentication is temporarily unavailable."
+          : result.message || "We could not create your account.";
 
-  const message =
-    result.status === 422
-      ? "That email address is already registered or cannot be used."
-      : result.status === 503
-        ? "Authentication is temporarily unavailable."
-        : "We could not create your account.";
-
-  return NextResponse.json(
-    { ok: false, message },
-    { status: result.status === 503 ? 503 : 400 },
-  );
-}
+    return NextResponse.json(
+      { ok: false, message },
+      { status: result.status === 503 ? 503 : 400 },
+    );
+  }
   if (result.data.user) {
     await ensureProfile(result.data.user.id, name);
     await addAccountEvent(result.data.user.id, "account.created");

@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/content/site";
 
-/**
- * Single place to build per-page metadata, so every route carries the same
- * canonical, Open Graph and Twitter shape. Pages that use this cannot forget
- * og:image, which is the most common metadata omission.
- */
-
 export const OG_IMAGE = {
   url: "/opengraph-image",
   width: 1200,
@@ -17,7 +11,6 @@ export const OG_IMAGE = {
 type PageMetaInput = {
   title: string;
   description: string;
-  /** Route path beginning with a slash, used for canonical + og:url. */
   path: string;
   type?: "website" | "article";
   robots?: Metadata["robots"];

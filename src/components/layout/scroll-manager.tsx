@@ -10,23 +10,29 @@ type HistoryState = Record<string, unknown> & {
   [POSITION_KEY]?: number;
 };
 
-function replaceScrollPosition() {
-  const state = (window.history.state ?? {}) as HistoryState;
-  window.history.replaceState(
-    { ...state, [POSITION_KEY]: Math.max(0, window.scrollY) },
-    "",
-    window.location.href,
-  );
-}
-
 export function ScrollManager() {
   const pathname = usePathname();
   const firstPath = useRef(pathname);
   const popNavigation = useRef(false);
+  const lastUpdateTime = useRef(0);
 
   useEffect(() => {
     const previousRestoration = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
+
+    const replaceScrollPosition = () => {
+      const now = Date.now();
+      if (now - lastUpdateTime.current < 200) return;
+      lastUpdateTime.current = now;
+
+      const state = (window.history.state ?? {}) as HistoryState;
+      window.history.replaceState(
+        { ...state, [POSITION_KEY]: Math.max(0, window.scrollY) },
+        "",
+        window.location.href,
+      );
+    };
+
     replaceScrollPosition();
 
     let frame = 0;

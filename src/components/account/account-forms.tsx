@@ -132,6 +132,16 @@ export function SignupForm() {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
 
+  const passwordChecks = {
+    length: password.length >= 8,
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[!@#$%^&*()_+\-=[\]{};'\\:"|<>?,./`~]/.test(password),
+  };
+
+  const passwordValid = Object.values(passwordChecks).every(Boolean);
+
   async function submit(event: FormEvent) {
     event.preventDefault();
     setBusy(true);
@@ -178,13 +188,37 @@ export function SignupForm() {
       </Field>
       <Field label="Password" error={errors.password}>
         <Input type="password" autoComplete="new-password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 8 characters" />
+        {password && (
+          <div className="mt-3 space-y-2">
+            <PasswordCheck label="At least 8 characters" met={passwordChecks.length} />
+            <PasswordCheck label="One lowercase letter (a-z)" met={passwordChecks.lowercase} />
+            <PasswordCheck label="One uppercase letter (A-Z)" met={passwordChecks.uppercase} />
+            <PasswordCheck label="One number (0-9)" met={passwordChecks.number} />
+            <PasswordCheck label="One special character (!@#$...)" met={passwordChecks.special} />
+          </div>
+        )}
       </Field>
       {message ? <Message text={message} error /> : null}
-      <FormButton disabled={busy}>{busy ? "Creating…" : "Create account"}</FormButton>
+      <FormButton disabled={busy || (password.length > 0 && !passwordValid)}>{busy ? "Creating…" : "Create account"}</FormButton>
       <p className="text-xs leading-5 text-muted">
         By creating an account you agree to the <a className="text-bone underline underline-offset-4" href="/terms">Terms</a> and acknowledge the <a className="text-bone underline underline-offset-4" href="/privacy">Privacy Policy</a>.
       </p>
     </form>
+  );
+}
+
+function PasswordCheck({ label, met }: { label: string; met: boolean }) {
+  return (
+    <div className="flex items-center gap-2 text-xs">
+      <svg className={`h-4 w-4 ${met ? "text-green-400" : "text-muted"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        {met ? (
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        ) : (
+          <circle cx="12" cy="12" r="9" strokeWidth={2} />
+        )}
+      </svg>
+      <span className={met ? "text-bone" : "text-muted"}>{label}</span>
+    </div>
   );
 }
 
@@ -311,6 +345,16 @@ export function SecurityForms({ email }: { email: string }) {
   const [emailMessage, setEmailMessage] = useState("");
   const [emailBusy, setEmailBusy] = useState(false);
 
+  const passwordChecks = {
+    length: next.length >= 8,
+    lowercase: /[a-z]/.test(next),
+    uppercase: /[A-Z]/.test(next),
+    number: /[0-9]/.test(next),
+    special: /[!@#$%^&*()_+\-=[\]{};'\\:"|<>?,./`~]/.test(next),
+  };
+
+  const passwordValid = Object.values(passwordChecks).every(Boolean);
+
   async function passwordSubmit(event: FormEvent) {
     event.preventDefault();
     setPasswordBusy(true);
@@ -357,9 +401,20 @@ export function SecurityForms({ email }: { email: string }) {
         <p className="label-mono text-muted">Password</p>
         <form onSubmit={passwordSubmit} className="mt-4 space-y-5">
           <Field label="Current password"><Input type="password" autoComplete="current-password" value={current} onChange={(event) => setCurrent(event.target.value)} required /></Field>
-          <Field label="New password"><Input type="password" autoComplete="new-password" value={next} onChange={(event) => setNext(event.target.value)} required minLength={8} /></Field>
+          <Field label="New password">
+            <Input type="password" autoComplete="new-password" value={next} onChange={(event) => setNext(event.target.value)} required minLength={8} />
+            {next && (
+              <div className="mt-3 space-y-2">
+                <PasswordCheck label="At least 8 characters" met={passwordChecks.length} />
+                <PasswordCheck label="One lowercase letter (a-z)" met={passwordChecks.lowercase} />
+                <PasswordCheck label="One uppercase letter (A-Z)" met={passwordChecks.uppercase} />
+                <PasswordCheck label="One number (0-9)" met={passwordChecks.number} />
+                <PasswordCheck label="One special character (!@#$...)" met={passwordChecks.special} />
+              </div>
+            )}
+          </Field>
           {message ? <Message text={message} error={message !== "Password changed."} /> : null}
-          <FormButton disabled={passwordBusy}>{passwordBusy ? "Saving…" : "Change password"}</FormButton>
+          <FormButton disabled={passwordBusy || (next.length > 0 && !passwordValid)}>{passwordBusy ? "Saving…" : "Change password"}</FormButton>
         </form>
       </section>
 

@@ -16,14 +16,6 @@ import { OG_IMAGE } from "@/lib/seo";
 
 import "./globals.css";
 
-/* ==========================================================================
-   TYPEFACES
-   Three faces, each with a job:
-     Inter Tight — display. Clean, tight, neutral.
-     Inter       — body. Neutral and highly legible at small sizes.
-     (labels and indices use Inter too, small and in sentence case)
-   ========================================================================== */
-
 const heading = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-heading",
@@ -36,10 +28,6 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
 });
-
-/* ==========================================================================
-   METADATA DEFAULTS
-   ========================================================================== */
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -89,6 +77,9 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
   category: "technology",
 };
 
@@ -99,10 +90,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
 };
-
-/* ==========================================================================
-   ORGANIZED DATA — Organization + Service catalogue.
-   ========================================================================== */
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
@@ -139,9 +126,6 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-navy font-sans text-bone antialiased">
-        {/* Theme initialization must run before hydration.
-            next/script with beforeInteractive is the correct
-            Next.js mechanism for this. */}
         <Script id="theme-init" strategy="beforeInteractive">
           {`try {
             const saved = localStorage.getItem("theme");
@@ -154,7 +138,6 @@ export default function RootLayout({
           }`}
         </Script>
 
-        {/* Static, developer-authored JSON-LD — no user input involved. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

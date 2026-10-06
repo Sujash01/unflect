@@ -1,7 +1,7 @@
 const EMAIL = /^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]{2,}$/;
-const COMMON = new Set([
-  "password", "password1", "password123", "12345678", "123456789", "qwerty", "qwerty123",
-  "qwerty-qwerty", "letmein", "welcome", "adminadmin", "unflect", "unflect123", "changeme",
+const DISPOSABLE_DOMAINS = new Set([
+  "tempmail.com", "guerrillamail.com", "10minutemail.com", "mailinator.com",
+  "throwaway.email", "temp-mail.org", "yopmail.com", "maildrop.cc"
 ]);
 
 export function normalizeEmail(value: unknown): string {
@@ -11,6 +11,8 @@ export function normalizeEmail(value: unknown): string {
 export function validateEmail(value: unknown): string | null {
   const email = normalizeEmail(value);
   if (!email || email.length > 254 || !EMAIL.test(email)) return "Enter a valid email address.";
+  const domain = email.split("@")[1];
+  if (domain && DISPOSABLE_DOMAINS.has(domain)) return "Disposable email addresses are not allowed.";
   return null;
 }
 
@@ -18,10 +20,10 @@ export function validatePassword(value: unknown): string | null {
   if (typeof value !== "string") return "Enter a password.";
   if (value.length < 8) return "Use at least 8 characters.";
   if (value.length > 72) return "Keep your password under 72 characters.";
-  const compact = value.toLowerCase().replace(/[^a-z0-9]/g, "");
-  if (COMMON.has(value.toLowerCase()) || COMMON.has(compact) || /^(.)\1+$/.test(value)) {
-    return "Choose a less predictable password.";
-  }
+  if (!/[a-z]/.test(value)) return "Include at least one lowercase letter.";
+  if (!/[A-Z]/.test(value)) return "Include at least one uppercase letter.";
+  if (!/[0-9]/.test(value)) return "Include at least one number.";
+  if (!/[!@#$%^&*()_+\-=[\]{};'\\:"|<>?,./`~]/.test(value)) return "Include at least one special character.";
   return null;
 }
 
