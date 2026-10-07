@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { rejectCrossOrigin, readJson, clientKey, rateLimit } from "@/lib/auth/security";
 import { validatePassword } from "@/lib/auth/validation";
 import { updateUser } from "@/lib/auth/gotrue";
-import { readSession, clearSessionCookies, setSessionCookies } from "@/lib/auth/session";
+import { readSession, clearSessionCookies } from "@/lib/auth/session";
 import { addAccountEvent } from "@/lib/auth/data";
 
 export async function POST(request: NextRequest) {

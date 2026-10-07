@@ -10,7 +10,7 @@ export const contactIntro = {
   heading: "Tell us what you are trying to build \u2014 and what problem is in the way.",
   body: "This is the beginning of a project discussion, not a contact form. The more you can say about the problem today, the more useful our first reply will be. If we are not the right fit, we will say so.",
   expectations: [
-    "A reply from a person who has read the enquiry, not an autoresponder.",
+    "An immediate transactional receipt, followed by a considered reply from a person who has read the brief.",
     "An honest read on whether software is the right answer to this problem.",
     "A view on scope, sequence and what it would realistically take.",
     "A clear statement if we are not the right people for it.",

@@ -535,7 +535,7 @@ html:not(.dark) .glass-chip {
 }
 
 /* ==========================================================================
-   PREMIUM LAYER — grain, aurora, marquee, split-text, spotlight, underline
+   ATMOSPHERE LAYER — grain, aurora, marquee, split-text, spotlight, underline
    ========================================================================== */
 
 /* Film grain over the whole canvas. Static, GPU-cheap, pointer-transparent. */

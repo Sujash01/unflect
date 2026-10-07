@@ -11,6 +11,7 @@ import { SmoothScroll } from "@/components/fx/smooth-scroll";
 import { ScrollProgress } from "@/components/fx/scroll-progress";
 import { ScrollManager } from "@/components/layout/scroll-manager";
 import { site } from "@/content/site";
+import { siteConfig } from "@/config/site";
 import { services } from "@/content/services";
 import { OG_IMAGE } from "@/lib/seo";
 
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
     "custom web development",
     "software consultancy",
   ],
-  alternates: { canonical: "/" },
+  // Root layout sets no default canonical so child pages define their own via pageMetadata
   openGraph: {
     type: "website",
     siteName: site.name,
@@ -91,29 +92,52 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-const organizationJsonLd = {
+const structuredDataJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": `${site.url}/#organization`,
-  name: site.name,
-  url: site.url,
-  description: site.description,
-  slogan: site.positioning,
-  email: site.email ?? undefined,
-  knowsAbout: services.map((service) => service.name),
-  hasOfferCatalog: {
-    "@type": "OfferCatalog",
-    name: "Software services",
-    itemListElement: services.map((service) => ({
-      "@type": "Offer",
-      itemOffered: {
-        "@type": "Service",
-        name: `${service.name} — ${service.summary}`,
-        description: service.promise,
-        url: `${site.url}/services/${service.slug}`,
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${site.url}/#organization`,
+      name: site.name,
+      ...(!site.legalName.includes("[CONFIRM") ? { legalName: site.legalName } : {}),
+      url: site.url,
+      description: site.description,
+      slogan: site.positioning,
+      ...(!site.email.includes("[CONFIRM") ? { email: site.email } : {}),
+      founder: {
+        "@id": `${site.url}/#founder`,
       },
-    })),
-  },
+      knowsAbout: services.map((service) => service.name),
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Software services",
+        itemListElement: services.map((service) => ({
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: `${service.name} — ${service.summary}`,
+            description: service.promise,
+            url: `${site.url}/services/${service.slug}`,
+          },
+        })),
+      },
+    },
+    {
+      "@type": "Person",
+      "@id": `${site.url}/#founder`,
+      name: siteConfig.founder.name,
+      jobTitle: siteConfig.founder.role.includes("[CONFIRM") ? "Founder" : siteConfig.founder.role,
+      url: siteConfig.founder.portfolio,
+      sameAs: [
+        siteConfig.founder.linkedin,
+        siteConfig.founder.github,
+        siteConfig.founder.portfolio,
+      ],
+      worksFor: {
+        "@id": `${site.url}/#organization`,
+      },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -141,7 +165,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationJsonLd),
+            __html: JSON.stringify(structuredDataJsonLd),
           }}
         />
 

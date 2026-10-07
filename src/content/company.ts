@@ -1,7 +1,12 @@
-/**
- * Why UNFLECT exists, and the principles it operates by.
- * Written plainly. No corporate filler.
- */
+import { siteConfig } from "@/config/site";
+
+export const founder = siteConfig.founder;
+export const team = siteConfig.team;
+export const studioLocation = {
+  location: siteConfig.location,
+  statement:
+    "UNFLECT is a small custom software studio. The person you speak with is the person who actually designs and builds your software — no account managers, no layers, and no outsourced handoffs.",
+};
 
 export const aboutIntro = {
   heading: "UNFLECT exists to solve business problems through thoughtfully built software.",

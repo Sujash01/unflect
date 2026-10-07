@@ -202,3 +202,13 @@ export function describeEnquiry(input: EnquiryInput) {
     details: input.details || "(none provided)",
   };
 }
+
+/** Lookup display label for select options */
+export function getEnquiryOptionLabel(
+  field: "projectType" | "timeline" | "budget",
+  value: string,
+): string {
+  const match = enquiryFields[field].find((opt) => opt.value === value);
+  return match ? match.label : value;
+}
+

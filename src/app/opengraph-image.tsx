@@ -63,19 +63,19 @@ export default async function OpengraphImage() {
               UNFLECT
             </div>
             <div style={{ color: "#A5AAA6", fontSize: "17px", marginTop: "6px" }}>
-              Web · Systems · Integrations
+              Web · Systems · Integrations · Studio
             </div>
           </div>
         </div>
 
         {/* Statement */}
-        <div style={{ display: "flex", flexDirection: "column", maxWidth: "960px" }}>
+        <div style={{ display: "flex", flexDirection: "column", maxWidth: "980px" }}>
           <div
             style={{
               color: "#F4F2EC",
-              fontSize: "68px",
+              fontSize: "64px",
               fontWeight: 600,
-              lineHeight: 1.06,
+              lineHeight: 1.08,
               letterSpacing: "-0.03em",
             }}
           >
@@ -83,10 +83,20 @@ export default async function OpengraphImage() {
           </div>
           <div
             style={{
+              color: "#B4B8B2",
+              fontSize: "24px",
+              lineHeight: 1.4,
+              marginTop: "20px",
+            }}
+          >
+            A small software studio that builds custom web products, internal systems and integrations.
+          </div>
+          <div
+            style={{
               display: "flex",
               alignItems: "center",
               gap: "14px",
-              marginTop: "36px",
+              marginTop: "28px",
             }}
           >
             <div
@@ -96,7 +106,7 @@ export default async function OpengraphImage() {
                 backgroundImage: "linear-gradient(to right, #285C70, #4E8CA3)",
               }}
             />
-            <div style={{ color: "#C9CCC6", fontSize: "24px" }}>
+            <div style={{ color: "#C9CCC6", fontSize: "20px" }}>
               Discover → Define → Build → Deploy → Evolve
             </div>
           </div>

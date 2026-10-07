@@ -14,7 +14,9 @@ export default function AuthCallbackPage() {
     if (window.location.hash) window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
     const next = new URLSearchParams(window.location.search).get("next") ?? "/account";
     if (!accessToken || !refreshToken) {
-      setMessage("This authentication link is missing its session. Please request a new one.");
+      setTimeout(() => {
+        setMessage("This authentication link is missing its session. Please request a new one.");
+      }, 0);
       return;
     }
     fetch("/api/auth/callback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ access_token: accessToken, refresh_token: refreshToken, next }) })

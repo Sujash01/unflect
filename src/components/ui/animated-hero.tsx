@@ -74,7 +74,7 @@ export function Hero() {
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <MagneticCta href="/contact" label="Start a project →" />
-            <MagneticCta href="/work" label="See our work" variant="outline" />
+            <MagneticCta href="/process" label="See how we work" variant="outline" />
           </motion.div>
         </div>
 

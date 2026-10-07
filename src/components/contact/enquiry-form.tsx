@@ -1,6 +1,9 @@
 "use client";
 
 import { useCallback, useRef, useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { Field, Select, TextArea, TextInput } from "./field";
 import { analytics } from "@/lib/analytics";
@@ -19,12 +22,41 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 const TEXT_LIMITS = { goal: 2000, problem: 2000, details: 2000 } as const;
 
+function resolveProjectTypeParam(param: string | null): string {
+  if (!param) return "";
+  const normalized = param.toLowerCase().trim();
+  if (normalized === "web" || normalized === "web-application") return "web-application";
+  if (
+    normalized === "systems" ||
+    normalized === "internal-system" ||
+    normalized === "internal-systems"
+  ) {
+    return "internal-system";
+  }
+  if (normalized === "integrations" || normalized === "integration") return "integration";
+  if (normalized === "ecommerce") return "ecommerce";
+  if (normalized === "customer-portal" || normalized === "portal") return "customer-portal";
+  if (normalized === "admin-platform" || normalized === "admin") return "admin-platform";
+  if (normalized === "unsure") return "unsure";
+  if (enquiryFields.projectType.some((opt) => opt.value === normalized)) return normalized;
+  return "";
+}
+
 export function EnquiryForm() {
-  const [values, setValues] = useState<EnquiryInput>(emptyEnquiry);
+  const searchParams = useSearchParams();
+  const initialType = resolveProjectTypeParam(
+    searchParams.get("type") || searchParams.get("service"),
+  );
+
+  const [values, setValues] = useState<EnquiryInput>(() => ({
+    ...emptyEnquiry,
+    projectType: initialType,
+  }));
   const [errors, setErrors] = useState<Partial<Record<EnquiryFieldName, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [formError, setFormError] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
+
 
   const formRef = useRef<HTMLFormElement>(null);
   const startedRef = useRef(false);
@@ -143,8 +175,13 @@ export function EnquiryForm() {
           Thank you. We have what we need.
         </h2>
         <p className="mt-5 text-[0.9375rem] leading-relaxed text-muted-strong">
-          Your enquiry has been recorded. Someone will read it properly and reply
-          with a considered response — not an autoresponder.
+          Your enquiry has been recorded. A transactional receipt with your submission details
+          has been dispatched to your email address. A person will read the brief properly and reply
+          with a considered assessment within{" "}
+          {siteConfig.responseWindow.includes("[CONFIRM")
+            ? "2 working days"
+            : siteConfig.responseWindow}{" "}
+          — not an automated sales sequence.
         </p>
         {reference ? (
           <p className="mt-6 border-y border-line py-4 text-[0.875rem] text-muted">
@@ -153,7 +190,7 @@ export function EnquiryForm() {
           </p>
         ) : null}
         <p className="mt-6 text-[0.9375rem] leading-relaxed text-muted-strong">
-          We will review the brief and reply with a considered next step. If you need
+          We will review the technical requirements and reply with a considered next step. If you need
           to follow up, keep your reference number handy.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -164,6 +201,7 @@ export function EnquiryForm() {
               setReference(null);
               setFormError(null);
               startedRef.current = false;
+              setValues({ ...emptyEnquiry, projectType: initialType });
             }}
           >
             Send another enquiry
@@ -348,9 +386,15 @@ export function EnquiryForm() {
       </div>
 
       <div className="mt-9 flex flex-col gap-5 border-t border-line pt-7 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-sm text-[0.8125rem] leading-relaxed text-muted">
-          Your enquiry is used to respond to you and nothing else. We do not sell
-          or share contact details.
+        <p className="max-w-sm text-[0.8125rem] leading-relaxed text-muted-strong">
+          Your enquiry is confidential. By submitting, you agree to our{" "}
+          <Link
+            href="/privacy"
+            className="text-bone underline underline-offset-2 hover:text-indigo-bright"
+          >
+            Privacy Policy
+          </Link>
+          .
         </p>
         <Button
           type="submit"

@@ -48,25 +48,34 @@ export type AnalyticsEvent =
 declare global {
   interface Window {
     dataLayer?: unknown[];
+    plausible?: (name: string, options?: { props?: Record<string, unknown> }) => void;
+    umami?: { track: (name: string, data?: Record<string, unknown>) => void };
   }
 }
 
 /**
  * Sends the event to any configured sink.
- * Replace this body with a provider call (gtag, plausible, posthog, ...).
+ * Plausible, Umami, dataLayer, and custom unflect:analytics event.
  */
 function deliver(event: AnalyticsEvent): void {
   if (typeof window === "undefined") return;
 
-  // Standard GTM/GA4 dataLayer convention. Presence of `window.dataLayer`
-  // (set by a provider snippet) is the only trigger \u2014 nothing is sent
-  // anywhere while it is undefined.
+  // Plausible custom event hook (cookie-free, privacy-preserving)
+  if (typeof window.plausible === "function") {
+    window.plausible(event.name, { props: event as unknown as Record<string, unknown> });
+  }
+
+  // Umami custom event hook (cookie-free, privacy-preserving)
+  if (typeof window.umami?.track === "function") {
+    window.umami.track(event.name, event as unknown as Record<string, unknown>);
+  }
+
+  // Standard GTM/GA4 dataLayer convention if present
   if (Array.isArray(window.dataLayer)) {
     window.dataLayer.push(event);
   }
 
-  // Allows non-provider listeners (client portal, session recording, tests)
-  // to observe events without coupling to a vendor.
+  // Allows non-provider listeners to observe events without vendor coupling
   window.dispatchEvent(
     new CustomEvent<AnalyticsEvent>("unflect:analytics", { detail: event }),
   );

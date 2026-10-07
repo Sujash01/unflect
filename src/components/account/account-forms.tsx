@@ -1,6 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type ApiData = {
   message?: string;
@@ -20,6 +22,19 @@ async function requestJson(url: string, init: RequestInit): Promise<{ ok: boolea
       data: { message: "We could not reach the server. Check your connection and try again." },
     };
   }
+}
+
+function applyClientPreferences(prefs: {
+  reducedMotion: boolean;
+  cursorEffects: boolean;
+  smoothScroll: boolean;
+}) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  root.dataset.reducedMotion = prefs.reducedMotion ? "true" : "false";
+  root.dataset.cursorEffects = prefs.cursorEffects ? "true" : "false";
+  root.dataset.smoothScroll = prefs.smoothScroll ? "true" : "false";
+  window.dispatchEvent(new CustomEvent("unflect:preferences"));
 }
 
 function FormButton({ children, disabled }: { children: React.ReactNode; disabled?: boolean }) {
@@ -73,15 +88,14 @@ function Message({ text, error = false }: { text: string; error?: boolean }) {
 const jsonHeaders = { "Content-Type": "application/json" };
 
 export function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const [reset, setReset] = useState(false);
 
-  useEffect(() => {
-    setReset(new URLSearchParams(window.location.search).get("reset") === "1");
-  }, []);
+  const reset = searchParams.get("reset") === "1";
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -97,9 +111,10 @@ export function LoginForm() {
         setMessage(result.data.message ?? "We could not sign you in.");
         return;
       }
-      const next = new URLSearchParams(window.location.search).get("next");
+      const next = searchParams.get("next");
       const safeNext = next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : "/account";
-      window.location.assign(safeNext);
+      router.push(safeNext);
+      router.refresh();
     } finally {
       setBusy(false);
     }
@@ -117,13 +132,14 @@ export function LoginForm() {
       {message ? <Message text={message} error /> : null}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <FormButton disabled={busy}>{busy ? "Signing in…" : "Sign in"}</FormButton>
-        <a className="text-sm text-muted transition-colors hover:text-bone" href="/forgot-password">Forgot password?</a>
+        <Link className="text-sm text-muted transition-colors hover:text-bone" href="/forgot-password">Forgot password?</Link>
       </div>
     </form>
   );
 }
 
 export function SignupForm() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -159,7 +175,10 @@ export function SignupForm() {
         return;
       }
       if (result.data.needsVerification) setDone(true);
-      else window.location.assign("/account");
+      else {
+        router.push("/account");
+        router.refresh();
+      }
     } finally {
       setBusy(false);
     }
@@ -173,7 +192,7 @@ export function SignupForm() {
         <p className="mt-4 text-sm leading-6 text-muted-strong">
           We sent a verification link to <span className="text-bone">{email}</span>. Once confirmed, follow the link back to Unflect.
         </p>
-        <a href="/login" className="mt-7 inline-flex h-11 items-center rounded-full border border-line-strong px-5 text-sm hover:border-bone/40">Back to sign in</a>
+        <Link href="/login" className="mt-7 inline-flex h-11 items-center rounded-full border border-line-strong px-5 text-sm hover:border-bone/40">Back to sign in</Link>
       </div>
     );
   }
@@ -201,7 +220,7 @@ export function SignupForm() {
       {message ? <Message text={message} error /> : null}
       <FormButton disabled={busy || (password.length > 0 && !passwordValid)}>{busy ? "Creating…" : "Create account"}</FormButton>
       <p className="text-xs leading-5 text-muted">
-        By creating an account you agree to the <a className="text-bone underline underline-offset-4" href="/terms">Terms</a> and acknowledge the <a className="text-bone underline underline-offset-4" href="/privacy">Privacy Policy</a>.
+        By creating an account you agree to the <Link className="text-bone underline underline-offset-4" href="/terms">Terms</Link> and acknowledge the <Link className="text-bone underline underline-offset-4" href="/privacy">Privacy Policy</Link>.
       </p>
     </form>
   );
@@ -258,6 +277,7 @@ export function ForgotForm() {
 }
 
 export function ResetForm() {
+  const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [message, setMessage] = useState("");
@@ -281,7 +301,7 @@ export function ResetForm() {
         setMessage(result.data.message ?? "We could not reset your password.");
         return;
       }
-      window.location.assign("/login?reset=1");
+      router.push("/login?reset=1");
     } finally {
       setBusy(false);
     }
@@ -446,11 +466,8 @@ export function SettingsForm({ initial }: { initial: Record<string, unknown> }) 
     setSettings(next);
     setBusyKey(key);
     setMessage("");
-    const root = document.documentElement;
-    root.dataset.reducedMotion = next.reducedMotion ? "true" : "false";
-    root.dataset.cursorEffects = next.cursorEffects ? "true" : "false";
-    root.dataset.smoothScroll = next.smoothScroll ? "true" : "false";
-    window.dispatchEvent(new CustomEvent("unflect:preferences"));
+
+    applyClientPreferences(next);
 
     try {
       const result = await requestJson("/api/account/settings", {
@@ -460,10 +477,7 @@ export function SettingsForm({ initial }: { initial: Record<string, unknown> }) 
       });
       if (!result.ok) {
         setSettings(settings);
-        root.dataset.reducedMotion = settings.reducedMotion ? "true" : "false";
-        root.dataset.cursorEffects = settings.cursorEffects ? "true" : "false";
-        root.dataset.smoothScroll = settings.smoothScroll ? "true" : "false";
-        window.dispatchEvent(new CustomEvent("unflect:preferences"));
+        applyClientPreferences(settings);
       }
       setMessage(result.ok ? "Settings saved." : result.data.message ?? "We could not save settings.");
     } finally {
@@ -496,6 +510,7 @@ export function SettingsForm({ initial }: { initial: Record<string, unknown> }) 
 }
 
 export function DeleteAccountForm() {
+  const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [message, setMessage] = useState("");
@@ -519,7 +534,8 @@ export function DeleteAccountForm() {
         setMessage(result.data.message ?? "We could not delete the account.");
         return;
       }
-      window.location.assign("/?account=deleted");
+      router.push("/?account=deleted");
+      router.refresh();
     } finally {
       setBusy(false);
     }

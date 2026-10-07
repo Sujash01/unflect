@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   if (rateLimit(clientKey(request, "upload"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many uploads. Please wait." }, { status: 429 });
   
   const session = await readSession();
-  if (!session) return NextResponse.json({ ok: false, message: "Authentication required." }, { status: 401 });
+  if (!session.user) return NextResponse.json({ ok: false, message: "Authentication required." }, { status: 401 });
 
   let formData: FormData;
   try {

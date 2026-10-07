@@ -5,8 +5,6 @@ import { rejectCrossOrigin, readJson } from "@/lib/auth/security";
 
 const ALLOWED = ["reducedMotion", "cursorEffects", "smoothScroll"] as const;
 
-type SettingKey = (typeof ALLOWED)[number];
-
 export async function GET() {
   const session = await readSession(); if (!session.user) return NextResponse.json({ ok: false, message: "Not signed in." }, { status: 401 });
   const profile = await ensureProfile(session.user.id, session.user.email?.split("@")[0] ?? "");

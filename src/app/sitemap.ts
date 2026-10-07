@@ -25,7 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   const workPages: MetadataRoute.Sitemap = caseStudies
-    .filter((study) => study.status === "published")
+    .filter((study) => study.status !== "coming_soon")
     .map((study) => ({
       url: `${site.url}/work/${study.slug}`,
       lastModified: study.completedAt ? new Date(study.completedAt) : now,
