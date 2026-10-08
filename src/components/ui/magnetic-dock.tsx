@@ -187,7 +187,7 @@ export function MagneticDock({
       onMouseLeave={() => mousePosition.set(Infinity)}
       onPointerMove={glassPointer}
       className={cn(
-        "glass inline-flex items-end gap-1 rounded-[1.4rem] p-2.5",
+        "glass inline-flex items-end gap-0.5 sm:gap-1 rounded-[1.2rem] sm:rounded-[1.4rem] p-1.5 sm:p-2.5",
         positionStyles[position],
         "shadow-[0_22px_55px_-22px_rgba(0,0,0,0.85)]",
         className,

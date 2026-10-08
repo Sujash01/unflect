@@ -48,7 +48,7 @@ export function AccountHeaderButton() {
   }, []);
 
   if (signedIn === null) {
-    return <span aria-hidden="true" className="hidden h-11 w-11 sm:block" />;
+    return <span aria-hidden="true" className="hidden h-9 w-9 sm:h-11 sm:w-11 sm:block" />;
   }
 
   if (signedIn) {
@@ -56,7 +56,7 @@ export function AccountHeaderButton() {
       <Link
         href="/account"
         aria-label="Account"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-bone/[0.04] text-bone transition-colors hover:bg-bone/[0.09]"
+        className="inline-flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-line bg-bone/[0.04] text-bone transition-colors hover:bg-bone/[0.09]"
       >
         <UserRound className="h-4 w-4" />
       </Link>
@@ -66,7 +66,7 @@ export function AccountHeaderButton() {
   return (
     <Link
       href="/login"
-      className="hidden h-11 items-center rounded-full border border-line bg-bone/[0.04] px-4 text-sm text-bone transition-colors hover:bg-bone/[0.09] sm:inline-flex"
+      className="hidden h-9 sm:h-11 items-center rounded-full border border-line bg-bone/[0.04] px-3 sm:px-4 text-xs sm:text-sm text-bone transition-colors hover:bg-bone/[0.09] sm:inline-flex"
     >
       Sign in
     </Link>

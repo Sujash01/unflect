@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ExternalLink, Github, Globe, Linkedin } from "lucide-react";
 import {
   aboutIntro,
   principles,
   engagementModel,
   handoverDeliverables,
   founder,
+  founders,
   team,
   studioLocation,
 } from "@/content/company";
@@ -70,74 +70,43 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="mt-14 max-w-3xl rounded-3xl border border-line bg-module/50 p-8 sm:p-10">
-            <div className="grid gap-8 sm:grid-cols-[8rem_1fr] sm:items-start">
-              {/* Monogram Avatar Slot */}
+          <div className="mt-14 max-w-4xl space-y-6">
+            {founders.map((person) => (
               <div
-                className="flex aspect-square w-32 flex-col items-center justify-center rounded-2xl border border-line bg-navy/90 p-4 text-center shadow-inner"
-                aria-label={`Monogram avatar for ${founder.name}`}
+                key={person.name}
+                className="rounded-3xl border border-line bg-module/50 p-7 sm:p-9 transition-all duration-300 hover:border-line-strong"
               >
-                <span className="font-mono text-2xl font-semibold tracking-wider text-indigo-bright">
-                  ZS
-                </span>
-                <span className="mt-1 font-mono text-[10px] uppercase tracking-wider text-muted">
-                  Founder
-                </span>
-              </div>
-
-              <div>
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="font-display text-2xl text-bone">
-                    {founder.name}
-                  </h3>
-                  <span className="font-mono text-xs text-indigo-bright">
-                    {founder.role.includes("[CONFIRM") ? "Founder & Lead Engineer" : founder.role}
-                  </span>
-                </div>
-
-                <p className="mt-4 text-sm leading-6 text-muted-strong">
-                  {founder.bio.includes("[CONFIRM")
-                    ? "Zorawar leads engineering and product delivery at UNFLECT, working directly with clients to design, build, and support production systems."
-                    : founder.bio}
-                </p>
-
-                {/* Verified Links */}
-                <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-line pt-5 text-xs text-muted-strong">
-                  <a
-                    href={founder.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 transition-colors hover:text-bone"
+                <div className="grid gap-6 sm:grid-cols-[7rem_1fr] sm:items-start">
+                  {/* Monogram Avatar Slot */}
+                  <div
+                    className="flex aspect-square w-24 sm:w-28 flex-col items-center justify-center rounded-2xl border border-line bg-navy/90 p-3 text-center shadow-inner"
+                    aria-label={`Monogram avatar for ${person.name}`}
                   >
-                    <Linkedin className="h-3.5 w-3.5 text-indigo-bright" />
-                    LinkedIn
-                    <ExternalLink className="h-2.5 w-2.5 opacity-60" />
-                  </a>
+                    <span className="font-mono text-xl sm:text-2xl font-semibold tracking-wider text-indigo-bright">
+                      {person.initials}
+                    </span>
+                    <span className="mt-1 font-mono text-[9px] uppercase tracking-wider text-muted">
+                      Co-Founder
+                    </span>
+                  </div>
 
-                  <a
-                    href={founder.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 transition-colors hover:text-bone"
-                  >
-                    <Github className="h-3.5 w-3.5 text-indigo-bright" />
-                    GitHub
-                    <ExternalLink className="h-2.5 w-2.5 opacity-60" />
-                  </a>
+                  <div>
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <h3 className="font-display text-2xl text-bone">
+                        {person.name}
+                      </h3>
+                      <span className="font-mono text-xs text-indigo-bright">
+                        Co-Founder
+                      </span>
+                    </div>
 
-                  <a
-                    href={founder.portfolio}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 transition-colors hover:text-bone"
-                  >
-                    <Globe className="h-3.5 w-3.5 text-indigo-bright" />
-                    Portfolio
-                    <ExternalLink className="h-2.5 w-2.5 opacity-60" />
-                  </a>
+                    <p className="mt-3 text-sm leading-6 text-muted-strong">
+                      {person.bio}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
 
             {team.length > 0 ? (
               <div className="mt-8 border-t border-line pt-6">

@@ -1,5 +1,33 @@
 import { siteConfig } from "@/config/site";
 
+export interface CoFounder {
+  name: string;
+  initials: string;
+  role: string;
+  bio: string;
+}
+
+export const founders: readonly CoFounder[] = [
+  {
+    name: "Zorawar Singh",
+    initials: "ZS",
+    role: "Co-Founder",
+    bio: "Zorawar leads engineering and product delivery at UNFLECT, working directly with clients to design, build, and support production systems.",
+  },
+  {
+    name: "Sujash Mittal",
+    initials: "SM",
+    role: "Co-Founder",
+    bio: "Sujash drives technical execution and product strategy at UNFLECT, working directly with clients to build and scale production systems.",
+  },
+  {
+    name: "Rishit Verma",
+    initials: "RV",
+    role: "Co-Founder",
+    bio: "Rishit drives systems engineering and technical architecture at UNFLECT, ensuring resilient software delivery without middlemen.",
+  },
+] as const;
+
 export const founder = siteConfig.founder;
 export const team = siteConfig.team;
 export const studioLocation = {

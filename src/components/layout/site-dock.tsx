@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { FolderKanban, House, Info, ListOrdered, Mail, Shapes, UserRound } from "lucide-react";
 import { MagneticDock, type DockItemData } from "@/components/ui/magnetic-dock";
@@ -20,6 +21,15 @@ function isActive(pathname: string, href: string) {
 
 export function SiteDock() {
   const pathname = usePathname();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   const dockItems: DockItemData[] = items.map((item) => ({
     id: item.id,
     label: item.label,
@@ -33,15 +43,15 @@ export function SiteDock() {
       aria-label="Primary"
       className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-2 pb-[calc(env(safe-area-inset-bottom,0px)+0.75rem)] sm:px-4 sm:pb-[calc(env(safe-area-inset-bottom,0px)+1rem)]"
     >
-      <div className="pointer-events-auto max-w-full">
+      <div className="pointer-events-auto max-w-[calc(100vw-1rem)] sm:max-w-full">
         <MagneticDock
           items={dockItems}
-          iconSize={40}
-          maxScale={1.28}
-          magneticDistance={110}
-          showLabels
+          iconSize={isMobile ? 32 : 40}
+          maxScale={isMobile ? 1.12 : 1.28}
+          magneticDistance={isMobile ? 60 : 110}
+          showLabels={!isMobile}
           position="bottom"
-          className="max-w-full"
+          className="max-w-full gap-0.5 p-1.5 sm:gap-1 sm:p-2.5"
         />
       </div>
     </nav>
