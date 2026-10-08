@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, Clock3, FolderOpen, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Clock3, FolderOpen, Shield, type LucideIcon } from "lucide-react";
 import { requirePageSession } from "@/lib/auth/session";
 import { ensureProfile, getUserEnquiries } from "@/lib/auth/data";
+import { isAdmin } from "@/lib/auth/admin";
 import { AccountNav } from "@/components/account/account-nav";
 import { DataExportLink, ResendVerificationButton, SignOutButton } from "@/components/account/account-client";
 
@@ -33,6 +34,7 @@ export default async function AccountPage() {
       : { ok: true as const, data: [] };
 
   const name = profile?.display_name || session.user.email?.split("@")[0] || "there";
+  const userIsAdmin = isAdmin(session.user.email);
 
   return (
     <div className="container-page py-16 sm:py-24 text-bone">
@@ -57,6 +59,15 @@ export default async function AccountPage() {
             </div>
 
             <div className="flex flex-wrap gap-2">
+              {userIsAdmin && (
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-2 rounded-lg border border-indigo bg-indigo/10 px-4 py-2 text-sm font-medium text-indigo transition-colors hover:bg-indigo/20"
+                >
+                  <Shield className="h-4 w-4" />
+                  Admin Panel
+                </Link>
+              )}
               <DataExportLink />
               <SignOutButton />
             </div>
