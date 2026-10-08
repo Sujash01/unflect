@@ -4,7 +4,6 @@ import { Mail, Calendar, ArrowUpRight } from "lucide-react";
 import { EnquiryForm } from "@/components/contact/enquiry-form";
 import { contactGuidance, contactIntro } from "@/content/company-extra";
 import { siteConfig } from "@/config/site";
-import { EditorialPageHeader } from "@/components/ui/page-header";
 import { Container } from "@/components/ui/primitives";
 import { pageMetadata } from "@/lib/seo";
 
@@ -18,15 +17,73 @@ export const metadata: Metadata = pageMetadata({
 export default function ContactPage() {
   return (
     <div className="text-bone">
-      <EditorialPageHeader
-        section="Contact"
-        title={contactIntro.heading}
-        lede={contactIntro.body}
-      />
+      {/* Form Section - Positioned at top for immediate above-the-fold access */}
+      <section className="relative overflow-hidden border-b border-line pt-24 pb-16 sm:pt-28 sm:pb-24 lg:pt-32">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          <div className="aurora-blob aurora-a -right-[10%] -top-[30%] h-[36rem] w-[36rem] opacity-70" />
+          <div className="aurora-blob aurora-b -left-[16%] top-[20%] h-[32rem] w-[32rem] opacity-60" />
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-grid-fine opacity-[0.2] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]"
+        />
 
-      <section className="border-b border-line bg-navy-inset/70 py-16 sm:py-24">
         <Container>
-          <div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-start">
+          <div className="relative mb-8 sm:mb-10">
+            <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.03em] text-muted">
+              <span className="flex items-center gap-2 text-indigo">
+                Contact
+              </span>
+              <span className="text-line-strong">/</span>
+              <span>Start a project</span>
+            </div>
+            <div className="mt-3 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <h1 className="font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[0.98] tracking-[-0.03em] text-bone">
+                  Start a Project
+                </h1>
+                <p className="mt-2.5 max-w-xl text-base leading-relaxed text-muted-strong sm:text-lg">
+                  Tell UNFLECT what you are trying to build. We review every brief and reply with honest feedback.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-muted">
+                {!siteConfig.email.includes("[CONFIRM") ? (
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="inline-flex items-center gap-2 rounded-full border border-line bg-module/70 px-3.5 py-1.5 text-bone transition-colors hover:border-line-strong hover:text-indigo-bright"
+                  >
+                    <Mail className="h-3.5 w-3.5 text-indigo-bright" />
+                    <span>{siteConfig.email}</span>
+                  </a>
+                ) : null}
+                {siteConfig.bookingLink ? (
+                  <a
+                    href={siteConfig.bookingLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-line bg-module/70 px-3.5 py-1.5 text-indigo-bright transition-colors hover:border-line-strong hover:underline"
+                  >
+                    <Calendar className="h-3.5 w-3.5" />
+                    <span>Book intro call</span>
+                    <ArrowUpRight className="h-3 w-3" />
+                  </a>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-12 lg:grid-cols-[1.2fr_.8fr] lg:items-start">
+            <div id="form">
+              <Suspense
+                fallback={
+                  <div className="h-96 animate-pulse rounded-2xl border border-line bg-navy-raised" />
+                }
+              >
+                <EnquiryForm />
+              </Suspense>
+            </div>
+
             <div className="space-y-8 lg:sticky lg:top-28">
               {/* Alternative Direct Channels */}
               <div className="rounded-2xl border border-line bg-module/60 p-6 sm:p-7">
@@ -97,15 +154,26 @@ export default function ContactPage() {
                 </ul>
               </div>
             </div>
+          </div>
+        </Container>
+      </section>
 
-            <div id="form">
-              <Suspense
-                fallback={
-                  <div className="h-96 animate-pulse rounded-2xl border border-line bg-navy-raised" />
-                }
-              >
-                <EnquiryForm />
-              </Suspense>
+      {/* Info Section - Shifted below the form section */}
+      <section className="border-b border-line bg-navy-inset/70 py-20 sm:py-28">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr] lg:items-end">
+            <div>
+              <p className="font-mono text-[11px] tracking-[0.03em] text-indigo">
+                {contactIntro.eyebrow}
+              </p>
+              <h2 className="mt-4 font-display text-4xl sm:text-5xl lg:text-6xl leading-[0.96] tracking-[-0.025em] text-bone">
+                {contactIntro.heading}
+              </h2>
+            </div>
+            <div className="max-w-md lg:pb-2">
+              <p className="text-base leading-7 text-muted-strong sm:text-lg">
+                {contactIntro.body}
+              </p>
             </div>
           </div>
         </Container>
