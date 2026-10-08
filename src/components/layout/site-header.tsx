@@ -52,8 +52,12 @@ export function SiteHeader() {
           aria-label={`${site.name} — home`}
           className="inline-flex shrink-0 items-center rounded-full px-1 py-1 sm:px-1.5 sm:py-1.5 transition-opacity hover:opacity-80"
         >
-          <Wordmark size={22} className="sm:hidden" />
-          <Wordmark size={24} className="hidden sm:inline-flex" />
+          <span className="sm:hidden">
+            <Wordmark size={22} showText={true} />
+          </span>
+          <span className="hidden sm:inline-flex">
+            <Wordmark size={24} showText={true} />
+          </span>
         </Link>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
@@ -66,7 +70,7 @@ export function SiteHeader() {
           <AnimatedThemeToggler className="inline-flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-line bg-bone/[0.04] text-bone transition-colors hover:bg-bone/[0.09]" />
           <Link
             href="/contact"
-            className="group relative inline-flex h-9 sm:h-11 shrink-0 items-center gap-1 sm:gap-1.5 overflow-hidden whitespace-nowrap rounded-full bg-indigo px-3 sm:px-5 lg:px-6 text-xs sm:text-[13px] font-semibold text-[#0A0A0A] transition-colors duration-300 hover:bg-indigo-bright"
+            className="group relative inline-flex h-9 sm:h-11 shrink-0 items-center gap-1 sm:gap-1.5 overflow-hidden whitespace-nowrap rounded-full bg-indigo px-2.5 sm:px-5 lg:px-6 text-[11px] sm:text-[13px] font-semibold text-[#0A0A0A] transition-colors duration-300 hover:bg-indigo-bright"
           >
             <span className="relative"><RollText>Start a project</RollText></span>
             <ArrowUpRight className="relative h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
