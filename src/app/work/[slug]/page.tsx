@@ -10,6 +10,7 @@ import { MarkerList, Module, NodeDot, StepList } from "@/components/ui/module";
 import { CaseStudyViewTracker } from "@/components/work/tracked-case-study-link";
 import { caseStudies, getCaseStudy, type CaseStudy } from "@/content/case-studies";
 import { servicesBySlug } from "@/content/services";
+import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -113,13 +114,55 @@ export default async function CaseStudyPage({ params }: Params) {
 
   const service = servicesBySlug[study.service];
 
+  const projectShortName = study.title.split(" — ")[0] || study.title;
+
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
-    headline: study.title,
-    description: study.summary,
-    author: { "@type": "Organization", name: "UNFLECT" },
-    about: service.name,
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: study.title,
+        description: study.summary,
+        url: `${site.url}/work/${study.slug}`,
+        mainEntityOfPage: `${site.url}/work/${study.slug}`,
+        author: {
+          "@type": "Organization",
+          name: site.name,
+          url: site.url,
+        },
+        publisher: {
+          "@type": "Organization",
+          name: site.name,
+          url: site.url,
+          logo: `${site.url}/brand/logo.png`,
+        },
+        datePublished: study.completedAt ? new Date(study.completedAt).toISOString() : "2026-01-01T00:00:00Z",
+        about: service.name,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: site.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Work",
+            item: `${site.url}/work`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: projectShortName,
+            item: `${site.url}/work/${study.slug}`,
+          },
+        ],
+      },
+    ],
   };
 
   const cleanParagraph = (text: string, fallback: string) =>
@@ -161,8 +204,8 @@ export default async function CaseStudyPage({ params }: Params) {
               </Link>
             </li>
             <li aria-hidden="true">/</li>
-            <li aria-current="page" className="inline-flex min-h-11 items-center truncate text-muted-strong">
-              {study.sector}
+            <li aria-current="page" className="inline-flex min-h-11 items-center truncate text-muted-strong font-medium">
+              {projectShortName}
             </li>
           </ol>
         </Container>

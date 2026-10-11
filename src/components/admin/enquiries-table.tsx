@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "@/lib/utils";
 import { Pencil, Trash2, X } from "lucide-react";
 
 type Enquiry = {
@@ -40,8 +40,8 @@ export function EnquiriesTable({ enquiries }: { enquiries: Enquiry[] }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const filteredEnquiries = filter === "all" 
-    ? enquiries 
+  const filteredEnquiries = filter === "all"
+    ? enquiries
     : enquiries.filter(e => e.status === filter);
 
   const statuses = ["all", "new", "contacted", "qualified", "won", "lost", "spam"];
@@ -63,7 +63,7 @@ export function EnquiriesTable({ enquiries }: { enquiries: Enquiry[] }) {
       } else {
         alert("Failed to delete enquiry");
       }
-    } catch (error) {
+    } catch {
       alert("Error deleting enquiry");
     } finally {
       setIsDeleting(false);
@@ -88,7 +88,7 @@ export function EnquiriesTable({ enquiries }: { enquiries: Enquiry[] }) {
       } else {
         alert("Failed to update enquiry");
       }
-    } catch (error) {
+    } catch {
       alert("Error updating enquiry");
     } finally {
       setIsSaving(false);
@@ -103,11 +103,10 @@ export function EnquiriesTable({ enquiries }: { enquiries: Enquiry[] }) {
           <button
             key={status}
             onClick={() => setFilter(status)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              filter === status
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${filter === status
                 ? "bg-indigo text-navy"
                 : "bg-navy-raised text-muted hover:bg-bone/5 hover:text-bone border border-line"
-            }`}
+              }`}
           >
             {status === "all" ? "All" : status.charAt(0).toUpperCase() + status.slice(1)}
             {status !== "all" && (
@@ -441,75 +440,75 @@ export function EnquiriesTable({ enquiries }: { enquiries: Enquiry[] }) {
             ) : (
               // View Mode
               <div className="space-y-4">
-              <div>
-                <p className="text-xs text-muted mb-1">Contact</p>
-                <p className="text-sm text-bone">{selectedEnquiry.name}</p>
-                <p className="text-xs text-muted mt-0.5">{selectedEnquiry.email}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-muted mb-1">Project Type</p>
-                  <p className="text-sm text-bone">{selectedEnquiry.project_type}</p>
+                  <p className="text-xs text-muted mb-1">Contact</p>
+                  <p className="text-sm text-bone">{selectedEnquiry.name}</p>
+                  <p className="text-xs text-muted mt-0.5">{selectedEnquiry.email}</p>
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-muted mb-1">Project Type</p>
+                    <p className="text-sm text-bone">{selectedEnquiry.project_type}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted mb-1">Timeline</p>
+                    <p className="text-sm text-bone">{selectedEnquiry.timeline}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted mb-1">Budget</p>
+                    <p className="text-sm text-bone">{selectedEnquiry.budget}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted mb-1">Status</p>
+                    <span className={`inline-block rounded-full border px-2.5 py-1 font-mono text-[10px] ${statusColors[selectedEnquiry.status] || "border-line text-muted"}`}>
+                      {selectedEnquiry.status}
+                    </span>
+                  </div>
+                </div>
+
                 <div>
-                  <p className="text-xs text-muted mb-1">Timeline</p>
-                  <p className="text-sm text-bone">{selectedEnquiry.timeline}</p>
+                  <p className="text-xs text-muted mb-1">What are they trying to build?</p>
+                  <p className="text-sm text-bone leading-relaxed">{selectedEnquiry.goal}</p>
                 </div>
+
                 <div>
-                  <p className="text-xs text-muted mb-1">Budget</p>
-                  <p className="text-sm text-bone">{selectedEnquiry.budget}</p>
+                  <p className="text-xs text-muted mb-1">What problem are they solving?</p>
+                  <p className="text-sm text-bone leading-relaxed">{selectedEnquiry.problem}</p>
                 </div>
+
+                {selectedEnquiry.details && (
+                  <div>
+                    <p className="text-xs text-muted mb-1">Additional Information</p>
+                    <p className="text-sm text-bone leading-relaxed">{selectedEnquiry.details}</p>
+                  </div>
+                )}
+
                 <div>
-                  <p className="text-xs text-muted mb-1">Status</p>
-                  <span className={`inline-block rounded-full border px-2.5 py-1 font-mono text-[10px] ${statusColors[selectedEnquiry.status] || "border-line text-muted"}`}>
-                    {selectedEnquiry.status}
-                  </span>
+                  <p className="text-xs text-muted mb-1">Created</p>
+                  <p className="text-sm text-bone">
+                    {new Date(selectedEnquiry.created_at).toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={() => setEditingEnquiry(selectedEnquiry)}
+                    className="flex items-center gap-2 rounded-lg bg-indigo px-4 py-2 text-sm font-medium text-navy hover:bg-indigo-bright transition-colors"
+                  >
+                    <Pencil className="h-4 w-4" />
+                    Edit Enquiry
+                  </button>
+                  <button
+                    onClick={() => handleDelete(selectedEnquiry.id)}
+                    disabled={isDeleting}
+                    className="flex items-center gap-2 rounded-lg border border-red-400 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors disabled:opacity-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {isDeleting ? "Deleting..." : "Delete"}
+                  </button>
                 </div>
               </div>
-
-              <div>
-                <p className="text-xs text-muted mb-1">What are they trying to build?</p>
-                <p className="text-sm text-bone leading-relaxed">{selectedEnquiry.goal}</p>
-              </div>
-
-              <div>
-                <p className="text-xs text-muted mb-1">What problem are they solving?</p>
-                <p className="text-sm text-bone leading-relaxed">{selectedEnquiry.problem}</p>
-              </div>
-
-              {selectedEnquiry.details && (
-                <div>
-                  <p className="text-xs text-muted mb-1">Additional Information</p>
-                  <p className="text-sm text-bone leading-relaxed">{selectedEnquiry.details}</p>
-                </div>
-              )}
-
-              <div>
-                <p className="text-xs text-muted mb-1">Created</p>
-                <p className="text-sm text-bone">
-                  {new Date(selectedEnquiry.created_at).toLocaleString()}
-                </p>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  onClick={() => setEditingEnquiry(selectedEnquiry)}
-                  className="flex items-center gap-2 rounded-lg bg-indigo px-4 py-2 text-sm font-medium text-navy hover:bg-indigo-bright transition-colors"
-                >
-                  <Pencil className="h-4 w-4" />
-                  Edit Enquiry
-                </button>
-                <button
-                  onClick={() => handleDelete(selectedEnquiry.id)}
-                  disabled={isDeleting}
-                  className="flex items-center gap-2 rounded-lg border border-red-400 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-400/10 transition-colors disabled:opacity-50"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  {isDeleting ? "Deleting..." : "Delete"}
-                </button>
-              </div>
-            </div>
             )}
           </div>
         </div>

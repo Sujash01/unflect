@@ -41,6 +41,7 @@
     "node_modules",
     ".next",
     "out",
-    "build"
+    "build",
+    "unflect-main"
   ]
 }

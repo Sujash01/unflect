@@ -9,6 +9,7 @@ import { EditorialPageHeader } from "@/components/ui/page-header";
 import { Module, NodeDot } from "@/components/ui/module";
 import { getService, services, type ServiceSlug } from "@/content/services";
 import { handoverDeliverables, clientOwnedInfrastructure } from "@/content/company";
+import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -46,12 +47,43 @@ export default async function ServiceDetailPage({ params }: Params) {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Service",
-    name: `${service.name} — ${service.summary}`,
-    description: service.seo.description,
-    serviceType: service.name,
-    provider: { "@type": "Organization", name: "UNFLECT" },
-    url: `/services/${service.slug}`,
+    "@graph": [
+      {
+        "@type": "Service",
+        name: `${service.name} — ${service.summary}`,
+        description: service.seo.description,
+        serviceType: service.name,
+        provider: {
+          "@type": "Organization",
+          name: site.name,
+          url: site.url,
+        },
+        url: `${site.url}/services/${service.slug}`,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: site.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Services",
+            item: `${site.url}/services`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: service.name,
+            item: `${site.url}/services/${service.slug}`,
+          },
+        ],
+      },
+    ],
   };
 
   return (
@@ -60,6 +92,28 @@ export default async function ServiceDetailPage({ params }: Params) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      <nav aria-label="Breadcrumb" className="border-b border-line bg-navy/40">
+        <Container>
+          <ol className="flex flex-wrap items-center gap-x-2 py-3 text-[0.8125rem] text-muted">
+            <li>
+              <Link href="/" className="inline-flex min-h-8 items-center transition-colors hover:text-bone">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li>
+              <Link href="/services" className="inline-flex min-h-8 items-center transition-colors hover:text-bone">
+                Services
+              </Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" className="inline-flex min-h-8 items-center truncate text-muted-strong font-medium">
+              {service.name}
+            </li>
+          </ol>
+        </Container>
+      </nav>
 
       <EditorialPageHeader
         section={`Service ${service.index}`}

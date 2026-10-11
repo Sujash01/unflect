@@ -5,14 +5,14 @@ import { updateRows, deleteRows } from "@/lib/supabase";
 
 export async function PATCH(request: Request) {
   const session = await readSession();
-  
+
   if (!isAdmin(session.user?.email)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
   try {
     const { id, ...updates } = await request.json();
-    
+
     if (!id) {
       return NextResponse.json({ error: "Enquiry ID required" }, { status: 400 });
     }
@@ -28,14 +28,14 @@ export async function PATCH(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }
 
 export async function DELETE(request: Request) {
   const session = await readSession();
-  
+
   if (!isAdmin(session.user?.email)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
@@ -43,7 +43,7 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-    
+
     if (!id) {
       return NextResponse.json({ error: "Enquiry ID required" }, { status: 400 });
     }
@@ -55,7 +55,7 @@ export async function DELETE(request: Request) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }

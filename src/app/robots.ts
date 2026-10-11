@@ -8,6 +8,8 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         disallow: [
+          "/admin",
+          "/admin/",
           "/account",
           "/profile",
           "/settings",
@@ -16,7 +18,7 @@ export default function robots(): MetadataRoute.Robots {
           "/forgot-password",
           "/reset-password",
           "/auth/",
-          "/api/"
+          "/api/",
         ],
       },
     ],

@@ -5,7 +5,6 @@ import {
   principles,
   engagementModel,
   handoverDeliverables,
-  founder,
   founders,
   team,
   studioLocation,

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { formatDistanceToNow } from "date-fns";
-import { Pencil, Trash2, Ban, CheckCircle, X } from "lucide-react";
+import { formatDistanceToNow } from "@/lib/utils";
+import { Ban, CheckCircle, X } from "lucide-react";
 
 type Profile = {
   id: string;
@@ -27,7 +27,7 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
 
     setIsSaving(true);
     try {
-      const { id, created_at, updated_at, ...updates } = editingProfile;
+      const { id, created_at: _created, updated_at: _updated, ...updates } = editingProfile;
       const response = await fetch("/api/admin/users", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -40,7 +40,7 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
       } else {
         alert("Failed to update profile");
       }
-    } catch (error) {
+    } catch {
       alert("Error updating profile");
     } finally {
       setIsSaving(false);
@@ -63,7 +63,7 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
       } else {
         alert("Failed to delete user");
       }
-    } catch (error) {
+    } catch {
       alert("Error deleting user");
     } finally {
       setIsDeleting(false);
@@ -89,7 +89,7 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
       } else {
         alert(`Failed to ${action} user`);
       }
-    } catch (error) {
+    } catch {
       alert(`Error ${action}ing user`);
     } finally {
       setIsBlocking(false);
@@ -132,10 +132,13 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
                       <td className="px-5 py-4">
                         {profile.avatar_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img 
-                            src={profile.avatar_url} 
+                          <img
+                            src={profile.avatar_url}
                             alt={profile.display_name}
-                            className="h-8 w-8 rounded-full"
+                            width={32}
+                            height={32}
+                            loading="lazy"
+                            className="h-8 w-8 rounded-full object-cover"
                           />
                         ) : (
                           <div className="h-8 w-8 rounded-full bg-bone/10 flex items-center justify-center">
@@ -208,10 +211,13 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
                 <div className="flex items-start gap-3 mb-3">
                   {profile.avatar_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img 
-                      src={profile.avatar_url} 
+                    <img
+                      src={profile.avatar_url}
                       alt={profile.display_name}
-                      className="h-12 w-12 rounded-full"
+                      width={48}
+                      height={48}
+                      loading="lazy"
+                      className="h-12 w-12 rounded-full object-cover"
                     />
                   ) : (
                     <div className="h-12 w-12 rounded-full bg-bone/10 flex items-center justify-center shrink-0">

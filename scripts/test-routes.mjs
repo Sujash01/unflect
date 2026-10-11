@@ -19,13 +19,15 @@ const routes = [
   '/work/systems-integration', // redirect test
 ];
 
+const port = process.env.PORT || 3000;
+
 async function checkRoutes() {
-  console.log('Testing routes on http://localhost:3002...\n');
+  console.log(`Testing routes on http://localhost:${port}...\n`);
   let hasErrors = false;
 
   for (const path of routes) {
     try {
-      const url = `http://localhost:3002${path}`;
+      const url = `http://localhost:${port}${path}`;
       const res = await fetch(url, { redirect: 'manual' });
 
       if (res.status === 307 || res.status === 308) {
@@ -58,7 +60,7 @@ async function checkRoutes() {
   // Check JSON-LD
   console.log('\n--- Checking Structured Data (JSON-LD) ---');
   for (const page of ['/', '/work/paperplane']) {
-    const res = await fetch(`http://localhost:3002${page}`);
+    const res = await fetch(`http://localhost:${port}${page}`);
     const text = await res.text();
     const matches = [...text.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)];
     console.log(`Page ${page}: found ${matches.length} JSON-LD script block(s).`);

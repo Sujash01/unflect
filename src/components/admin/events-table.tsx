@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "@/lib/utils";
 
 type AccountEvent = {
   id: string;
@@ -41,8 +41,8 @@ export function EventsTable({ events }: { events: AccountEvent[] }) {
                     </td>
                     <td className="px-5 py-4">
                       <p className="text-xs text-muted max-w-xs truncate">
-                        {Object.keys(event.metadata).length > 0 
-                          ? JSON.stringify(event.metadata) 
+                        {Object.keys(event.metadata).length > 0
+                          ? JSON.stringify(event.metadata)
                           : "—"}
                       </p>
                     </td>

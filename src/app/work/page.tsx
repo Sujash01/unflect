@@ -169,9 +169,9 @@ export default function WorkPage() {
                   <p className="font-mono text-[11px] tracking-[0.03em] text-indigo">
                     Pipeline
                   </p>
-                  <h3 className="mt-2 font-display text-2xl text-bone">
+                  <h2 className="mt-2 font-display text-2xl text-bone">
                     In progress / coming soon
-                  </h3>
+                  </h2>
                 </div>
                 <p className="text-xs text-muted max-w-md">
                   Active projects currently in engineering. Detailed architecture notes will be published upon release.
@@ -202,9 +202,9 @@ export default function WorkPage() {
                           />
                         </div>
 
-                        <h4 className="mt-3 font-display text-xl text-bone">
+                        <h3 className="mt-3 font-display text-xl text-bone">
                           {study.title}
-                        </h4>
+                        </h3>
 
                         <p className="mt-2 text-sm leading-6 text-muted-strong">
                           {study.summary}

@@ -30,3 +30,48 @@ export function formatDate(iso: string): string {
     year: "numeric",
   });
 }
+
+/** Lightweight, zero-dependency relative date formatter compatible with date-fns formatDistanceToNow */
+export function formatDistanceToNow(
+  date: Date | string | number | null | undefined,
+  options?: { addSuffix?: boolean },
+): string {
+  if (!date) return options?.addSuffix ? "recently" : "recent";
+  const d = date instanceof Date ? date : new Date(date);
+  const time = d.getTime();
+  if (Number.isNaN(time)) return options?.addSuffix ? "recently" : "recent";
+
+  const diffMs = Date.now() - time;
+  const diffSec = Math.floor(Math.abs(diffMs) / 1000);
+  const isFuture = diffMs < 0;
+
+  let timeStr = "";
+  if (diffSec < 45) {
+    timeStr = "less than a minute";
+  } else if (diffSec < 90) {
+    timeStr = "about 1 minute";
+  } else if (diffSec < 45 * 60) {
+    timeStr = `${Math.round(diffSec / 60)} minutes`;
+  } else if (diffSec < 90 * 60) {
+    timeStr = "about 1 hour";
+  } else if (diffSec < 24 * 3600) {
+    timeStr = `about ${Math.round(diffSec / 3600)} hours`;
+  } else if (diffSec < 42 * 3600) {
+    timeStr = "1 day";
+  } else if (diffSec < 30 * 24 * 3600) {
+    timeStr = `${Math.round(diffSec / (24 * 3600))} days`;
+  } else if (diffSec < 45 * 24 * 3600) {
+    timeStr = "about 1 month";
+  } else if (diffSec < 365 * 24 * 3600) {
+    timeStr = `${Math.round(diffSec / (30 * 24 * 3600))} months`;
+  } else {
+    const years = Math.round(diffSec / (365 * 24 * 3600));
+    timeStr = years <= 1 ? "about 1 year" : `over ${years} years`;
+  }
+
+  if (options?.addSuffix) {
+    return isFuture ? `in ${timeStr}` : `${timeStr} ago`;
+  }
+  return timeStr;
+}
+

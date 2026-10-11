@@ -96,11 +96,23 @@ const structuredDataJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
+      "@type": "WebSite",
+      "@id": `${site.url}/#website`,
+      url: site.url,
+      name: site.name,
+      description: site.description,
+      publisher: {
+        "@id": `${site.url}/#organization`,
+      },
+      inLanguage: "en-GB",
+    },
+    {
       "@type": "Organization",
       "@id": `${site.url}/#organization`,
       name: site.name,
       ...(!site.legalName.includes("[CONFIRM") ? { legalName: site.legalName } : {}),
       url: site.url,
+      logo: `${site.url}/brand/logo.png`,
       description: site.description,
       slogan: site.positioning,
       ...(!site.email.includes("[CONFIRM") ? { email: site.email } : {}),
