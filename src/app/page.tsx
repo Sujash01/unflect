@@ -5,7 +5,7 @@ import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: `${site.name} — ${site.tagline}`,
+  title: site.name,
   description: site.description,
   path: "/",
 });

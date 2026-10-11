@@ -5,11 +5,11 @@ export const OG_IMAGE = {
   url: "/opengraph-image",
   width: 1200,
   height: 630,
-  alt: `${site.name} — ${site.tagline}`,
+  alt: site.name,
 };
 
 type PageMetaInput = {
-  title: string;
+  title?: string | { absolute: string };
   description: string;
   path: string;
   type?: "website" | "article";
@@ -25,8 +25,16 @@ export function pageMetadata({
 }: PageMetaInput): Metadata {
   const url = `${site.url}${path === "/" ? "" : path}`;
 
+  const isHome = path === "/";
+  // On the homepage, ensure title is absolute "UNFLECT" so parent template (%s · UNFLECT) is ignored
+  const pageTitle = isHome
+    ? { absolute: typeof title === "string" ? title : (title?.absolute ?? site.name) }
+    : (title ?? site.name);
+
+  const ogTitle = typeof pageTitle === "string" ? pageTitle : pageTitle.absolute;
+
   return {
-    title,
+    title: pageTitle,
     description,
     alternates: { canonical: path },
     robots,
@@ -35,13 +43,13 @@ export function pageMetadata({
       siteName: site.name,
       locale: site.locale,
       url,
-      title,
+      title: ogTitle,
       description,
       images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description,
       images: [OG_IMAGE.url],
     },
