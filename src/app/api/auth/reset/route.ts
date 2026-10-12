@@ -7,7 +7,7 @@ import { addAccountEvent } from "@/lib/auth/data";
 
 export async function POST(request: NextRequest) {
   const blocked = rejectCrossOrigin(request); if (blocked) return blocked;
-  if (rateLimit(clientKey(request, "reset"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
+  if (await rateLimit(clientKey(request, "reset"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
   const session = await readSession(); if (!session.user || !session.accessToken) return NextResponse.json({ ok: false, message: "Your recovery session has expired. Start again." }, { status: 401 });
   let raw: unknown; try { raw = await readJson(request); } catch { return NextResponse.json({ ok: false, message: "Malformed request." }, { status: 400 }); }
   const password = typeof (raw as Record<string, unknown>).password === "string" ? (raw as Record<string, string>).password : "";

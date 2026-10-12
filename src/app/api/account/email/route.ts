@@ -7,7 +7,7 @@ import { addAccountEvent } from "@/lib/auth/data";
 
 export async function PATCH(request: NextRequest) {
   const blocked = rejectCrossOrigin(request); if (blocked) return blocked;
-  if (rateLimit(clientKey(request, "email"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
+  if (await rateLimit(clientKey(request, "email"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
   const session = await readSession(); if (!session.user || !session.accessToken) return NextResponse.json({ ok: false, message: "Not signed in." }, { status: 401 });
   let raw: unknown; try { raw = await readJson(request, 4 * 1024); } catch { return NextResponse.json({ ok: false, message: "Malformed request." }, { status: 400 }); }
   const body = raw as Record<string, unknown>;

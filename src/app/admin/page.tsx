@@ -2,11 +2,19 @@ import { redirect } from "next/navigation";
 import { Database, Users, Activity, FileText } from "lucide-react";
 import { requirePageSession } from "@/lib/auth/session";
 import { isAdmin } from "@/lib/auth/admin";
-import { getAllEnquiries, getAllProfiles, getAllAccountEvents } from "@/lib/admin/data";
+import {
+  countEnquiriesByStatus,
+  getAccountEvents,
+  getEnquiriesPage,
+  getProfilesPage,
+  normalizePage,
+  normalizePageSize,
+} from "@/lib/admin/data";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { EnquiriesTable } from "@/components/admin/enquiries-table";
 import { ProfilesTable } from "@/components/admin/profiles-table";
 import { EventsTable } from "@/components/admin/events-table";
+import { Pagination } from "@/components/admin/pagination";
 
 export const metadata = {
   title: "Admin Panel",
@@ -14,29 +22,48 @@ export const metadata = {
   alternates: { canonical: null },
 };
 
-export default async function AdminPage() {
+type AdminSearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+export default async function AdminPage({ searchParams }: { searchParams: AdminSearchParams }) {
   const session = await requirePageSession("/admin");
-  
-  if (!isAdmin(session.user.email)) {
+
+  if (!isAdmin(session.user)) {
     redirect("/account");
   }
 
-  const [enquiriesResult, profilesResult, eventsResult] = await Promise.all([
-    getAllEnquiries(),
-    getAllProfiles(),
-    getAllAccountEvents(),
+  const params = await searchParams;
+  const enquiryPage = normalizePage(params.epage);
+  const profilePage = normalizePage(params.ppage);
+  const pageSize = normalizePageSize(params.pageSize);
+
+  const [enquiriesResult, profilesResult, eventsResult, newEnquiries] = await Promise.all([
+    getEnquiriesPage(enquiryPage, pageSize),
+    getProfilesPage(profilePage, pageSize),
+    getAccountEvents(200),
+    countEnquiriesByStatus("new"),
   ]);
 
   const enquiries = enquiriesResult.ok ? enquiriesResult.data : [];
   const profiles = profilesResult.ok ? profilesResult.data : [];
   const events = eventsResult.ok ? eventsResult.data : [];
 
-  // Calculate stats
   const stats = {
-    totalEnquiries: enquiries.length,
-    totalProfiles: profiles.length,
-    totalEvents: events.length,
-    newEnquiries: enquiries.filter(e => e.status === 'new').length,
+    totalEnquiries: enquiriesResult.ok ? enquiriesResult.count : 0,
+    totalProfiles: profilesResult.ok ? profilesResult.count : 0,
+    totalEvents: eventsResult.ok ? eventsResult.count : events.length,
+    newEnquiries,
+  };
+
+  const dbConnected = enquiriesResult.ok;
+
+  const listHref = (target: "epage" | "ppage", page: number): string => {
+    const sp = new URLSearchParams();
+    const ep = target === "epage" ? page : enquiryPage;
+    const pp = target === "ppage" ? page : profilePage;
+    if (ep > 1) sp.set("epage", String(ep));
+    if (pp > 1) sp.set("ppage", String(pp));
+    const query = sp.toString();
+    return query ? `/admin?${query}` : "/admin";
   };
 
   return (
@@ -79,7 +106,9 @@ export default async function AdminPage() {
             <div className="rounded-2xl border border-line bg-navy-raised p-4 sm:p-5">
               <Database className="h-4 w-4 text-indigo" />
               <p className="mt-4 sm:mt-6 text-xs text-muted">Database Status</p>
-              <p className="mt-1 text-sm font-medium text-bone">Connected</p>
+              <p className="mt-1 text-sm font-medium text-bone">
+                {dbConnected ? "Connected" : "Unavailable"}
+              </p>
             </div>
           </section>
 
@@ -95,6 +124,12 @@ export default async function AdminPage() {
             </div>
             <div className="mt-4 sm:mt-5">
               <EnquiriesTable enquiries={enquiries} />
+              <Pagination
+                page={enquiryPage}
+                pageSize={pageSize}
+                total={stats.totalEnquiries}
+                makeHref={(page) => listHref("epage", page)}
+              />
             </div>
           </section>
 
@@ -110,6 +145,12 @@ export default async function AdminPage() {
             </div>
             <div className="mt-4 sm:mt-5">
               <ProfilesTable profiles={profiles} />
+              <Pagination
+                page={profilePage}
+                pageSize={pageSize}
+                total={stats.totalProfiles}
+                makeHref={(page) => listHref("ppage", page)}
+              />
             </div>
           </section>
 

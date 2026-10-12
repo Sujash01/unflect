@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { deliverEnquiry } from "@/lib/enquiry-delivery";
 import { validateEnquiry } from "@/lib/enquiry";
 import { enquiryReference } from "@/lib/utils";
+import { clientKey, rateLimit, rejectCrossOrigin } from "@/lib/auth/security";
+import { getRequestId } from "@/lib/request-id";
 
 /**
  * POST /api/enquiries
@@ -11,11 +13,12 @@ import { enquiryReference } from "@/lib/utils";
  * never trusted), and hands it to the delivery adapter.
  *
  * Responses:
- *   202 \u2014 accepted and queued for delivery
- *   400 \u2014 validation failed; `errors` maps field name to message
- *   413 \u2014 payload too large
- *   429 \u2014 rate limited
- *   500 \u2014 delivery failed
+ *   202 — accepted and stored (email delivery is best-effort)
+ *   400 — validation failed; `errors` maps field name to message
+ *   413 — payload too large
+ *   429 — rate limited (per client)
+ *   500 — storage failed
+ *   503 — the enquiry store is not configured; nothing was saved
  *
  * No personal data is echoed back beyond field-level validation messages.
  */
@@ -25,20 +28,12 @@ export const dynamic = "force-dynamic";
 
 const MAX_BODY_BYTES = 16 * 1024;
 
-/** In-memory sliding window. Sized for a shared office IP, not for a single user. */
-const RATE_LIMIT = { windowMs: 60_000, max: 10 };
-const hits: number[] = [];
-
-function rateLimited(now: number): boolean {
-  const cutoff = now - RATE_LIMIT.windowMs;
-  while (hits.length > 0 && (hits[0] ?? 0) < cutoff) hits.shift();
-  if (hits.length >= RATE_LIMIT.max) return true;
-  hits.push(now);
-  return false;
-}
-
 export async function POST(request: NextRequest) {
-  if (rateLimited(Date.now())) {
+  const blocked = rejectCrossOrigin(request);
+  if (blocked) return blocked;
+
+  // Per-client limit so one visitor cannot block everybody else.
+  if (await rateLimit(clientKey(request, "enquiry"), 60_000, 5)) {
     return NextResponse.json(
       { ok: false, message: "Too many submissions. Please try again shortly." },
       { status: 429, headers: { "Retry-After": "60" } },
@@ -89,41 +84,28 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  try {
-    const delivery = await deliverEnquiry(result.value, reference);
+  const delivery = await deliverEnquiry(result.value, reference, {
+    requestId: getRequestId(request),
+  });
 
-    if (!delivery.delivered) {
-      return NextResponse.json(
-        {
-          ok: false,
-          message:
-            "Your enquiry could not be delivered. Please try again shortly.",
-          reference,
-        },
-        { status: 500 },
-      );
-    }
-
-    return NextResponse.json(
-      { ok: true, reference, via: delivery.via },
-      { status: 202 },
-    );
-  } catch (error) {
-    // Never surface internal error detail to the client.
-    console.error("[enquiries] delivery failed", {
-      reference,
-      error: error instanceof Error ? error.message : "unknown",
-    });
-
+  if (!delivery.delivered) {
+    const notConfigured = delivery.reason === "not_configured";
     return NextResponse.json(
       {
         ok: false,
-        message: "Your enquiry could not be delivered. Please try again shortly.",
+        message: notConfigured
+          ? "We are temporarily unable to record enquiries. Please email us directly and we will reply."
+          : "Your enquiry could not be recorded. Please try again shortly.",
         reference,
       },
-      { status: 500 },
+      { status: notConfigured ? 503 : 500 },
     );
   }
+
+  return NextResponse.json(
+    { ok: true, reference, via: delivery.via },
+    { status: 202 },
+  );
 }
 
 /** Explicit, rather than relying on an auto-generated 405. */

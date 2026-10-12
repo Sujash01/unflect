@@ -46,7 +46,8 @@ export async function getUserEnquiries(email: string) {
   return selectRows<{ id: string; reference: string; company: string; project_type: string; timeline: string; budget: string; status: string; created_at: string }>(`enquiries?email=eq.${encoded}&select=id,reference,company,project_type,timeline,budget,status,created_at&order=created_at.desc&limit=25`);
 }
 
-export async function deleteProfileData(userId: string) {
-  await deleteRows("account_events", `user_id=eq.${encodeURIComponent(userId)}`);
-  await deleteRows("profiles", `id=eq.${encodeURIComponent(userId)}`);
+export async function deleteProfileData(userId: string): Promise<boolean> {
+  const events = await deleteRows("account_events", `user_id=eq.${encodeURIComponent(userId)}`);
+  const profile = await deleteRows("profiles", `id=eq.${encodeURIComponent(userId)}`);
+  return events.ok && profile.ok;
 }

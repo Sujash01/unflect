@@ -7,7 +7,7 @@ import { addAccountEvent, ensureProfile } from "@/lib/auth/data";
 
 export async function POST(request: NextRequest) {
   const blocked = rejectCrossOrigin(request); if (blocked) return blocked;
-  if (rateLimit(clientKey(request, "signup"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
+  if (await rateLimit(clientKey(request, "signup"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
   let raw: unknown;
   try { raw = await readJson(request); } catch (e) { return NextResponse.json({ ok: false, message: e instanceof Error && e.message === "PAYLOAD_TOO_LARGE" ? "Request too large." : "Malformed request." }, { status: 400 }); }
   const body = raw as Record<string, unknown>;
@@ -20,12 +20,11 @@ export async function POST(request: NextRequest) {
   const result = await signUp(email, password, name, `${origin}/auth/callback`);
   if (!result.ok) {
     console.error("[signup] Supabase error:", { status: result.status, message: result.message });
+    // Generic message: never reveal whether the address is already registered.
     const message =
-      result.status === 422
-        ? "That email address is already registered or cannot be used."
-        : result.status === 503
-          ? "Authentication is temporarily unavailable."
-          : result.message || "We could not create your account.";
+      result.status === 503
+        ? "Authentication is temporarily unavailable. Please try again."
+        : "We could not create your account. If you already have an account, try signing in or resetting your password.";
 
     return NextResponse.json(
       { ok: false, message },

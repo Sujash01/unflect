@@ -125,6 +125,45 @@ export function selectRows<T>(path: string): Promise<SupabaseDataResult<T>> {
   return dataRequest<T>(path, { method: "GET" });
 }
 
+export type SupabasePagedResult<T> =
+  | { ok: true; data: T[]; count: number }
+  | { ok: false; status: number; message: string };
+
+/**
+ * Like `selectRows`, but asks PostgREST for an exact total count via
+ * `Prefer: count=exact` and parses it from the `Content-Range` header.
+ * Use with `limit`/`offset` query parameters for stable pagination.
+ */
+export async function selectPaged<T>(path: string): Promise<SupabasePagedResult<T>> {
+  const cfg = config();
+  if (!cfg) return { ok: false, status: 503, message: "Supabase is not configured." };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${cfg.url}/rest/v1/${path}`, {
+      method: "GET",
+      cache: "no-store",
+      signal: controller.signal,
+      headers: {
+        apikey: cfg.key,
+        Authorization: `Bearer ${cfg.key}`,
+        "Content-Type": "application/json",
+        Prefer: "count=exact",
+      },
+    });
+    const body = await response.text();
+    if (!response.ok) return { ok: false, status: response.status, message: body.slice(0, 300) };
+    const contentRange = response.headers.get("content-range") ?? "";
+    const total = Number(contentRange.split("/")[1] ?? "");
+    const data = body ? (JSON.parse(body) as T[]) : [];
+    return { ok: true, data, count: Number.isFinite(total) ? total : data.length };
+  } catch (error) {
+    return { ok: false, status: 0, message: error instanceof Error ? error.message : "request failed" };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function upsertRow<T>(table: string, row: Record<string, unknown>, conflict: string): Promise<SupabaseDataResult<T>> {
   return dataRequest<T>(`${table}?on_conflict=${encodeURIComponent(conflict)}`, {
     method: "POST",

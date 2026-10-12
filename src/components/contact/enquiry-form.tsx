@@ -175,8 +175,8 @@ export function EnquiryForm() {
           Thank you. We have what we need.
         </h2>
         <p className="mt-5 text-[0.9375rem] leading-relaxed text-muted-strong">
-          Your enquiry has been recorded. A transactional receipt with your submission details
-          has been dispatched to your email address. A person will read the brief properly and reply
+          Your enquiry has been recorded. A confirmation with your submission details will be sent
+          to the email address you provided. A person will read the brief properly and reply
           with a considered assessment within{" "}
           {siteConfig.responseWindow.includes("[CONFIRM")
             ? "2 working days"

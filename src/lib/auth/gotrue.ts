@@ -10,16 +10,38 @@ export type AuthUser = {
 
 type AuthTokens = { access_token: string; refresh_token: string; expires_in?: number; user?: AuthUser };
 
+/**
+ * Auth credentials.
+ *
+ *   - `anonKey` is the public/publishable key and is used for ordinary client
+ *     authentication flows (sign up, sign in, refresh, recover, verify, update
+ *     own user). This is the Supabase-recommended key for these operations.
+ *   - `serviceKey` is the secret/service-role key and is used ONLY for
+ *     privileged admin operations (delete/ban users). It must never reach the
+ *     browser.
+ *
+ * If `SUPABASE_ANON_KEY` is not configured we fall back to the service key so
+ * existing deployments keep working, but operators should set the anon key.
+ */
 function authConfig() {
   const url = process.env.SUPABASE_URL?.trim().replace(/\/+$/, "");
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
-  if (!url || !key) return null;
-  return { url, key };
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  const anonKey =
+    process.env.SUPABASE_ANON_KEY?.trim() ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
+  if (!url || !serviceKey) return null;
+  return { url, serviceKey, anonKey: anonKey || serviceKey };
 }
 
-async function authRequest<T>(path: string, init: RequestInit, token?: string): Promise<{ ok: true; data: T } | { ok: false; status: number; message: string }> {
+async function authRequest<T>(
+  path: string,
+  init: RequestInit,
+  token?: string,
+  options: { admin?: boolean } = {},
+): Promise<{ ok: true; data: T } | { ok: false; status: number; message: string }> {
   const cfg = authConfig();
   if (!cfg || !isSupabaseConfigured()) return { ok: false, status: 503, message: "Authentication is not configured." };
+  const key = options.admin ? cfg.serviceKey : cfg.anonKey;
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
@@ -28,8 +50,8 @@ async function authRequest<T>(path: string, init: RequestInit, token?: string): 
       cache: "no-store",
       signal: controller.signal,
       headers: {
-        apikey: cfg.key,
-        Authorization: `Bearer ${token ?? cfg.key}`,
+        apikey: key,
+        Authorization: `Bearer ${token ?? key}`,
         "Content-Type": "application/json",
         ...init.headers,
       },
@@ -100,6 +122,28 @@ export function resendVerification(email: string, redirectTo: string) {
   });
 }
 
+/* ------------------------------------------------------------------ */
+/* Privileged admin operations — service-role only.                    */
+/* ------------------------------------------------------------------ */
+
 export function adminDeleteUser(userId: string) {
-  return authRequest<unknown>(`admin/users/${encodeURIComponent(userId)}`, { method: "DELETE" });
+  return authRequest<unknown>(`admin/users/${encodeURIComponent(userId)}`, { method: "DELETE" }, undefined, { admin: true });
+}
+
+/**
+ * Ban a user so that Supabase Auth rejects their existing access/refresh
+ * tokens (the supported session-revocation mechanism). `banDuration` is a
+ * Go duration string, e.g. "876000h" (~100 years) to block indefinitely.
+ */
+export function adminBanUser(userId: string, banDuration: string) {
+  return authRequest<AuthUser>(
+    `admin/users/${encodeURIComponent(userId)}`,
+    { method: "PUT", body: JSON.stringify({ ban_duration: banDuration }) },
+    undefined,
+    { admin: true },
+  );
+}
+
+export function adminUnbanUser(userId: string) {
+  return adminBanUser(userId, "none");
 }

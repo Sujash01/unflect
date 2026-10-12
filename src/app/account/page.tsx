@@ -34,7 +34,7 @@ export default async function AccountPage() {
       : { ok: true as const, data: [] };
 
   const name = profile?.display_name || session.user.email?.split("@")[0] || "there";
-  const userIsAdmin = isAdmin(session.user.email);
+  const userIsAdmin = isAdmin(session.user);
 
   return (
     <div className="container-page py-16 sm:py-24 text-bone">

@@ -1,71 +1,86 @@
 /**
- * Admin data access functions
+ * Admin data access.
+ *
+ * All list queries are paginated with a validated page size and a stable
+ * ordering (`created_at desc, id desc`) so records never shift between pages.
  */
 
-import { selectRows, updateRows } from "@/lib/supabase";
+import { selectPaged } from "@/lib/supabase";
 
-// All enquiries with full details
-export async function getAllEnquiries() {
-  return selectRows<{
-    id: string;
-    reference: string;
-    name: string;
-    company: string;
-    email: string;
-    project_type: string;
-    goal: string;
-    problem: string;
-    timeline: string;
-    budget: string;
-    details: string | null;
-    status: string;
-    created_at: string;
-  }>(`enquiries?select=*&order=created_at.desc`);
+export const PAGE_SIZE_DEFAULT = 25;
+export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100] as const;
+
+/** Stable ordering: newest first, with id as a deterministic tie-breaker. */
+const ORDER = "created_at.desc,id.desc";
+
+export type EnquiryRow = {
+  id: string;
+  reference: string;
+  name: string;
+  company: string;
+  email: string;
+  project_type: string;
+  goal: string;
+  problem: string;
+  timeline: string;
+  budget: string;
+  details: string | null;
+  status: string;
+  created_at: string;
+};
+
+export type ProfileRow = {
+  id: string;
+  display_name: string;
+  bio: string;
+  avatar_url: string;
+  settings: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AccountEventRow = {
+  id: string;
+  user_id: string;
+  event: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+
+export function normalizePage(value: unknown): number {
+  const n = Number(Array.isArray(value) ? value[0] : value);
+  if (!Number.isFinite(n) || n < 1) return 1;
+  return Math.floor(n);
 }
 
-// All user profiles
-export async function getAllProfiles() {
-  return selectRows<{
-    id: string;
-    display_name: string;
-    bio: string;
-    avatar_url: string;
-    settings: Record<string, unknown>;
-    created_at: string;
-    updated_at: string;
-  }>(`profiles?select=*&order=created_at.desc`);
+export function normalizePageSize(value: unknown): number {
+  const n = Number(Array.isArray(value) ? value[0] : value);
+  return (PAGE_SIZE_OPTIONS as readonly number[]).includes(n) ? n : PAGE_SIZE_DEFAULT;
 }
 
-// All account events
-export async function getAllAccountEvents() {
-  return selectRows<{
-    id: string;
-    user_id: string;
-    event: string;
-    metadata: Record<string, unknown>;
-    created_at: string;
-  }>(`account_events?select=*&order=created_at.desc&limit=200`);
-}
-
-// Update enquiry status
-export async function updateEnquiryStatus(id: string, status: string) {
-  return updateRows("enquiries", `id=eq.${encodeURIComponent(id)}`, { status });
-}
-
-// Get stats for dashboard
-export async function getAdminStats() {
-  const enquiriesResult = await selectRows<{ count: number }>(`enquiries?select=count`);
-  const profilesResult = await selectRows<{ count: number }>(`profiles?select=count`);
-  const eventsResult = await selectRows<{ count: number }>(`account_events?select=count`);
-  
-  const enquiriesByStatus = await selectRows<{ status: string; count: number }>(
-    `enquiries?select=status&order=status`
+export function getEnquiriesPage(page: number, pageSize: number) {
+  const offset = (page - 1) * pageSize;
+  return selectPaged<EnquiryRow>(
+    `enquiries?select=*&order=${ORDER}&limit=${pageSize}&offset=${offset}`,
   );
-  
-  return {
-    totalEnquiries: enquiriesResult.ok ? enquiriesResult.data.length : 0,
-    totalProfiles: profilesResult.ok ? profilesResult.data.length : 0,
-    totalEvents: eventsResult.ok ? eventsResult.data.length : 0,
-    enquiriesByStatus: enquiriesByStatus.ok ? enquiriesByStatus.data : [],
-  };
+}
+
+export function getProfilesPage(page: number, pageSize: number) {
+  const offset = (page - 1) * pageSize;
+  return selectPaged<ProfileRow>(
+    `profiles?select=*&order=${ORDER}&limit=${pageSize}&offset=${offset}`,
+  );
+}
+
+export function getAccountEvents(limit = 200) {
+  return selectPaged<AccountEventRow>(
+    `account_events?select=*&order=${ORDER}&limit=${limit}`,
+  );
+}
+
+export async function countEnquiriesByStatus(status: string): Promise<number> {
+  const result = await selectPaged<{ id: string }>(
+    `enquiries?select=id&status=eq.${encodeURIComponent(status)}&limit=1`,
+  );
+  return result.ok ? result.count : 0;
 }

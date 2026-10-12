@@ -6,7 +6,7 @@ import { deleteProfileData } from "@/lib/auth/data";
 
 export async function DELETE(request: NextRequest) {
   const blocked = rejectCrossOrigin(request); if (blocked) return blocked;
-  if (rateLimit(clientKey(request, "delete-account"), 60_000, 3)) return NextResponse.json({ ok: false, message: "Too many attempts. Please wait." }, { status: 429 });
+  if (await rateLimit(clientKey(request, "delete-account"), 60_000, 3)) return NextResponse.json({ ok: false, message: "Too many attempts. Please wait." }, { status: 429 });
   const session = await readSession(); if (!session.user) return NextResponse.json({ ok: false, message: "Not signed in." }, { status: 401 });
   let raw: unknown; try { raw = await readJson(request, 4 * 1024); } catch { return NextResponse.json({ ok: false, message: "Malformed request." }, { status: 400 }); }
   const body = raw as Record<string, unknown>;

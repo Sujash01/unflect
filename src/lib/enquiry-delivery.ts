@@ -104,165 +104,136 @@ async function dispatchEmail(options: {
   const resendKey = process.env.RESEND_API_KEY;
   const postmarkToken = process.env.POSTMARK_SERVER_TOKEN;
 
-  if (resendKey) {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${resendKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: fromEmail,
-        to: options.to,
-        subject: options.subject,
-        text: options.text,
-        ...(options.replyTo ? { reply_to: options.replyTo } : {}),
-      }),
-    });
-    return res.ok;
-  }
+  try {
+    if (resendKey) {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: fromEmail,
+          to: options.to,
+          subject: options.subject,
+          text: options.text,
+          ...(options.replyTo ? { reply_to: options.replyTo } : {}),
+        }),
+      });
+      // The provider confirms acceptance with a 2xx response only.
+      return res.ok;
+    }
 
-  if (postmarkToken) {
-    const res = await fetch("https://api.postmarkapp.com/email", {
-      method: "POST",
-      headers: {
-        "X-Postmark-Server-Token": postmarkToken,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        From: fromEmail,
-        To: options.to,
-        Subject: options.subject,
-        TextBody: options.text,
-        ...(options.replyTo ? { ReplyTo: options.replyTo } : {}),
-      }),
-    });
-    return res.ok;
-  }
+    if (postmarkToken) {
+      const res = await fetch("https://api.postmarkapp.com/email", {
+        method: "POST",
+        headers: {
+          "X-Postmark-Server-Token": postmarkToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          From: fromEmail,
+          To: options.to,
+          Subject: options.subject,
+          TextBody: options.text,
+          ...(options.replyTo ? { ReplyTo: options.replyTo } : {}),
+        }),
+      });
+      return res.ok;
+    }
 
-  return false;
+    return false;
+  } catch {
+    // Network/timeout failures are reported by the caller, never thrown.
+    return false;
+  }
 }
 
 export async function deliverEnquiry(
   enquiry: EnquiryInput,
   reference: string,
+  options?: { requestId?: string },
 ): Promise<DeliveryResult> {
   const summary = describeEnquiry(enquiry);
-  let dbSuccess = false;
+  const requestId = options?.requestId;
 
-  // Step 1: Store in database if Supabase configured
-  if (isSupabaseConfigured()) {
-    const result = await insertRow("enquiries", {
-      reference,
-      name: enquiry.name,
-      company: enquiry.company,
-      email: enquiry.email,
-      project_type: enquiry.projectType,
-      goal: enquiry.goal,
-      problem: enquiry.problem,
-      timeline: enquiry.timeline,
-      budget: enquiry.budget,
-      details: enquiry.details || null,
+  // Structured log emitter that always carries the request id for correlation.
+  const emit = (level: "info" | "error", event: string, extra: Record<string, unknown> = {}) => {
+    const payload = JSON.stringify({ event, reference, requestId, ...extra });
+    if (level === "info") console.info(payload);
+    else console.error(payload);
+  };
+
+  // Step 1: Persist. An enquiry that is not stored is NOT delivered.
+  if (!isSupabaseConfigured()) {
+    emit("error", "project_enquiry_store_unavailable", {
+      note: "Supabase is not configured; set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.",
     });
-
-    if (!result.ok) {
-      console.error(
-        JSON.stringify({
-          event: "project_enquiry_store_failed",
-          reference,
-          status: result.status,
-          detail: result.message,
-        }),
-      );
-      return { delivered: false, reason: "database" };
-    }
-
-    dbSuccess = true;
-    console.info(
-      JSON.stringify({
-        event: "project_enquiry",
-        reference,
-        receivedAt: summary.receivedAt,
-        classification: summary.classification,
-        delivery: "supabase",
-      }),
-    );
-  } else {
-    // Fallback log when Supabase is not configured
-    console.info(
-      JSON.stringify({
-        event: "project_enquiry",
-        reference,
-        receivedAt: summary.receivedAt,
-        contact: {
-          name: summary.contact.name,
-          company: summary.contact.company,
-          email: summary.contact.email,
-        },
-        classification: summary.classification,
-        characterCounts: {
-          goal: enquiry.goal.length,
-          problem: enquiry.problem.length,
-          details: enquiry.details.length,
-        },
-        delivery: "server-log",
-        note: "Supabase not configured; set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local",
-      }),
-    );
+    return { delivered: false, reason: "not_configured" };
   }
 
-  // Step 2: Email dispatch (Studio notification + submitter receipt)
+  const result = await insertRow("enquiries", {
+    reference,
+    name: enquiry.name,
+    company: enquiry.company,
+    email: enquiry.email,
+    project_type: enquiry.projectType,
+    goal: enquiry.goal,
+    problem: enquiry.problem,
+    timeline: enquiry.timeline,
+    budget: enquiry.budget,
+    details: enquiry.details || null,
+  });
+
+  if (!result.ok) {
+    emit("error", "project_enquiry_store_failed", {
+      status: result.status,
+      detail: result.message,
+    });
+    return { delivered: false, reason: "database" };
+  }
+
+  emit("info", "project_enquiry", {
+    receivedAt: summary.receivedAt,
+    classification: summary.classification,
+    delivery: "supabase",
+  });
+
+  // Step 2: Best-effort email. A saved enquiry is preserved even if email fails.
   const hasEmailProvider = Boolean(
     process.env.RESEND_API_KEY || process.env.POSTMARK_SERVER_TOKEN,
   );
 
   if (hasEmailProvider) {
-    try {
-      const studioInbox =
-        process.env.STUDIO_NOTIFICATION_EMAIL ||
-        (!siteConfig.email.includes("[CONFIRM") ? siteConfig.email : "team@unflect.in");
+    const studioInbox =
+      process.env.STUDIO_NOTIFICATION_EMAIL ||
+      (!siteConfig.email.includes("[CONFIRM") ? siteConfig.email : "team@unflect.in");
 
-      // Dispatch internal studio notification
-      await dispatchEmail({
-        to: studioInbox,
-        subject: `[${siteConfig.name} Enquiry ${reference}] ${enquiry.name} (${enquiry.company})`,
-        text: formatStudioNotification(enquiry, reference),
-        replyTo: enquiry.email,
-      });
+    const studioAccepted = await dispatchEmail({
+      to: studioInbox,
+      subject: `[${siteConfig.name} Enquiry ${reference}] ${enquiry.name} (${enquiry.company})`,
+      text: formatStudioNotification(enquiry, reference),
+      replyTo: enquiry.email,
+    });
 
-      // Dispatch client receipt
-      await dispatchEmail({
-        to: enquiry.email,
-        subject: `We have received your enquiry [Ref: ${reference}] — ${siteConfig.name}`,
-        text: formatClientReceipt(enquiry, reference),
-        replyTo: !siteConfig.email.includes("[CONFIRM") ? siteConfig.email : undefined,
-      });
+    const clientAccepted = await dispatchEmail({
+      to: enquiry.email,
+      subject: `We have received your enquiry [Ref: ${reference}] — ${siteConfig.name}`,
+      text: formatClientReceipt(enquiry, reference),
+      replyTo: !siteConfig.email.includes("[CONFIRM") ? siteConfig.email : undefined,
+    });
 
-      console.info(
-        JSON.stringify({
-          event: "project_enquiry_email_dispatched",
-          reference,
-        }),
-      );
-    } catch (err) {
-      // Never fail submission if database write succeeded
-      console.error(
-        JSON.stringify({
-          event: "project_enquiry_email_failed",
-          reference,
-          error: err instanceof Error ? err.message : "unknown",
-        }),
-      );
+    if (studioAccepted && clientAccepted) {
+      emit("info", "project_enquiry_email_dispatched");
+    } else {
+      // Provider did not accept one or both messages. Enquiry is still saved.
+      emit("error", "project_enquiry_email_failed", { studioAccepted, clientAccepted });
     }
   } else {
-    console.info(
-      JSON.stringify({
-        event: "project_enquiry_email_skipped",
-        reference,
-        reason: "No email provider configured (RESEND_API_KEY / POSTMARK_SERVER_TOKEN)",
-      }),
-    );
+    emit("info", "project_enquiry_email_skipped", {
+      reason: "No email provider configured (RESEND_API_KEY / POSTMARK_SERVER_TOKEN)",
+    });
   }
 
-  return { delivered: true, via: dbSuccess ? "database" : "log" };
+  return { delivered: true, via: "database" };
 }

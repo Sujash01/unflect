@@ -7,7 +7,7 @@ import { ensureProfile, addAccountEvent } from "@/lib/auth/data";
 
 export async function POST(request: NextRequest) {
   const blocked = rejectCrossOrigin(request); if (blocked) return blocked;
-  if (rateLimit(clientKey(request, "login"), 60_000, 10)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
+  if (await rateLimit(clientKey(request, "login"), 60_000, 10)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
   let raw: unknown; try { raw = await readJson(request); } catch { return NextResponse.json({ ok: false, message: "Malformed request." }, { status: 400 }); }
   const body = raw as Record<string, unknown>;
   const email = normalizeEmail(body.email); const password = typeof body.password === "string" ? body.password : "";

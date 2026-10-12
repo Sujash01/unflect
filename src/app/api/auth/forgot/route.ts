@@ -5,7 +5,7 @@ import { recover } from "@/lib/auth/gotrue";
 
 export async function POST(request: NextRequest) {
   const blocked = rejectCrossOrigin(request); if (blocked) return blocked;
-  if (rateLimit(clientKey(request, "forgot"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
+  if (await rateLimit(clientKey(request, "forgot"), 60_000, 5)) return NextResponse.json({ ok: false, message: "Too many attempts. Please try again shortly." }, { status: 429 });
   let raw: unknown; try { raw = await readJson(request); } catch { return NextResponse.json({ ok: false, message: "Malformed request." }, { status: 400 }); }
   const email = normalizeEmail((raw as Record<string, unknown>).email); if (validateEmail(email)) return NextResponse.json({ ok: false, message: "Enter a valid email address." }, { status: 400 });
   const result = await recover(email, `${new URL(request.url).origin}/auth/callback?next=/reset-password`);

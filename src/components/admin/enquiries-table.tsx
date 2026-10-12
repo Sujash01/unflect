@@ -61,7 +61,12 @@ export function EnquiriesTable({ enquiries }: { enquiries: Enquiry[] }) {
         router.refresh();
         setSelectedEnquiry(null);
       } else {
-        alert("Failed to delete enquiry");
+        const data = await response.json().catch(() => null);
+        alert(
+          typeof data?.error === "string" && data.error
+            ? data.error
+            : "Failed to delete enquiry",
+        );
       }
     } catch {
       alert("Error deleting enquiry");
@@ -78,7 +83,19 @@ export function EnquiriesTable({ enquiries }: { enquiries: Enquiry[] }) {
       const response = await fetch("/api/admin/enquiries", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingEnquiry),
+        body: JSON.stringify({
+          id: editingEnquiry.id,
+          name: editingEnquiry.name,
+          company: editingEnquiry.company,
+          email: editingEnquiry.email,
+          project_type: editingEnquiry.project_type,
+          timeline: editingEnquiry.timeline,
+          budget: editingEnquiry.budget,
+          status: editingEnquiry.status,
+          goal: editingEnquiry.goal,
+          problem: editingEnquiry.problem,
+          details: editingEnquiry.details ?? "",
+        }),
       });
 
       if (response.ok) {
@@ -86,7 +103,12 @@ export function EnquiriesTable({ enquiries }: { enquiries: Enquiry[] }) {
         setEditingEnquiry(null);
         setSelectedEnquiry(null);
       } else {
-        alert("Failed to update enquiry");
+        const data = await response.json().catch(() => null);
+        alert(
+          typeof data?.error === "string" && data.error
+            ? data.error
+            : "Failed to update enquiry",
+        );
       }
     } catch {
       alert("Error updating enquiry");

@@ -27,18 +27,27 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
 
     setIsSaving(true);
     try {
-      const { id, created_at: _created, updated_at: _updated, ...updates } = editingProfile;
       const response = await fetch("/api/admin/users", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...updates }),
+        body: JSON.stringify({
+          id: editingProfile.id,
+          display_name: editingProfile.display_name,
+          bio: editingProfile.bio,
+          avatar_url: editingProfile.avatar_url,
+        }),
       });
 
       if (response.ok) {
         router.refresh();
         setEditingProfile(null);
       } else {
-        alert("Failed to update profile");
+        const data = await response.json().catch(() => null);
+        alert(
+          typeof data?.error === "string" && data.error
+            ? data.error
+            : "Failed to update profile",
+        );
       }
     } catch {
       alert("Error updating profile");
@@ -61,7 +70,12 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
       if (response.ok) {
         router.refresh();
       } else {
-        alert("Failed to delete user");
+        const data = await response.json().catch(() => null);
+        alert(
+          typeof data?.error === "string" && data.error
+            ? data.error
+            : "Failed to delete user",
+        );
       }
     } catch {
       alert("Error deleting user");
@@ -87,7 +101,12 @@ export function ProfilesTable({ profiles }: { profiles: Profile[] }) {
       if (response.ok) {
         router.refresh();
       } else {
-        alert(`Failed to ${action} user`);
+        const data = await response.json().catch(() => null);
+        alert(
+          typeof data?.error === "string" && data.error
+            ? data.error
+            : `Failed to ${action} user`,
+        );
       }
     } catch {
       alert(`Error ${action}ing user`);
