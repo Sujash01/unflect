@@ -10,6 +10,7 @@ import { SiteEffects } from "@/components/layout/site-effects";
 import { SmoothScroll } from "@/components/fx/smooth-scroll";
 import { ScrollProgress } from "@/components/fx/scroll-progress";
 import { ScrollManager } from "@/components/layout/scroll-manager";
+import { RouteLoader } from "@/components/layout/route-loader";
 import { site } from "@/content/site";
 import { siteConfig } from "@/config/site";
 import { services } from "@/content/services";
@@ -199,6 +200,7 @@ export default function RootLayout({
           Skip to content
         </a>
 
+        <RouteLoader />
         <SmoothScroll />
         <ScrollManager />
         <ScrollProgress />

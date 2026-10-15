@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { UserRound } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Loader2, UserRound } from "lucide-react";
 
 function applyPreferences(settings: Record<string, unknown>) {
   const root = document.documentElement;
@@ -14,6 +15,14 @@ function applyPreferences(settings: Record<string, unknown>) {
 
 export function AccountHeaderButton() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
+  const pathname = usePathname();
+
+  // Reset navigation state whenever pathname changes
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNavigatingTo(null);
+  }, [pathname]);
 
   useEffect(() => {
     let active = true;
@@ -52,23 +61,40 @@ export function AccountHeaderButton() {
   }
 
   if (signedIn) {
+    const isNavigating = navigatingTo === "/account";
     return (
       <Link
         href="/account"
         aria-label="Account"
-        className="inline-flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-line bg-bone/[0.04] text-bone transition-colors hover:bg-bone/[0.09]"
+        aria-busy={isNavigating ? "true" : undefined}
+        onClick={() => {
+          if (pathname !== "/account") setNavigatingTo("/account");
+        }}
+        className="inline-flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-line bg-bone/[0.04] text-bone transition-all duration-200 hover:bg-bone/[0.09] active:scale-[0.96] active:brightness-95"
       >
-        <UserRound className="h-4 w-4" />
+        {isNavigating ? (
+          <Loader2 className="h-4 w-4 animate-spin text-indigo shrink-0" />
+        ) : (
+          <UserRound className="h-4 w-4" />
+        )}
       </Link>
     );
   }
 
+  const isNavigatingLogin = navigatingTo === "/login";
   return (
     <Link
       href="/login"
-      className="hidden h-9 sm:h-11 items-center rounded-full border border-line bg-bone/[0.04] px-3 sm:px-4 text-xs sm:text-sm text-bone transition-colors hover:bg-bone/[0.09] sm:inline-flex"
+      aria-busy={isNavigatingLogin ? "true" : undefined}
+      onClick={() => {
+        if (pathname !== "/login") setNavigatingTo("/login");
+      }}
+      className="hidden h-9 sm:h-11 items-center gap-1.5 rounded-full border border-line bg-bone/[0.04] px-3 sm:px-4 text-xs sm:text-sm text-bone transition-all duration-200 hover:bg-bone/[0.09] active:scale-[0.96] active:brightness-95 sm:inline-flex"
     >
-      Sign in
+      {isNavigatingLogin ? (
+        <Loader2 className="h-3.5 w-3.5 animate-spin text-indigo shrink-0" />
+      ) : null}
+      <span>Sign in</span>
     </Link>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   AnimatePresence,
   motion,
@@ -10,6 +12,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { glassPointer } from "@/lib/pointer";
 
@@ -53,9 +56,20 @@ function DockItem({
   isVertical,
   reducedMotion,
 }: DockItemProps) {
-  const ref = React.useRef<HTMLAnchorElement>(null);
+  const ref = React.useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = React.useState(false);
   const [focused, setFocused] = React.useState(false);
+  const [pendingHref, setPendingHref] = React.useState<string | null>(null);
+  const pathname = usePathname();
+
+  // Reset pending state when pathname changes
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPendingHref(null);
+  }, [pathname]);
+
+  const pending = pendingHref !== null && pendingHref !== pathname;
+
   const showLabel = showLabels && (hovered || focused);
 
   const distance = useTransform(mousePosition, (value) => {
@@ -79,78 +93,93 @@ function DockItem({
   const smoothLift = useSpring(lift, springConfig);
 
   return (
-    <motion.a
-      ref={ref}
+    <Link
       href={item.href}
       aria-label={item.label}
       aria-current={item.isActive ? "page" : undefined}
+      aria-busy={pending ? "true" : undefined}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={cn(
-        "relative flex shrink-0 items-center justify-center rounded-2xl",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo/70",
-        item.isActive && "bg-indigo/10 ring-1 ring-inset ring-indigo/30",
-      )}
-      style={{
-        width: reducedMotion ? iconSize : size,
-        height: reducedMotion ? iconSize : size,
-        y: reducedMotion || isVertical ? 0 : smoothLift,
-        x: reducedMotion || !isVertical ? 0 : smoothLift,
+      onClick={() => {
+        if (item.href !== pathname) {
+          setPendingHref(item.href);
+        }
       }}
-      whileTap={reducedMotion ? undefined : { scale: 0.9 }}
+      className="relative flex shrink-0 items-center justify-center outline-none"
     >
-      <motion.span
-        aria-hidden="true"
+      <motion.div
+        ref={ref}
         className={cn(
-          "relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl",
-          "border border-line bg-navy-raised",
-          "shadow-[0_6px_18px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.05)]",
+          "relative flex shrink-0 items-center justify-center rounded-2xl transition-all duration-200",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo/70",
+          item.isActive && "bg-indigo/10 ring-1 ring-inset ring-indigo/30",
+          pending && "ring-1 ring-indigo/50 animate-pulse",
         )}
         style={{
-          borderColor: hovered ? "var(--color-line-strong)" : undefined,
+          width: reducedMotion ? iconSize : size,
+          height: reducedMotion ? iconSize : size,
+          y: reducedMotion || isVertical ? 0 : smoothLift,
+          x: reducedMotion || !isVertical ? 0 : smoothLift,
         }}
+        whileTap={reducedMotion ? undefined : { scale: 0.94 }}
       >
-        <span
+        <motion.span
+          aria-hidden="true"
           className={cn(
-            "flex h-[55%] w-[55%] items-center justify-center",
-            item.isActive ? "text-indigo-bright" : "text-muted-strong",
+            "relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl",
+            "border border-line bg-navy-raised",
+            "shadow-[0_6px_18px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.05)]",
           )}
+          style={{
+            borderColor: hovered ? "var(--color-line-strong)" : undefined,
+          }}
         >
-          {item.icon}
-        </span>
-      </motion.span>
-
-      <AnimatePresence initial={false}>
-        {item.badge !== undefined && item.badge > 0 ? (
-          <motion.span
-            initial={reducedMotion ? false : { scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={reducedMotion ? { opacity: 0 } : { scale: 0, opacity: 0 }}
-            className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-navy bg-[#c95f55] px-1.5 text-xs font-semibold text-bone shadow-lg"
+          <span
+            className={cn(
+              "flex h-[55%] w-[55%] items-center justify-center",
+              item.isActive ? "text-indigo-bright" : "text-muted-strong",
+            )}
           >
-            {item.badge > 99 ? "99+" : item.badge}
-          </motion.span>
-        ) : null}
-      </AnimatePresence>
+            {pending ? (
+              <Loader2 className="h-full w-full animate-spin text-indigo" />
+            ) : (
+              item.icon
+            )}
+          </span>
+        </motion.span>
 
-      <AnimatePresence initial={false}>
-        {showLabel ? (
-          <motion.span
-            aria-hidden="true"
-            initial={reducedMotion ? false : { opacity: 0, y: 8, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.9 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            className="pointer-events-none absolute -top-10 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-lg border border-line bg-navy-raised/95 px-3 py-1.5 text-xs font-medium text-bone shadow-lg shadow-black/40 backdrop-blur-sm"
-          >
-            {item.label}
-            <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-line bg-navy-raised/95" />
-          </motion.span>
-        ) : null}
-      </AnimatePresence>
-    </motion.a>
+        <AnimatePresence initial={false}>
+          {item.badge !== undefined && item.badge > 0 ? (
+            <motion.span
+              initial={reducedMotion ? false : { scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={reducedMotion ? { opacity: 0 } : { scale: 0, opacity: 0 }}
+              className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-navy bg-[#c95f55] px-1.5 text-xs font-semibold text-bone shadow-lg"
+            >
+              {item.badge > 99 ? "99+" : item.badge}
+            </motion.span>
+          ) : null}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {showLabel ? (
+            <motion.span
+              aria-hidden="true"
+              initial={reducedMotion ? false : { opacity: 0, y: 8, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.9 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="pointer-events-none absolute -top-10 left-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-lg border border-line bg-navy-raised/95 px-3 py-1.5 text-xs font-medium text-bone shadow-lg shadow-black/40 backdrop-blur-sm"
+            >
+              {item.label}
+              <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-line bg-navy-raised/95" />
+            </motion.span>
+          ) : null}
+        </AnimatePresence>
+      </motion.div>
+    </Link>
   );
 }
 

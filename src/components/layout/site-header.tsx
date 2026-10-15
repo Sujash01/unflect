@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
 import { Wordmark } from "@/components/brand/logo";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,15 @@ export function SiteHeader() {
   }, []);
 
   const section = pathname === "/" ? "Home" : pathname.split("/")[1];
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
+
+  // Reset navigation state when pathname changes
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNavigatingTo(null);
+  }, [pathname]);
+
+  const isNavigating = navigatingTo === "/contact";
 
   return (
     <motion.header
@@ -70,10 +79,21 @@ export function SiteHeader() {
           <AnimatedThemeToggler className="inline-flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-line bg-bone/[0.04] text-bone transition-colors hover:bg-bone/[0.09]" />
           <Link
             href="/contact"
-            className="group relative inline-flex h-9 sm:h-11 shrink-0 items-center gap-1 sm:gap-1.5 overflow-hidden whitespace-nowrap rounded-full bg-indigo px-2.5 sm:px-5 lg:px-6 text-[11px] sm:text-[13px] font-semibold text-[#0A0A0A] transition-colors duration-300 hover:bg-indigo-bright"
+            aria-busy={isNavigating ? "true" : undefined}
+            onClick={() => {
+              if (pathname !== "/contact") setNavigatingTo("/contact");
+            }}
+            className={cn(
+              "group relative inline-flex h-9 sm:h-11 shrink-0 items-center gap-1 sm:gap-1.5 overflow-hidden whitespace-nowrap rounded-full bg-indigo px-2.5 sm:px-5 lg:px-6 text-[11px] sm:text-[13px] font-semibold text-[#0A0A0A] transition-all duration-200 hover:bg-indigo-bright active:scale-[0.96] active:brightness-95",
+              isNavigating && "cursor-wait opacity-85 pointer-events-none",
+            )}
           >
             <span className="relative"><RollText>Start a project</RollText></span>
-            <ArrowUpRight className="relative h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            {isNavigating ? (
+              <Loader2 className="relative h-3 w-3 sm:h-3.5 sm:w-3.5 animate-spin text-[#0A0A0A] shrink-0" />
+            ) : (
+              <ArrowUpRight className="relative h-3 w-3 sm:h-3.5 sm:w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            )}
           </Link>
         </div>
       </div>

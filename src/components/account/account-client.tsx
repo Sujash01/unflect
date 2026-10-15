@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Download, LogOut } from "lucide-react";
+import { Download, Loader2, LogOut } from "lucide-react";
 
 export function SignOutButton() {
   const router = useRouter();
@@ -23,11 +23,16 @@ export function SignOutButton() {
     <button
       type="button"
       disabled={busy}
+      aria-busy={busy ? "true" : undefined}
       onClick={signOut}
-      className="inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2.5 text-sm text-muted transition-colors hover:border-bone/40 hover:text-bone disabled:opacity-50"
+      className="inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2.5 text-sm text-muted transition-all hover:border-bone/40 hover:text-bone active:scale-[0.97] active:brightness-95 disabled:opacity-50 disabled:cursor-wait"
     >
-      <LogOut className="h-4 w-4" />
-      {busy ? "Signing out…" : "Sign out"}
+      {busy ? (
+        <Loader2 className="h-4 w-4 animate-spin text-indigo shrink-0" />
+      ) : (
+        <LogOut className="h-4 w-4 shrink-0" />
+      )}
+      <span>{busy ? "Signing out…" : "Sign out"}</span>
     </button>
   );
 }
@@ -59,10 +64,15 @@ export function DataExportLink() {
       type="button"
       onClick={exportData}
       disabled={busy}
-      className="inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2.5 text-sm transition-colors hover:border-bone/40 disabled:opacity-50"
+      aria-busy={busy ? "true" : undefined}
+      className="inline-flex items-center gap-2 rounded-full border border-line-strong px-4 py-2.5 text-sm transition-all hover:border-bone/40 active:scale-[0.97] active:brightness-95 disabled:opacity-50 disabled:cursor-wait"
     >
-      <Download className="h-4 w-4" />
-      {busy ? "Preparing…" : "Export my data"}
+      {busy ? (
+        <Loader2 className="h-4 w-4 animate-spin text-indigo shrink-0" />
+      ) : (
+        <Download className="h-4 w-4 shrink-0" />
+      )}
+      <span>{busy ? "Preparing…" : "Export my data"}</span>
     </button>
   );
 }
@@ -92,9 +102,11 @@ export function ResendVerificationButton({ email }: { email: string }) {
         type="button"
         onClick={resend}
         disabled={busy}
-        className="rounded-full border border-line-strong px-4 py-2 text-xs text-bone hover:border-bone/40 disabled:opacity-50"
+        aria-busy={busy ? "true" : undefined}
+        className="inline-flex items-center gap-1.5 rounded-full border border-line-strong px-4 py-2 text-xs text-bone hover:border-bone/40 active:scale-[0.97] active:brightness-95 disabled:opacity-50 disabled:cursor-wait transition-all"
       >
-        {busy ? "Sending…" : "Resend verification"}
+        {busy ? <Loader2 className="h-3 w-3 animate-spin text-indigo shrink-0" /> : null}
+        <span>{busy ? "Sending…" : "Resend verification"}</span>
       </button>
       {message ? <span className="text-xs text-muted">{message}</span> : null}
     </div>

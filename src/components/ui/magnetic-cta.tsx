@@ -1,8 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { RollText } from "@/components/fx/roll-text";
 
 /**
@@ -20,6 +22,22 @@ export function MagneticCta({
 }) {
   const outer = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
+  const pathname = usePathname();
+  const [navigatingHref, setNavigatingHref] = useState<string | null>(null);
+
+  // Reset on mount and whenever pathname changes
+  useEffect(() => {
+    console.log('[MagneticCta FIX APPLIED] Resetting for pathname:', pathname, 'href:', href, 'old navigatingHref:', navigatingHref);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNavigatingHref(null);
+  }, [pathname, href, navigatingHref]);
+
+  const isNavigating = navigatingHref !== null && navigatingHref === href && navigatingHref !== pathname;
+  
+  if (isNavigating) {
+    console.log('[MagneticCta] Showing loader for:', href, 'pathname:', pathname, 'navigatingHref:', navigatingHref);
+  }
+
   const mx = useSpring(0, { damping: 18, stiffness: 180, mass: 0.5 });
   const my = useSpring(0, { damping: 18, stiffness: 180, mass: 0.5 });
   const x = useTransform(mx, (v) => v);
@@ -39,17 +57,28 @@ export function MagneticCta({
     my.set(0);
   }
 
+  const isInternal = href.startsWith("/") && !href.startsWith("//");
+
   return (
     <div ref={outer} onMouseMove={onMove} onMouseLeave={onLeave} className="inline-flex">
       <motion.div style={{ x, y }}>
         <Link
           href={href}
+          aria-busy={isNavigating ? "true" : undefined}
+          onClick={() => {
+            if (isInternal && href !== pathname) {
+              setNavigatingHref(href);
+            }
+          }}
           className={
             variant === "solid"
-              ? "group inline-flex h-14 items-center gap-2.5 rounded-full bg-indigo px-9 text-base font-semibold text-[#0A0A0A] transition-colors duration-300 hover:bg-indigo-bright active:scale-[0.98]"
-              : "group inline-flex h-14 items-center gap-2.5 rounded-full border border-line-strong px-9 text-base font-medium text-bone transition-colors duration-300 hover:border-bone/40 hover:bg-bone/[0.05] active:scale-[0.98]"
+              ? `group inline-flex h-14 items-center gap-2.5 rounded-full bg-indigo px-9 text-base font-semibold text-[#0A0A0A] transition-all duration-200 hover:bg-indigo-bright active:scale-[0.97] active:brightness-95 ${isNavigating ? "cursor-wait pointer-events-none opacity-85" : ""}`
+              : `group inline-flex h-14 items-center gap-2.5 rounded-full border border-line-strong px-9 text-base font-medium text-bone transition-all duration-200 hover:border-bone/40 hover:bg-bone/[0.05] active:scale-[0.97] active:brightness-95 ${isNavigating ? "cursor-wait pointer-events-none opacity-85" : ""}`
           }
         >
+          {isNavigating ? (
+            <Loader2 className="h-4 w-4 animate-spin shrink-0 text-current" />
+          ) : null}
           <RollText>{label}</RollText>
         </Link>
       </motion.div>

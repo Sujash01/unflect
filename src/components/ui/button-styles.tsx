@@ -1,4 +1,5 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import { Loader2 } from "lucide-react";
 
 export type ButtonVariant = "primary" | "outline" | "ghost" | "quiet";
 export type ButtonSize = "sm" | "md" | "lg";
@@ -12,20 +13,22 @@ export type ButtonSize = "sm" | "md" | "lg";
  *  · Primary is solid indigo and lands on violet. The arrow sits on the violet
  *    end, so the affordance points where the eye already is.
  *  · Secondary is transparent with a violet/indigo edge, never a fill.
- *  · Nothing scales on hover except a 1% press, which is a physical response,
- *    not decoration.
+ *  · Instant tactile press with active:scale-[0.97] and active:brightness-95
+ *    for clear visual response.
  */
 export function buttonStyles({
   variant = "primary",
   size = "md",
   className,
+  loading = false,
 }: {
   variant?: ButtonVariant;
   size?: ButtonSize;
   className?: string;
+  loading?: boolean;
 } = {}): string {
   const base =
-    "group/btn relative inline-flex items-center justify-center gap-2.5 rounded-full font-medium tracking-[-0.005em] transition-[background-color,border-color,color,box-shadow,transform] duration-300 ease-[var(--ease-precision)] whitespace-nowrap select-none active:scale-[0.99] motion-reduce:active:scale-100";
+    "group/btn relative inline-flex items-center justify-center gap-2.5 rounded-full font-medium tracking-[-0.005em] transition-[background-color,border-color,color,box-shadow,transform,opacity] duration-200 ease-[var(--ease-precision)] whitespace-nowrap select-none active:scale-[0.97] active:brightness-95 motion-reduce:active:scale-100 disabled:pointer-events-none disabled:opacity-50 cursor-pointer";
 
   const sizes: Record<ButtonSize, string> = {
     sm: "h-9 px-4 text-[0.8125rem]",
@@ -44,7 +47,9 @@ export function buttonStyles({
       "border border-line bg-navy-inset/60 text-muted-strong hover:border-line-strong hover:bg-navy-inset/70 hover:text-bone",
   };
 
-  return [base, sizes[size], variants[variant], className]
+  const loadingClasses = loading ? "cursor-wait pointer-events-none opacity-80" : "";
+
+  return [base, sizes[size], variants[variant], loadingClasses, className]
     .filter(Boolean)
     .join(" ");
 }
@@ -53,13 +58,30 @@ export type ButtonProps = {
   children: ReactNode;
   variant?: ButtonVariant;
   size?: ButtonSize;
+  loading?: boolean;
 } & ComponentPropsWithoutRef<"button">;
 
-/** Native button. Primarily used inside the enquiry form (client component). */
-export function Button({ children, variant, size, className, ...rest }: ButtonProps) {
+/** Native button. Primarily used inside the enquiry form and action buttons. */
+export function Button({
+  children,
+  variant,
+  size,
+  className,
+  loading = false,
+  disabled,
+  ...rest
+}: ButtonProps) {
   return (
-    <button className={buttonStyles({ variant, size, className })} {...rest}>
-      <span className="relative z-1 inline-flex items-center gap-2.5">{children}</span>
+    <button
+      className={buttonStyles({ variant, size, className, loading })}
+      disabled={disabled || loading}
+      aria-busy={loading ? "true" : undefined}
+      {...rest}
+    >
+      <span className="relative z-1 inline-flex items-center gap-2.5">
+        {loading && <Loader2 className="h-4 w-4 animate-spin shrink-0 text-current" />}
+        {children}
+      </span>
     </button>
   );
 }

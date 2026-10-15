@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 type ApiData = {
   message?: string;
@@ -37,14 +38,24 @@ function applyClientPreferences(prefs: {
   window.dispatchEvent(new CustomEvent("unflect:preferences"));
 }
 
-function FormButton({ children, disabled }: { children: React.ReactNode; disabled?: boolean }) {
+function FormButton({
+  children,
+  disabled,
+  loading = false,
+}: {
+  children: React.ReactNode;
+  disabled?: boolean;
+  loading?: boolean;
+}) {
   return (
     <button
       type="submit"
-      disabled={disabled}
-      className="inline-flex h-12 items-center justify-center rounded-full bg-indigo px-6 text-sm font-semibold text-indigo-ink transition-all hover:bg-indigo-bright disabled:cursor-not-allowed disabled:opacity-50"
+      disabled={disabled || loading}
+      aria-busy={loading ? "true" : undefined}
+      className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-indigo px-6 text-sm font-semibold text-indigo-ink transition-all hover:bg-indigo-bright active:scale-[0.97] active:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      {children}
+      {loading ? <Loader2 className="h-4 w-4 animate-spin shrink-0 text-current" /> : null}
+      <span>{children}</span>
     </button>
   );
 }
@@ -131,7 +142,7 @@ export function LoginForm() {
       </Field>
       {message ? <Message text={message} error /> : null}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <FormButton disabled={busy}>{busy ? "Signing in…" : "Sign in"}</FormButton>
+        <FormButton loading={busy} disabled={busy}>{busy ? "Signing in…" : "Sign in"}</FormButton>
         <Link className="text-sm text-muted transition-colors hover:text-bone" href="/forgot-password">Forgot password?</Link>
       </div>
     </form>
@@ -218,7 +229,7 @@ export function SignupForm() {
         )}
       </Field>
       {message ? <Message text={message} error /> : null}
-      <FormButton disabled={busy || (password.length > 0 && !passwordValid)}>{busy ? "Creating…" : "Create account"}</FormButton>
+      <FormButton loading={busy} disabled={busy || (password.length > 0 && !passwordValid)}>{busy ? "Creating…" : "Create account"}</FormButton>
       <p className="text-xs leading-5 text-muted">
         By creating an account you agree to the <Link className="text-bone underline underline-offset-4" href="/terms">Terms</Link> and acknowledge the <Link className="text-bone underline underline-offset-4" href="/privacy">Privacy Policy</Link>.
       </p>
@@ -271,7 +282,7 @@ export function ForgotForm() {
         <Input type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@company.com" />
       </Field>
       {message ? <Message text={message} error={error} /> : null}
-      <FormButton disabled={busy}>{busy ? "Sending…" : "Send recovery email"}</FormButton>
+      <FormButton loading={busy} disabled={busy}>{busy ? "Sending…" : "Send recovery email"}</FormButton>
     </form>
   );
 }
@@ -316,7 +327,7 @@ export function ResetForm() {
         <Input type="password" autoComplete="new-password" required value={confirm} onChange={(event) => setConfirm(event.target.value)} placeholder="Repeat your password" />
       </Field>
       {message ? <Message text={message} error /> : null}
-      <FormButton disabled={busy}>{busy ? "Updating…" : "Set new password"}</FormButton>
+      <FormButton loading={busy} disabled={busy}>{busy ? "Updating…" : "Set new password"}</FormButton>
     </form>
   );
 }
@@ -350,7 +361,7 @@ export function ProfileForm({ initial }: { initial: { display_name: string; bio:
       <Field label="Bio"><Textarea value={values.bio} onChange={(event) => setValues((current) => ({ ...current, bio: event.target.value }))} placeholder="A short line about you." /></Field>
       <Field label="Avatar URL (optional)"><Input type="url" value={values.avatar_url} onChange={(event) => setValues((current) => ({ ...current, avatar_url: event.target.value }))} placeholder="https://…" /></Field>
       {message ? <Message text={message} error={error} /> : null}
-      <FormButton disabled={busy}>{busy ? "Saving…" : "Save profile"}</FormButton>
+      <FormButton loading={busy} disabled={busy}>{busy ? "Saving…" : "Save profile"}</FormButton>
     </form>
   );
 }
@@ -434,7 +445,7 @@ export function SecurityForms({ email }: { email: string }) {
             )}
           </Field>
           {message ? <Message text={message} error={message !== "Password changed."} /> : null}
-          <FormButton disabled={passwordBusy || (next.length > 0 && !passwordValid)}>{passwordBusy ? "Saving…" : "Change password"}</FormButton>
+          <FormButton loading={passwordBusy} disabled={passwordBusy || (next.length > 0 && !passwordValid)}>{passwordBusy ? "Saving…" : "Change password"}</FormButton>
         </form>
       </section>
 
@@ -445,7 +456,7 @@ export function SecurityForms({ email }: { email: string }) {
           <Field label="New email"><Input type="email" autoComplete="email" value={newEmail} onChange={(event) => setNewEmail(event.target.value)} required /></Field>
           <Field label="Current password"><Input type="password" autoComplete="current-password" value={emailPassword} onChange={(event) => setEmailPassword(event.target.value)} required /></Field>
           {emailMessage ? <Message text={emailMessage} error={!emailMessage.startsWith("Check")} /> : null}
-          <FormButton disabled={emailBusy}>{emailBusy ? "Updating…" : "Change email"}</FormButton>
+          <FormButton loading={emailBusy} disabled={emailBusy}>{emailBusy ? "Updating…" : "Change email"}</FormButton>
         </form>
       </section>
     </div>
@@ -494,13 +505,24 @@ export function SettingsForm({ initial }: { initial: Record<string, unknown> }) 
   return (
     <div className="space-y-3">
       {rows.map(([key, title, desc]) => (
-        <button type="button" key={key} onClick={() => void toggle(key)} disabled={busyKey !== null} className="flex w-full items-center justify-between gap-5 rounded-2xl border border-line bg-navy-raised p-5 text-left transition-colors hover:border-line-strong disabled:cursor-wait disabled:opacity-70">
+        <button
+          type="button"
+          key={key}
+          onClick={() => void toggle(key)}
+          disabled={busyKey !== null}
+          className="flex w-full items-center justify-between gap-5 rounded-2xl border border-line bg-navy-raised p-5 text-left transition-colors hover:border-line-strong active:scale-[0.99] disabled:cursor-wait disabled:opacity-70"
+        >
           <span>
             <span className="block text-sm text-bone">{title}</span>
             <span className="mt-1 block text-xs leading-5 text-muted">{desc}</span>
           </span>
-          <span aria-hidden="true" className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors ${settings[key] ? "border-indigo bg-indigo" : "border-line-strong bg-bone/[0.04]"}`}>
-            <span className={`absolute top-1 h-4 w-4 rounded-full bg-bone transition-transform ${settings[key] ? "translate-x-6" : "translate-x-1"}`} />
+          <span className="flex items-center gap-2">
+            {busyKey === key ? (
+              <Loader2 className="h-4 w-4 animate-spin text-indigo shrink-0" />
+            ) : null}
+            <span aria-hidden="true" className={`relative h-6 w-11 shrink-0 rounded-full border transition-colors ${settings[key] ? "border-indigo bg-indigo" : "border-line-strong bg-bone/[0.04]"}`}>
+              <span className={`absolute top-1 h-4 w-4 rounded-full bg-bone transition-transform ${settings[key] ? "translate-x-6" : "translate-x-1"}`} />
+            </span>
           </span>
         </button>
       ))}
@@ -546,8 +568,14 @@ export function DeleteAccountForm() {
       <Field label="Current password"><Input type="password" autoComplete="current-password" required value={password} onChange={(event) => setPassword(event.target.value)} /></Field>
       <Field label="Type DELETE to confirm"><Input value={confirmation} onChange={(event) => setConfirmation(event.target.value)} autoComplete="off" required placeholder="DELETE" /></Field>
       {message ? <Message text={message} error /> : null}
-      <button type="submit" disabled={busy} className="inline-flex h-12 items-center justify-center rounded-full border border-[#ff9b8a]/40 px-6 text-sm text-[#ff9b8a] transition-colors hover:bg-[#ff9b8a]/[0.06] disabled:opacity-50">
-        {busy ? "Deleting…" : "Delete account permanently"}
+      <button
+        type="submit"
+        disabled={busy}
+        aria-busy={busy ? "true" : undefined}
+        className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-[#ff9b8a]/40 px-6 text-sm text-[#ff9b8a] transition-colors hover:bg-[#ff9b8a]/[0.06] active:scale-[0.97] active:brightness-95 disabled:opacity-50 disabled:cursor-wait"
+      >
+        {busy ? <Loader2 className="h-4 w-4 animate-spin shrink-0 text-[#ff9b8a]" /> : null}
+        <span>{busy ? "Deleting…" : "Delete account permanently"}</span>
       </button>
     </form>
   );

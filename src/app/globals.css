@@ -182,6 +182,23 @@ html:not(.dark) .glass-chip {
     color: inherit;
   }
 
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  button:not(:disabled):active,
+  [role="button"]:not([aria-disabled="true"]):active {
+    transform: scale(0.97);
+    transition: transform 100ms var(--ease-precision);
+  }
+
+  [aria-busy="true"],
+  .cursor-wait,
+  button:disabled.cursor-wait {
+    cursor: wait !important;
+  }
+
   @supports (scrollbar-color: auto) {
     html {
       scrollbar-color: rgba(244, 242, 236, 0.18) transparent;

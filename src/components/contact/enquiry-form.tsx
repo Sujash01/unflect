@@ -16,7 +16,6 @@ import {
   type EnquiryInput,
 } from "@/lib/enquiry";
 import { emptyEnquiry } from "@/lib/enquiry";
-import { cn } from "@/lib/utils";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -399,8 +398,9 @@ export function EnquiryForm() {
         <Button
           type="submit"
           size="lg"
+          loading={status === "submitting"}
           disabled={status === "submitting"}
-          className={cn("shrink-0", status === "submitting" && "cursor-wait opacity-70")}
+          className="shrink-0"
         >
           {status === "submitting" ? "Sending enquiry\u2026" : "Start a project"}
         </Button>
