@@ -15,6 +15,13 @@ export type CaseStudyStatus =
   | "coming_soon"
   | "published";
 
+export type CaseStudyScreenshot = {
+  readonly src: string;
+  readonly alt: string;
+  readonly title: string;
+  readonly description?: string;
+};
+
 export type CaseStudy = {
   readonly slug: string;
   readonly status: CaseStudyStatus;
@@ -49,6 +56,7 @@ export type CaseStudy = {
   /** Optional screenshot path under /public. Null when image pending. */
   readonly image: string | null;
   readonly imagePlaceholderLabel: string;
+  readonly screenshots?: readonly CaseStudyScreenshot[];
   readonly tags: readonly string[];
   readonly completedAt: string | null;
   /** Cross-link to live site. */
@@ -98,9 +106,38 @@ export const caseStudies: readonly CaseStudy[] = [
     outcome:
       "Early access; no outcome figures published yet. The platform is live and in active evaluation with early creators and freelance talent.",
     metrics: [],
-    image: null,
-    imagePlaceholderLabel:
-      "PaperPlane interface preview (upload approved screenshot to /public/work/paperplane/preview.png)",
+    image: "/work/paperplane/preview.png",
+    imagePlaceholderLabel: "PaperPlane interface preview",
+    screenshots: [
+      {
+        src: "/work/paperplane/hero.png",
+        alt: "PaperPlane marketplace homepage and creator matching",
+        title: "Platform Homepage & Discovery",
+        description:
+          "Public landing page connecting creators with video editors, thumbnail artists, and scriptwriters with live market metrics.",
+      },
+      {
+        src: "/work/paperplane/how-it-works.png",
+        alt: "How PaperPlane works and open gigs listing",
+        title: "Three-Step Workflow & Active Gigs",
+        description:
+          "Clear workflow for creators (brief, compare profiles, ship) alongside real-time live gigs.",
+      },
+      {
+        src: "/work/paperplane/freelancers.png",
+        alt: "Freelancer discovery with rate and skill filters",
+        title: "Freelancer Directory & Search",
+        description:
+          "Filter talent by specialty, hourly rate brackets, and reputation ratings with transparent verified cards.",
+      },
+      {
+        src: "/work/paperplane/post-gig.png",
+        alt: "Structured gig posting modal with specialty selection",
+        title: "Structured Gig Scoping",
+        description:
+          "Fast project publishing workflow specifying specialty, budget, project type (one-off / recurring), and deliverable requirements.",
+      },
+    ],
     tags: ["early-access", "marketplace", "creator-economy", "supabase", "web-application"],
     completedAt: "2026-03-01",
     liveUrl: "https://paperplane.buzz",
@@ -143,9 +180,38 @@ export const caseStudies: readonly CaseStudy[] = [
     outcome:
       "Sample project built on public/sample data to demonstrate analytics architecture and dashboard design. Figures shown on demonstration dashboards reflect sample scenario data.",
     metrics: [],
-    image: null,
-    imagePlaceholderLabel:
-      "DataForge dashboard preview (upload approved screenshot to /public/work/dataforge/preview.png)",
+    image: "/work/dataforge/preview.png",
+    imagePlaceholderLabel: "DataForge analytics platform preview",
+    screenshots: [
+      {
+        src: "/work/dataforge/hero.png",
+        alt: "DataForge homepage and Telco customer churn command centre",
+        title: "Platform Homepage & Retention Command Centre",
+        description:
+          "Executive overview featuring interactive Telco Customer Churn Power BI analytics, key performance KPIs, and engagement metrics.",
+      },
+      {
+        src: "/work/dataforge/case-studies.png",
+        alt: "Featured analytics case studies for churn, sales, and finance",
+        title: "Featured Analytics Case Studies",
+        description:
+          "End-to-end analytics engagements spanning customer churn reduction, B2B sales performance, and multi-entity financial consolidation.",
+      },
+      {
+        src: "/work/dataforge/resource-library.png",
+        alt: "Presentations, dashboards and reporting deliverables library",
+        title: "Presentations, Dashboards & Reports",
+        description:
+          "Deliverables hub offering Power BI templates, executive reporting packs, and downloadable analytics assets.",
+      },
+      {
+        src: "/work/dataforge/strategic-cta.png",
+        alt: "Data-to-decisions strategy call-to-action and consultation booking",
+        title: "Strategic Decisions Workflow & Advisory",
+        description:
+          "Clear advisory framing helping leadership turn raw operational records into governed business decisions.",
+      },
+    ],
     tags: ["sample-project", "power-bi", "business-intelligence", "dax", "analytics"],
     completedAt: "2026-02-01",
     liveUrl: "https://data-forge-liart.vercel.app/",

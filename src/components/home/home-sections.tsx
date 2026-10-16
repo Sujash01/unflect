@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
@@ -134,32 +135,52 @@ export function HomeSections() {
                     className="block overflow-hidden rounded-3xl border border-line bg-module/60 p-3 transition-colors duration-500 hover:border-line-strong"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line bg-navy/80 p-6 flex flex-col justify-between">
-                      <div className="flex items-center justify-between">
-                        <span className="rounded-full border border-line bg-black/40 px-3 py-1.5 font-mono text-[11px] tracking-[0.03em] text-muted-strong backdrop-blur-md">
+                      {study.image ? (
+                        <>
+                          <Image
+                            src={study.image}
+                            alt={study.title}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 50vw"
+                            className="object-cover object-top transition-transform duration-700 ease-[var(--ease-precision)] group-hover:scale-105"
+                          />
+                          <div
+                            aria-hidden="true"
+                            className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/40"
+                          />
+                        </>
+                      ) : null}
+
+                      <div className="relative z-10 flex items-center justify-between">
+                        <span className="rounded-full border border-line bg-black/60 px-3 py-1.5 font-mono text-[11px] tracking-[0.03em] text-muted-strong backdrop-blur-md">
                           0{i + 1} · {study.service}
                         </span>
                         <span
-                          className={`rounded-full border px-2.5 py-1 font-mono text-[11px] ${
+                          className={`rounded-full border px-2.5 py-1 font-mono text-[11px] backdrop-blur-md ${
                             study.status === "early_access"
-                              ? "border-indigo/40 bg-indigo/10 text-indigo-bright"
-                              : "border-line bg-bone/[0.05] text-muted-strong"
+                              ? "border-indigo/40 bg-indigo/20 text-indigo-bright"
+                              : "border-line bg-black/50 text-muted-strong"
                           }`}
                         >
                           {study.statusLabel}
                         </span>
                       </div>
 
-                      <div className="rounded-xl border border-dashed border-line/60 bg-black/30 p-4 text-center">
-                        <p className="font-mono text-xs text-bone">
-                          {study.image ? "Screenshot available" : "Preview screenshot pending"}
-                        </p>
-                        <p className="mt-1 text-[11px] text-muted">
-                          {study.imagePlaceholderLabel}
-                        </p>
-                      </div>
+                      {!study.image ? (
+                        <div className="relative z-10 rounded-xl border border-dashed border-line/60 bg-black/30 p-4 text-center">
+                          <p className="font-mono text-xs text-bone">Preview screenshot pending</p>
+                          <p className="mt-1 text-[11px] text-muted">{study.imagePlaceholderLabel}</p>
+                        </div>
+                      ) : (
+                        <div className="relative z-10 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                          <span className="rounded-full border border-white/20 bg-black/60 px-3 py-1 font-mono text-[11px] text-bone backdrop-blur-md">
+                            View case study
+                          </span>
+                        </div>
+                      )}
 
-                      <div className="flex items-center justify-between text-xs text-muted">
-                        <span>{study.sector}</span>
+                      <div className="relative z-10 flex items-center justify-between text-xs text-muted-strong">
+                        <span className="rounded-full bg-black/50 px-2.5 py-1 backdrop-blur-md">{study.sector}</span>
                         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-bone text-[#0A0A0A] transition-transform duration-300 group-hover:scale-105">
                           <ArrowUpRight className="h-4 w-4" />
                         </span>

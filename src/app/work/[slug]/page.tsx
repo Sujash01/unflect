@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink } from "lucide-react";
@@ -7,6 +8,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container, Rule, Section, Tag } from "@/components/ui/primitives";
 import { Reveal } from "@/components/ui/reveal";
 import { MarkerList, Module, NodeDot, StepList } from "@/components/ui/module";
+import { CaseStudyCarousel } from "@/components/work/case-study-carousel";
 import { CaseStudyViewTracker } from "@/components/work/tracked-case-study-link";
 import { caseStudies, getCaseStudy, type CaseStudy } from "@/content/case-studies";
 import { servicesBySlug } from "@/content/services";
@@ -254,16 +256,17 @@ export default async function CaseStudyPage({ params }: Params) {
       <Section spacing="tight">
         <Container>
           <Reveal>
-            <div className="flex aspect-[21/9] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-line bg-navy-raised p-8 text-center">
-              <span className="font-mono text-sm text-bone">
-                {study.image ? "Screenshot" : "Project visual pending screenshot"}
-              </span>
-              <p className="mt-2 max-w-md text-xs leading-relaxed text-muted">
-                {study.imagePlaceholderLabel.includes("[CONFIRM")
+            <CaseStudyCarousel
+              title={study.title}
+              liveUrl={study.liveUrl}
+              defaultImage={study.image}
+              placeholderLabel={
+                study.imagePlaceholderLabel.includes("[CONFIRM")
                   ? "Visual asset and live interface preview pending release."
-                  : study.imagePlaceholderLabel}
-              </p>
-            </div>
+                  : study.imagePlaceholderLabel
+              }
+              screenshots={study.screenshots}
+            />
           </Reveal>
         </Container>
       </Section>
@@ -324,6 +327,59 @@ export default async function CaseStudyPage({ params }: Params) {
           </div>
         </Container>
       </Section>
+
+      {study.screenshots && study.screenshots.length > 0 ? (
+        <Section spacing="normal" background="raised" className="border-t border-line">
+          <Container>
+            <div className="max-w-2xl">
+              <p className="label-mono flex items-center gap-3 text-indigo">
+                <span aria-hidden="true" className="h-px w-8 bg-indigo/60" />
+                Workflows & UI
+              </p>
+              <h2 className="mt-4 font-display text-3xl tracking-[-0.02em] text-bone sm:text-4xl">
+                Platform interface & core flows.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-muted-strong">
+                Verified live views of the marketplace across discovery, talent browsing, and gig submission.
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-8 md:grid-cols-2">
+              {study.screenshots.map((screen, idx) => (
+                <Reveal key={screen.src} delay={idx * 0.08}>
+                  <div className="group overflow-hidden rounded-2xl border border-line bg-navy/80 transition-colors hover:border-line-strong">
+                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-black/40">
+                      <Image
+                        src={screen.src}
+                        alt={screen.alt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover object-top transition-transform duration-500 ease-[var(--ease-precision)] group-hover:scale-[1.03]"
+                      />
+                    </div>
+                    <div className="p-5">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[11px] tracking-wider text-indigo">
+                          0{idx + 1}
+                        </span>
+                        <span className="font-mono text-[11px] text-muted">Verified build</span>
+                      </div>
+                      <h3 className="mt-2 font-display text-lg text-bone">
+                        {screen.title}
+                      </h3>
+                      {screen.description ? (
+                        <p className="mt-2 text-xs leading-relaxed text-muted-strong">
+                          {screen.description}
+                        </p>
+                      ) : null}
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </Section>
+      ) : null}
 
       <Section spacing="tight" background="raised">
         <Container>

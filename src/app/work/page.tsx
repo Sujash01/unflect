@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, ExternalLink } from "lucide-react";
 import { caseStudies } from "@/content/case-studies";
@@ -147,15 +148,37 @@ export default function WorkPage() {
                     </div>
                   </div>
 
-                  {/* Neutral labelled preview slot */}
-                  <div className="flex aspect-[16/10] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-line bg-navy/60 p-6 text-center">
-                    <span className="font-mono text-xs text-muted-strong">
-                      Approved screenshot pending
-                    </span>
-                    <span className="mt-2 max-w-xs text-[11px] leading-relaxed text-muted">
-                      {study.imagePlaceholderLabel}
-                    </span>
-                  </div>
+                  {/* Screenshot preview or neutral placeholder slot */}
+                  {study.image ? (
+                    <Link
+                      href={`/work/${study.slug}`}
+                      className="group/img relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-line bg-navy/60 transition-colors hover:border-line-strong focus:outline-none"
+                    >
+                      <Image
+                        src={study.image}
+                        alt={study.title}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 40vw"
+                        className="object-cover object-top transition-transform duration-500 ease-[var(--ease-precision)] group-hover/img:scale-[1.03]"
+                      />
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover/img:opacity-100"
+                      />
+                      <span className="absolute bottom-3 right-3 rounded-full border border-white/20 bg-black/70 px-2.5 py-1 font-mono text-[10px] tracking-wider text-bone backdrop-blur-md opacity-0 transition-opacity duration-300 group-hover/img:opacity-100">
+                        View case study
+                      </span>
+                    </Link>
+                  ) : (
+                    <div className="flex aspect-[16/10] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-line bg-navy/60 p-6 text-center">
+                      <span className="font-mono text-xs text-muted-strong">
+                        Approved screenshot pending
+                      </span>
+                      <span className="mt-2 max-w-xs text-[11px] leading-relaxed text-muted">
+                        {study.imagePlaceholderLabel}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
