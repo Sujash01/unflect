@@ -323,7 +323,6 @@ export function ForgotForm() {
 
 export function ResetForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [status, setStatus] = useState<"checking" | "ready" | "no_session" | "expired">("checking");
   const [errorMessage, setErrorMessage] = useState("");
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -347,7 +346,8 @@ export function ResetForm() {
   useEffect(() => {
     async function initRecovery() {
       // 1. Check for errors in search params or hash
-      const searchError = searchParams.get("error_description") || searchParams.get("error");
+      const search = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+      const searchError = search ? search.get("error_description") || search.get("error") : null;
       const hash = typeof window !== "undefined" ? new URLSearchParams(window.location.hash.replace(/^#/, "")) : null;
       const hashError = hash ? hash.get("error_description") || hash.get("error") : null;
 
@@ -365,8 +365,8 @@ export function ResetForm() {
       // 2. Check for token in hash (direct redirect from Supabase)
       const hashAccessToken = hash ? hash.get("access_token") : null;
       const hashRefreshToken = hash ? hash.get("refresh_token") : null;
-      const searchCode = searchParams.get("code");
-      const searchTokenHash = searchParams.get("token_hash");
+      const searchCode = search ? search.get("code") : null;
+      const searchTokenHash = search ? search.get("token_hash") : null;
 
       if (hashAccessToken) {
         setAccessToken(hashAccessToken);
@@ -429,7 +429,7 @@ export function ResetForm() {
     }
 
     void initRecovery();
-  }, [searchParams]);
+  }, []);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
