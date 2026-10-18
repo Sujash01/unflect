@@ -111,7 +111,25 @@ export function logout(accessToken: string) {
 export function recover(email: string, redirectTo: string) {
   return authRequest<unknown>("recover", {
     method: "POST",
-    body: JSON.stringify({ email, options: { redirect_to: redirectTo } }),
+    body: JSON.stringify({
+      email,
+      options: { email_redirect_to: redirectTo, redirect_to: redirectTo },
+      redirect_to: redirectTo,
+    }),
+  });
+}
+
+export function verifyTokenHash(tokenHash: string, type: "recovery" | "signup" | "email" = "recovery") {
+  return authRequest<AuthTokens>("verify", {
+    method: "POST",
+    body: JSON.stringify({ token_hash: tokenHash, type }),
+  });
+}
+
+export function exchangeCode(code: string) {
+  return authRequest<AuthTokens>("token?grant_type=pkce", {
+    method: "POST",
+    body: JSON.stringify({ auth_code: code }),
   });
 }
 

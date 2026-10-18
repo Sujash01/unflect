@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -257,6 +257,7 @@ export function ForgotForm() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -269,11 +270,44 @@ export function ForgotForm() {
         headers: jsonHeaders,
         body: JSON.stringify({ email }),
       });
-      setMessage(result.data.message ?? "If an account exists, check your inbox.");
-      setError(!result.ok);
+      if (result.ok) {
+        setSent(true);
+      } else {
+        setMessage(result.data.message ?? "We could not process your request.");
+        setError(true);
+      }
     } finally {
       setBusy(false);
     }
+  }
+
+  if (sent) {
+    return (
+      <div className="space-y-6 rounded-2xl border border-line bg-navy-raised p-6 sm:p-8">
+        <div className="space-y-2">
+          <p className="font-mono text-xs text-indigo">Recovery email sent</p>
+          <h3 className="font-display text-xl text-bone">Check your inbox</h3>
+          <p className="text-sm leading-6 text-muted-strong">
+            If an account exists for <span className="text-bone">{email}</span>, a password reset link has been sent. Follow the link to choose a new password.
+          </p>
+          <p className="text-xs text-muted">
+            Be sure to check your spam or junk folder if it doesn&apos;t arrive in a few minutes.
+          </p>
+        </div>
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={() => {
+              setSent(false);
+              setMessage("");
+            }}
+            className="text-xs text-indigo-bright hover:underline"
+          >
+            Try another email address
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -289,27 +323,137 @@ export function ForgotForm() {
 
 export function ResetForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [status, setStatus] = useState<"checking" | "ready" | "no_session" | "expired">("checking");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [message, setMessage] = useState("");
+  const [submitMessage, setSubmitMessage] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const passwordChecks = {
+    length: password.length >= 8,
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[!@#$%^&*()_+\-=[\]{};'\\:"|<>?,./`~]/.test(password),
+  };
+  const passwordValid = Object.values(passwordChecks).every(Boolean);
+  const passwordsMatch = confirm.length > 0 && password === confirm;
+  const passwordsMismatch = confirm.length > 0 && password !== confirm;
+
+  useEffect(() => {
+    async function initRecovery() {
+      // 1. Check for errors in search params or hash
+      const searchError = searchParams.get("error_description") || searchParams.get("error");
+      const hash = typeof window !== "undefined" ? new URLSearchParams(window.location.hash.replace(/^#/, "")) : null;
+      const hashError = hash ? hash.get("error_description") || hash.get("error") : null;
+
+      if (searchError || hashError) {
+        const err = (searchError || hashError || "").replace(/\+/g, " ");
+        setErrorMessage(
+          err.toLowerCase().includes("expired") || err.toLowerCase().includes("invalid")
+            ? "This password reset link has expired or has already been used."
+            : err
+        );
+        setStatus("expired");
+        return;
+      }
+
+      // 2. Check for token in hash (direct redirect from Supabase)
+      const hashAccessToken = hash ? hash.get("access_token") : null;
+      const hashRefreshToken = hash ? hash.get("refresh_token") : null;
+      const searchCode = searchParams.get("code");
+      const searchTokenHash = searchParams.get("token_hash");
+
+      if (hashAccessToken) {
+        setAccessToken(hashAccessToken);
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+        try {
+          await fetch("/api/auth/callback", {
+            method: "POST",
+            headers: jsonHeaders,
+            body: JSON.stringify({
+              access_token: hashAccessToken,
+              refresh_token: hashRefreshToken || "",
+              next: "/reset-password",
+            }),
+          });
+        } catch {
+          // Ignore background session exchange errors if access token is preserved
+        }
+        setStatus("ready");
+        return;
+      }
+
+      if (searchCode || searchTokenHash) {
+        try {
+          const res = await fetch("/api/auth/callback", {
+            method: "POST",
+            headers: jsonHeaders,
+            body: JSON.stringify({
+              code: searchCode || undefined,
+              token_hash: searchTokenHash || undefined,
+              type: "recovery",
+              next: "/reset-password",
+            }),
+          });
+          const data = await res.json();
+          if (data.ok) {
+            if (data.accessToken) setAccessToken(data.accessToken);
+            setStatus("ready");
+          } else {
+            setErrorMessage(data.message || "Invalid or expired recovery link.");
+            setStatus("expired");
+          }
+        } catch {
+          setStatus("no_session");
+        }
+        return;
+      }
+
+      // 3. Check for existing session cookies
+      try {
+        const res = await fetch("/api/auth/session");
+        const data = await res.json();
+        if (data.authenticated) {
+          setStatus("ready");
+        } else {
+          setStatus("no_session");
+        }
+      } catch {
+        setStatus("no_session");
+      }
+    }
+
+    void initRecovery();
+  }, [searchParams]);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (password !== confirm) {
-      setMessage("Passwords do not match.");
+      setSubmitMessage("Passwords do not match.");
+      return;
+    }
+    if (!passwordValid) {
+      setSubmitMessage("Please meet all password requirements before continuing.");
       return;
     }
     setBusy(true);
-    setMessage("");
+    setSubmitMessage("");
     try {
       const result = await requestJson("/api/auth/reset", {
         method: "POST",
         headers: jsonHeaders,
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ password, accessToken }),
       });
       if (!result.ok) {
-        setMessage(result.data.message ?? "We could not reset your password.");
+        setSubmitMessage(result.data.message ?? "We could not reset your password.");
+        if (result.status === 401) {
+          setStatus("expired");
+        }
         return;
       }
       router.push("/login?reset=1");
@@ -318,16 +462,97 @@ export function ResetForm() {
     }
   }
 
+  if (status === "checking") {
+    return (
+      <div className="rounded-2xl border border-line bg-navy-raised p-8 text-center">
+        <div className="inline-flex items-center gap-3 text-sm text-muted-strong">
+          <Loader2 className="h-5 w-5 animate-spin text-indigo" />
+          <span>Verifying recovery link…</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "expired" || status === "no_session") {
+    return (
+      <div className="space-y-6 rounded-2xl border border-line bg-navy-raised p-6 sm:p-8">
+        <div className="space-y-2">
+          <p className="font-mono text-xs text-indigo">
+            {status === "expired" ? "Link expired or invalid" : "Reset link required"}
+          </p>
+          <h3 className="font-display text-xl text-bone">
+            {status === "expired" ? "This recovery link is no longer valid" : "Need to reset your password?"}
+          </h3>
+          <p className="text-sm leading-6 text-muted-strong">
+            {errorMessage ||
+              (status === "expired"
+                ? "Password reset links can only be used once and expire shortly after being sent."
+                : "To choose a new password, please request a password reset email for your account.")}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 pt-2">
+          <Link
+            href="/forgot-password"
+            className="inline-flex h-11 items-center justify-center rounded-full bg-indigo px-5 text-sm font-semibold text-indigo-ink hover:bg-indigo-bright"
+          >
+            Request a password reset link
+          </Link>
+          <Link
+            href="/login"
+            className="inline-flex h-11 items-center justify-center rounded-full border border-line-strong px-5 text-sm font-medium text-bone hover:border-bone/50"
+          >
+            Back to sign in
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={submit} className="space-y-6 rounded-2xl border border-line bg-navy-raised p-6 sm:p-8">
       <Field label="New password">
-        <Input type="password" autoComplete="new-password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 8 characters" />
+        <Input
+          type="password"
+          autoComplete="new-password"
+          required
+          minLength={8}
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          placeholder="At least 8 characters"
+        />
+        {password && (
+          <div className="mt-3 space-y-2">
+            <PasswordCheck label="At least 8 characters" met={passwordChecks.length} />
+            <PasswordCheck label="One lowercase letter (a-z)" met={passwordChecks.lowercase} />
+            <PasswordCheck label="One uppercase letter (A-Z)" met={passwordChecks.uppercase} />
+            <PasswordCheck label="One number (0-9)" met={passwordChecks.number} />
+            <PasswordCheck label="One special character (!@#$...)" met={passwordChecks.special} />
+          </div>
+        )}
       </Field>
+
       <Field label="Confirm password">
-        <Input type="password" autoComplete="new-password" required value={confirm} onChange={(event) => setConfirm(event.target.value)} placeholder="Repeat your password" />
+        <Input
+          type="password"
+          autoComplete="new-password"
+          required
+          value={confirm}
+          onChange={(event) => setConfirm(event.target.value)}
+          placeholder="Repeat your new password"
+        />
+        {passwordsMatch && (
+          <span className="mt-2 block text-xs text-green-400">Passwords match</span>
+        )}
+        {passwordsMismatch && (
+          <span className="mt-2 block text-xs text-[#ff9b8a]">Passwords do not match</span>
+        )}
       </Field>
-      {message ? <Message text={message} error /> : null}
-      <FormButton loading={busy} disabled={busy}>{busy ? "Updating…" : "Set new password"}</FormButton>
+
+      {submitMessage ? <Message text={submitMessage} error /> : null}
+
+      <FormButton loading={busy} disabled={busy || !passwordValid || !passwordsMatch}>
+        {busy ? "Updating…" : "Set new password"}
+      </FormButton>
     </form>
   );
 }
