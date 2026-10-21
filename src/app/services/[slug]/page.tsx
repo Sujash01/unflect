@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+
 import { ButtonLink } from "@/components/ui/button";
 import { ServiceBlock } from "@/components/services/service-block";
 import { Container } from "@/components/ui/primitives";
 import { EditorialPageHeader } from "@/components/ui/page-header";
 import { Module, NodeDot } from "@/components/ui/module";
 import { getService, services, type ServiceSlug } from "@/content/services";
+import { caseStudies } from "@/content/case-studies";
 import { handoverDeliverables, clientOwnedInfrastructure } from "@/content/company";
 import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
@@ -52,7 +56,7 @@ export default async function ServiceDetailPage({ params }: Params) {
         "@type": "Service",
         name: `${service.name} — ${service.summary}`,
         description: service.seo.description,
-        serviceType: service.name,
+        serviceType: service.seo.title,
         provider: {
           "@type": "Organization",
           name: site.name,
@@ -183,6 +187,89 @@ export default async function ServiceDetailPage({ params }: Params) {
           </div>
         </Container>
       </section>
+
+      {/* Real-world case study connection */}
+      {caseStudies.filter((s) => s.service === service.slug && s.status !== "coming_soon").length > 0 ? (
+        <section
+          aria-labelledby="case-study-heading"
+          className="border-t border-line py-20 sm:py-28"
+        >
+          <Container>
+            <div className="max-w-3xl">
+              <p className="font-mono text-[11px] tracking-[0.03em] text-indigo">
+                Real-world project
+              </p>
+              <h2
+                id="case-study-heading"
+                className="mt-4 font-display text-4xl tracking-[-0.02em] text-bone sm:text-5xl"
+              >
+                See this discipline in practice.
+              </h2>
+              <p className="mt-4 text-sm leading-6 text-muted-strong">
+                Explore a live system engineered by UNFLECT demonstrating our {service.name.toLowerCase()} software architecture.
+              </p>
+            </div>
+
+            <div className="mt-12 space-y-6">
+              {caseStudies
+                .filter((s) => s.service === service.slug && s.status !== "coming_soon")
+                .map((study) => (
+                  <div
+                    key={study.slug}
+                    className="rounded-3xl border border-line bg-module/40 p-6 sm:p-8 transition-colors hover:border-line-strong"
+                  >
+                    <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="font-mono text-[11px] uppercase tracking-[0.04em] text-muted">
+                            {study.sector}
+                          </span>
+                          <span className="rounded-full border border-indigo/40 bg-indigo/10 px-2.5 py-0.5 font-mono text-[11px] text-indigo-bright">
+                            {study.statusLabel}
+                          </span>
+                        </div>
+                        <h3 className="mt-4 font-display text-2xl text-bone sm:text-3xl">
+                          <Link
+                            href={`/work/${study.slug}`}
+                            className="hover:underline"
+                          >
+                            {study.title}
+                          </Link>
+                        </h3>
+                        <p className="mt-3 text-sm leading-6 text-muted-strong">
+                          {study.summary}
+                        </p>
+                        <div className="mt-6">
+                          <Link
+                            href={`/work/${study.slug}`}
+                            className="inline-flex items-center gap-2 text-sm font-medium text-indigo-bright hover:text-bone"
+                          >
+                            Explore case study & architecture
+                            <ArrowUpRight className="h-4 w-4" />
+                          </Link>
+                        </div>
+                      </div>
+                      {study.image ? (
+                        <Link
+                          href={`/work/${study.slug}`}
+                          className="group relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-line bg-navy/60 block"
+                        >
+                          <Image
+                            src={study.image}
+                            alt={study.title}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 40vw"
+                            className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </Link>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
 
       {/* Handover & Ownership Deliverables */}
       <section

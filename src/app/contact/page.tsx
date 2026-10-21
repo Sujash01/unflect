@@ -5,18 +5,46 @@ import { EnquiryForm } from "@/components/contact/enquiry-form";
 import { contactGuidance, contactIntro } from "@/content/company-extra";
 import { siteConfig } from "@/config/site";
 import { Container } from "@/components/ui/primitives";
+import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Start a Project",
+  title: "Start a Custom Software Project · Contact Us",
   description:
-    "Tell UNFLECT what you are trying to build and what problem is in the way.",
+    "Discuss your custom software project with UNFLECT. Share your operational requirements and get a considered engineering response within two business days.",
   path: "/contact",
 });
 
 export default function ContactPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: site.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Contact",
+            item: `${site.url}/contact`,
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="text-bone">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Form Section - Positioned at top for immediate above-the-fold access */}
       <section className="relative overflow-hidden border-b border-line pt-24 pb-16 sm:pt-28 sm:pb-24 lg:pt-32">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">

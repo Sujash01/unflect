@@ -133,9 +133,9 @@ export const services = [
     ],
     contactQueryType: "web",
     seo: {
-      title: "Web Software",
+      title: "Custom Web Application Development Services",
       description:
-        "Custom web software built around a business purpose: e-commerce platforms, customer portals, web applications and SaaS products. Designed, built, deployed and supported.",
+        "Custom web application development services by UNFLECT: customer portals, SaaS platforms, bespoke business tools, and responsive web products built for operational utility.",
     },
   },
   {
@@ -228,9 +228,9 @@ export const services = [
     ],
     contactQueryType: "systems",
     seo: {
-      title: "Business Systems Software",
+      title: "Internal Business Tools & Custom Systems Development",
       description:
-        "Internal software that helps businesses operate: operational tools, dashboards, admin platforms and custom management systems. Built around your actual workflows.",
+        "Internal business tools, operational dashboards, and custom systems development by UNFLECT. Replace fragile spreadsheets and automate manual back-office workflows.",
     },
   },
   {
@@ -323,9 +323,9 @@ export const services = [
     ],
     contactQueryType: "integrations",
     seo: {
-      title: "Systems Integration",
+      title: "API Integration Services & Business Workflow Automation",
       description:
-        "Connect the software your business already depends on: APIs, payments, CRM and third-party integrations, plus data synchronisation with proper error handling.",
+        "API integration services and business workflow automation by UNFLECT: connect CRMs, ERPs, payment gateways, and third-party tools with automated, reliable data pipelines.",
     },
   },
 ] as const satisfies readonly Service[];

@@ -12,18 +12,46 @@ import {
 import { aiPhilosophyNote } from "@/content/company-extra";
 import { EditorialPageHeader } from "@/components/ui/page-header";
 import { Container } from "@/components/ui/primitives";
+import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "About",
+  title: "About Our Software Studio & Engineering Approach",
   description:
-    "Why UNFLECT exists, who you will work with, and how we build custom software without hype.",
+    "Learn why UNFLECT exists, how our remote-first engineering studio operates, and our direct, hype-free approach to building custom business software.",
   path: "/about",
 });
 
 export default function AboutPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: site.url,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "About",
+            item: `${site.url}/about`,
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="text-bone">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <EditorialPageHeader
         section="About"
         title="Solve the problem first."

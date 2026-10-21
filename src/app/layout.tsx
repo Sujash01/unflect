@@ -132,10 +132,19 @@ const structuredDataJsonLd = {
       founder: {
         "@id": `${site.url}/#founder`,
       },
-      knowsAbout: services.map((service) => service.name),
+      knowsAbout: [
+        "Custom Software Development",
+        "Web Application Development",
+        "Internal Business Tools",
+        "Business Systems Software",
+        "API Integration",
+        "Workflow Automation",
+        "Data Dashboards and Reporting",
+        ...services.map((service) => service.name),
+      ],
       hasOfferCatalog: {
         "@type": "OfferCatalog",
-        name: "Software services",
+        name: "Custom Software Development Services",
         itemListElement: services.map((service) => ({
           "@type": "Offer",
           itemOffered: {

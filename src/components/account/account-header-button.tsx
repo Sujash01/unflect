@@ -22,7 +22,9 @@ function isCrawler(): boolean {
 }
 
 export function AccountHeaderButton() {
-  const [signedIn, setSignedIn] = useState<boolean | null>(null);
+  const [signedIn, setSignedIn] = useState<boolean | null>(() =>
+    isCrawler() ? false : null,
+  );
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
   const pathname = usePathname();
 
@@ -38,7 +40,6 @@ export function AccountHeaderButton() {
     // Search crawlers never have an authenticated session. Skipping the request
     // prevents Search Console "Other error" alerts caused by robots.txt disallow rules.
     if (isCrawler()) {
-      setSignedIn(false);
       return;
     }
 

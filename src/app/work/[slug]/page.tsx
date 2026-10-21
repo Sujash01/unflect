@@ -216,7 +216,13 @@ export default async function CaseStudyPage({ params }: Params) {
       <header className="border-b border-line pb-14 pt-12 sm:pb-16 sm:pt-14">
         <Container>
           <div className="flex flex-wrap items-center gap-3">
-            <Tag tone="signal">{service.name}</Tag>
+            <Link
+              href={`/services/${study.service}`}
+              className="transition-opacity hover:opacity-80"
+              title={`View ${service.name} development services`}
+            >
+              <Tag tone="signal">{service.name} Development</Tag>
+            </Link>
             <StatusBadge status={study.status} label={study.statusLabel} />
             {study.completedAt ? (
               <Tag>{new Date(study.completedAt).getFullYear()}</Tag>

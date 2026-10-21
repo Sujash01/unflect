@@ -41,7 +41,7 @@ export function Hero() {
             transition={{ duration: 0.7, ease: EASE }}
             className="glass-chip inline-flex items-center gap-2.5 rounded-full px-4 py-2"
           >
-            <span className="label-mono text-muted-strong">Custom software · Remote-first</span>
+            <span className="label-mono text-indigo-bright">Custom software development company · Remote-first studio</span>
           </motion.div>
 
           <h1 className="mt-8 max-w-4xl font-display text-[clamp(2.8rem,6.1vw,5.7rem)] leading-[0.98] tracking-[-0.025em]">
@@ -54,7 +54,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
             className="mt-8 max-w-xl text-lg leading-8 text-muted-strong"
           >
-            UNFLECT designs, builds and supports custom software — web products, internal systems and integrations.
+            UNFLECT is a custom software development company. We engineer bespoke web applications, internal business tools, and workflow integrations designed around your actual operations.
           </motion.p>
 
           <motion.div
