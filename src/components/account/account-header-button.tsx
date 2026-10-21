@@ -13,6 +13,14 @@ function applyPreferences(settings: Record<string, unknown>) {
   window.dispatchEvent(new CustomEvent("unflect:preferences"));
 }
 
+const BOT_UA_REGEX =
+  /googlebot|bingbot|yandex|baiduspider|duckduckbot|slurp|crawler|spider|robot|crawling/i;
+
+function isCrawler(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return Boolean(navigator.webdriver || BOT_UA_REGEX.test(navigator.userAgent || ""));
+}
+
 export function AccountHeaderButton() {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
@@ -26,6 +34,13 @@ export function AccountHeaderButton() {
 
   useEffect(() => {
     let active = true;
+
+    // Search crawlers never have an authenticated session. Skipping the request
+    // prevents Search Console "Other error" alerts caused by robots.txt disallow rules.
+    if (isCrawler()) {
+      setSignedIn(false);
+      return;
+    }
 
     const load = async () => {
       try {

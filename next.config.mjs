@@ -62,6 +62,12 @@ const nextConfig = {
           { key: "Content-Security-Policy-Report-Only", value: cspReportOnly },
         ],
       },
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
       { source: "/api/auth/:path*", headers: noStore },
       { source: "/api/account/:path*", headers: noStore },
       { source: "/api/admin/:path*", headers: noStore },
