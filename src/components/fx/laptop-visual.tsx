@@ -6,8 +6,12 @@ import { pointerX, pointerY } from "@/lib/pointer";
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
-const tilt = (v: number, size: number, max: number) =>
-  v <= -500 || typeof window === "undefined" ? 0 : Math.max(-max, Math.min(max, ((v - size / 2) / (size / 2)) * max));
+const tilt = (v: number, max: number, isY = false) => {
+  if (v <= -500 || typeof window === "undefined") return 0;
+  const size = isY ? window.innerHeight : window.innerWidth;
+  if (!size) return 0;
+  return Math.max(-max, Math.min(max, ((v - size / 2) / (size / 2)) * max));
+};
 
 /**
  * An open laptop, drawn in CSS/SVG. The screen carries the UNFLECT mark and name,
@@ -17,8 +21,8 @@ const tilt = (v: number, size: number, max: number) =>
  */
 export function LaptopVisual() {
   const reduce = useReducedMotion();
-  const rotY = useSpring(useTransform(pointerX, (v) => tilt(v, typeof window === "undefined" ? 1 : window.innerWidth, 6)), { damping: 30, stiffness: 70 });
-  const rotX = useSpring(useTransform(pointerY, (v) => -tilt(v, typeof window === "undefined" ? 1 : window.innerHeight, 3)), { damping: 30, stiffness: 70 });
+  const rotY = useSpring(useTransform(pointerX, (v) => tilt(v, 6, false)), { damping: 30, stiffness: 70 });
+  const rotX = useSpring(useTransform(pointerY, (v) => -tilt(v, 3, true)), { damping: 30, stiffness: 70 });
 
   return (
     <motion.div
@@ -43,7 +47,7 @@ export function LaptopVisual() {
             <span aria-hidden="true" className="absolute left-1/2 top-[1%] h-[0.3rem] w-[0.3rem] -translate-x-1/2 rounded-full bg-[#0a0a0b] ring-1 ring-white/10" />
 
             {/* Screen */}
-            <div className="@container relative aspect-[16/10] overflow-hidden rounded-[0.45rem] bg-[#06080a] ring-1 ring-black">
+            <div aria-hidden="true" className="@container relative aspect-[16/10] overflow-hidden rounded-[0.45rem] bg-[#06080a] ring-1 ring-black">
               <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,rgba(78,140,163,0.2),transparent_60%),linear-gradient(180deg,#0b1216,#06080a)]" />
               <div aria-hidden="true" className="absolute inset-0 bg-grid-fine opacity-[0.22] [mask-image:radial-gradient(ellipse_at_50%_55%,black,transparent_72%)]" />
 

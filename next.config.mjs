@@ -27,6 +27,9 @@ const nextConfig = {
       },
     ];
   },
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
   async headers() {
     // Content-Security-Policy is shipped in Report-Only mode so violations are
     // surfaced without breaking hydration, fonts, images or auth callbacks.
@@ -66,6 +69,12 @@ const nextConfig = {
         source: "/_next/static/:path*",
         headers: [
           { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+      {
+        source: "/((?!_next/).*\\.(?:ico|png|svg|jpg|jpeg|webp|avif|webmanifest|woff2?))",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
         ],
       },
       { source: "/api/auth/:path*", headers: noStore },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { FolderKanban, House, Info, ListOrdered, Mail, Shapes, UserRound } from "lucide-react";
 import { MagneticDock, type DockItemData } from "@/components/ui/magnetic-dock";
@@ -19,16 +19,23 @@ function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
+function subscribeMobile(notify: () => void) {
+  const mql = window.matchMedia("(max-width: 639px)");
+  mql.addEventListener("change", notify);
+  return () => mql.removeEventListener("change", notify);
+}
+
+function getMobileSnapshot() {
+  return window.matchMedia("(max-width: 639px)").matches;
+}
+
+function getMobileServerSnapshot() {
+  return false;
+}
+
 export function SiteDock() {
   const pathname = usePathname();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 640);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  const isMobile = useSyncExternalStore(subscribeMobile, getMobileSnapshot, getMobileServerSnapshot);
 
   const dockItems: DockItemData[] = items.map((item) => ({
     id: item.id,

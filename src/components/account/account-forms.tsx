@@ -480,9 +480,9 @@ export function ResetForm() {
           <p className="font-mono text-xs text-indigo">
             {status === "expired" ? "Link expired or invalid" : "Reset link required"}
           </p>
-          <h3 className="font-display text-xl text-bone">
+          <h2 className="font-display text-xl text-bone">
             {status === "expired" ? "This recovery link is no longer valid" : "Need to reset your password?"}
-          </h3>
+          </h2>
           <p className="text-sm leading-6 text-muted-strong">
             {errorMessage ||
               (status === "expired"

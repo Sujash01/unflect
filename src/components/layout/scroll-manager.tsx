@@ -33,8 +33,7 @@ export function ScrollManager() {
       );
     };
 
-    replaceScrollPosition();
-
+    // Only update history state during scroll, not synchronously on initial mount
     let frame = 0;
     const remember = () => {
       cancelAnimationFrame(frame);

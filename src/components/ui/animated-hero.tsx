@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { MagneticCta } from "@/components/ui/magnetic-cta";
 import { TypingAnimation } from "@/components/ui/typing-animation";
@@ -14,14 +13,12 @@ const TICKER = ["Web products", "Internal systems", "Integrations", "Discover", 
 
 export function Hero() {
   const reduce = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
-  const auroraY = useTransform(scrollYProgress, [0, 1], [0, 200]);
+  const { scrollYProgress } = useScroll();
+  const contentY = useTransform(scrollYProgress, [0, 0.2], [0, 120]);
+  const auroraY = useTransform(scrollYProgress, [0, 0.2], [0, 200]);
 
   return (
-    <section ref={ref} className="relative overflow-hidden border-b border-line">
+    <section className="relative overflow-hidden border-b border-line">
       {/* Atmosphere */}
       <motion.div aria-hidden="true" style={reduce ? undefined : { y: auroraY }} className="pointer-events-none absolute inset-0">
         <div className="aurora-blob aurora-a -left-[10%] top-[-12%] h-[44rem] w-[44rem]" />
@@ -33,29 +30,19 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 bg-grid opacity-[0.09] [mask-image:radial-gradient(ellipse_at_50%_30%,black,transparent_72%)]"
       />
 
-      <motion.div style={reduce ? undefined : { y: contentY, opacity: contentOpacity }} className="container-page relative grid min-h-[100svh] items-center gap-10 pb-28 pt-24 sm:pb-32 sm:pt-28 lg:grid-cols-[minmax(0,1.08fr)_minmax(19rem,0.92fr)] lg:gap-8">
+      <motion.div style={reduce ? undefined : { y: contentY }} className="container-page relative grid min-h-[100svh] items-center gap-10 pb-28 pt-24 sm:pb-32 sm:pt-28 lg:grid-cols-[minmax(0,1.08fr)_minmax(19rem,0.92fr)] lg:gap-8">
         <div>
-          <motion.div
-            initial={reduce ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="glass-chip inline-flex items-center gap-2.5 rounded-full px-4 py-2"
-          >
+          <div className="glass-chip inline-flex items-center gap-2.5 rounded-full px-4 py-2">
             <span className="label-mono text-indigo-bright">Custom software development company · Remote-first studio</span>
-          </motion.div>
+          </div>
 
           <h1 className="mt-8 max-w-4xl font-display text-[clamp(2.8rem,6.1vw,5.7rem)] leading-[0.98] tracking-[-0.025em]">
             <SplitText text="Software for the way your business actually works." mode="mount" delay={0.15} accent={["actually"]} />
           </h1>
 
-          <motion.p
-            initial={reduce ? false : { opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
-            className="mt-8 max-w-xl text-lg leading-8 text-muted-strong"
-          >
+          <p className="mt-8 max-w-xl text-lg leading-8 text-muted-strong">
             UNFLECT is a custom software development company. We engineer bespoke web applications, internal business tools, and workflow integrations designed around your actual operations.
-          </motion.p>
+          </p>
 
           <motion.div
             initial={reduce ? false : { opacity: 0 }}

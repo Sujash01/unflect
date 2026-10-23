@@ -606,6 +606,30 @@ html:not(.dark) .aurora-c { background: radial-gradient(circle, rgba(26,25,22,0.
 .split-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.12em; margin-bottom: -0.12em; }
 .split-word > span { display: inline-block; will-change: transform; }
 
+@keyframes uf-split-rise {
+  from {
+    transform: translate3d(0, 110%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+.split-word-rise {
+  animation: uf-split-rise 0.95s var(--ease-precision) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .split-word-rise {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* Off-screen rendering optimization: skip layout/style work until near viewport */
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
 /* Marquee */
 @keyframes uf-marquee { to { transform: translate3d(-50%, 0, 0); } }
 .marquee-track { display: flex; width: max-content; animation: uf-marquee var(--marquee-duration, 38s) linear infinite; }
@@ -692,8 +716,8 @@ html[data-reduced-motion="true"] *::after {
    Framer Motion transition applied a permanent blur style to the page. */
 @keyframes uf-page-enter {
   from {
-    opacity: 0.01;
-    transform: translate3d(0, 10px, 0);
+    opacity: 0.9;
+    transform: translate3d(0, 6px, 0);
   }
   to {
     opacity: 1;
@@ -702,7 +726,7 @@ html[data-reduced-motion="true"] *::after {
 }
 
 .page-enter {
-  animation: uf-page-enter 480ms var(--ease-precision) both;
+  animation: uf-page-enter 360ms var(--ease-precision) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

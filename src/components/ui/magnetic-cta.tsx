@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion, useSpring, useTransform } from "framer-motion";
@@ -24,19 +24,14 @@ export function MagneticCta({
   const reduceMotion = useReducedMotion();
   const pathname = usePathname();
   const [navigatingHref, setNavigatingHref] = useState<string | null>(null);
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  // Reset on mount and whenever pathname changes
-  useEffect(() => {
-    console.log('[MagneticCta FIX APPLIED] Resetting for pathname:', pathname, 'href:', href, 'old navigatingHref:', navigatingHref);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setNavigatingHref(null);
-  }, [pathname, href, navigatingHref]);
+  }
 
   const isNavigating = navigatingHref !== null && navigatingHref === href && navigatingHref !== pathname;
-  
-  if (isNavigating) {
-    console.log('[MagneticCta] Showing loader for:', href, 'pathname:', pathname, 'navigatingHref:', navigatingHref);
-  }
 
   const mx = useSpring(0, { damping: 18, stiffness: 180, mass: 0.5 });
   const my = useSpring(0, { damping: 18, stiffness: 180, mass: 0.5 });
@@ -64,6 +59,7 @@ export function MagneticCta({
       <motion.div style={{ x, y }}>
         <Link
           href={href}
+          prefetch={false}
           aria-busy={isNavigating ? "true" : undefined}
           onClick={() => {
             if (isInternal && href !== pathname) {

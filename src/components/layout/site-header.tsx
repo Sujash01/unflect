@@ -20,26 +20,33 @@ export function SiteHeader() {
   const lastY = useRef(0);
 
   useEffect(() => {
-    const onScroll = () => {
+    let ticking = false;
+    const updateScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 80);
       // Tuck away while reading down, return the moment the reader turns back.
       setHidden((current) => (y > 360 && y > lastY.current + 4 ? true : y < lastY.current - 4 ? false : current));
       lastY.current = y;
+      ticking = false;
     };
-    onScroll();
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateScroll);
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const section = pathname === "/" ? "Home" : pathname.split("/")[1];
   const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  // Reset navigation state when pathname changes
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setNavigatingTo(null);
-  }, [pathname]);
+  }
 
   const isNavigating = navigatingTo === "/contact";
 
@@ -79,6 +86,7 @@ export function SiteHeader() {
           <AnimatedThemeToggler className="inline-flex h-9 w-9 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full border border-line bg-bone/[0.04] text-bone transition-colors hover:bg-bone/[0.09]" />
           <Link
             href="/contact"
+            prefetch={false}
             aria-busy={isNavigating ? "true" : undefined}
             onClick={() => {
               if (pathname !== "/contact") setNavigatingTo("/contact");

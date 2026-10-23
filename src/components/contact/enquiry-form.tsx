@@ -371,7 +371,7 @@ export function EnquiryForm() {
       </div>
 
       {/* Honeypot: hidden from people, tempting to bots. */}
-      <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+      <div className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
         <label htmlFor={HONEYPOT_FIELD}>Website</label>
         <input
           id={HONEYPOT_FIELD}

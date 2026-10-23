@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Lenis from "lenis";
 import { setScrollController } from "@/lib/scroll";
 
 /**
@@ -9,12 +8,14 @@ import { setScrollController } from "@/lib/scroll";
  * ScrollManager so Lenis never carries an old route's momentum into a new page.
  */
 export function SmoothScroll() {
-  const [enabled, setEnabled] = useState(true);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     const sync = () => {
+      const isTouchOnly = window.matchMedia("(pointer: coarse) and (hover: none)").matches;
       setEnabled(
-        document.documentElement.dataset.smoothScroll !== "false" &&
+        !isTouchOnly &&
+          document.documentElement.dataset.smoothScroll !== "false" &&
           document.documentElement.dataset.reducedMotion !== "true" &&
           !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       );
@@ -30,20 +31,27 @@ export function SmoothScroll() {
       return;
     }
 
-    const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-
-    setScrollController(lenis);
-
+    let lenis: InstanceType<typeof import("lenis").default> | null = null;
     let raf = 0;
-    const loop = (time: number) => {
-      lenis.raf(time);
+    let isCancelled = false;
+
+    import("lenis").then(({ default: LenisClass }) => {
+      if (isCancelled) return;
+
+      lenis = new LenisClass({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
+
+      setScrollController(lenis);
+
+      const loop = (time: number) => {
+        lenis?.raf(time);
+        raf = requestAnimationFrame(loop);
+      };
       raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
+    });
 
     const onClick = (event: MouseEvent) => {
       const anchor = (event.target as HTMLElement | null)?.closest?.(
@@ -55,16 +63,17 @@ export function SmoothScroll() {
       const target = document.querySelector(id);
       if (!target) return;
       event.preventDefault();
-      lenis.scrollTo(target as HTMLElement, { offset: -88 });
+      lenis?.scrollTo(target as HTMLElement, { offset: -88 });
     };
 
     document.addEventListener("click", onClick);
 
     return () => {
+      isCancelled = true;
       document.removeEventListener("click", onClick);
-      cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
       setScrollController(null);
-      lenis.destroy();
+      lenis?.destroy();
     };
   }, [enabled]);
 

@@ -61,19 +61,19 @@ function DockItem({
   const [focused, setFocused] = React.useState(false);
   const [pendingHref, setPendingHref] = React.useState<string | null>(null);
   const pathname = usePathname();
+  const [prevPathname, setPrevPathname] = React.useState(pathname);
 
-  // Reset pending state when pathname changes
-  React.useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setPendingHref(null);
-  }, [pathname]);
+  }
 
   const pending = pendingHref !== null && pendingHref !== pathname;
 
   const showLabel = showLabels && (hovered || focused);
 
   const distance = useTransform(mousePosition, (value) => {
-    if (!ref.current) return magneticDistance + 1;
+    if (!Number.isFinite(value) || !ref.current) return magneticDistance + 1;
     const rect = ref.current.getBoundingClientRect();
     const center = isVertical
       ? rect.top + rect.height / 2
@@ -95,6 +95,7 @@ function DockItem({
   return (
     <Link
       href={item.href}
+      prefetch={false}
       aria-label={item.label}
       aria-current={item.isActive ? "page" : undefined}
       aria-busy={pending ? "true" : undefined}

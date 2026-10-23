@@ -43,23 +43,40 @@ export function usePointerSystem() {
   }, []);
 }
 
+function subscribeFinePointer(notify: () => void) {
+  const mql = window.matchMedia(finePointerQuery);
+  mql.addEventListener("change", notify);
+  return () => mql.removeEventListener("change", notify);
+}
+function getFinePointerSnapshot() {
+  return window.matchMedia(finePointerQuery).matches;
+}
+function getFinePointerServerSnapshot() {
+  return false;
+}
+
+function subscribePreferences(notify: () => void) {
+  window.addEventListener("unflect:preferences", notify);
+  return () => window.removeEventListener("unflect:preferences", notify);
+}
+function getPreferencesSnapshot() {
+  return document.documentElement.dataset.cursorEffects !== "false";
+}
+function getPreferencesServerSnapshot() {
+  return true;
+}
+
 /** Ambient blue light that lags the cursor. Very low opacity by design. */
 export function AmbientLight() {
   const reduceMotion = useReducedMotion();
-  const [enabled, setEnabled] = React.useState(true);
+  const isFine = React.useSyncExternalStore(subscribeFinePointer, getFinePointerSnapshot, getFinePointerServerSnapshot);
+  const enabled = React.useSyncExternalStore(subscribePreferences, getPreferencesSnapshot, getPreferencesServerSnapshot);
   const sx = useSpring(pointerX, { damping: 30, stiffness: 60, mass: 1.4 });
   const sy = useSpring(pointerY, { damping: 30, stiffness: 60, mass: 1.4 });
   const x = useTransform(sx, (v) => v - 320);
   const y = useTransform(sy, (v) => v - 320);
 
-  React.useEffect(() => {
-    const sync = () => setEnabled(document.documentElement.dataset.cursorEffects !== "false");
-    sync();
-    window.addEventListener("unflect:preferences", sync);
-    return () => window.removeEventListener("unflect:preferences", sync);
-  }, []);
-
-  if (reduceMotion || !enabled) return null;
+  if (reduceMotion || !enabled || !isFine) return null;
 
   return (
     <motion.div

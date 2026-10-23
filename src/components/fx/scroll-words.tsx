@@ -24,7 +24,7 @@ export function ScrollWords({ text, className, accent = [] }: { text: string; cl
   if (reduce) return <p className={className}>{text}</p>;
 
   return (
-    <p ref={ref} className={className} aria-label={text}>
+    <p ref={ref} className={className}>
       {words.map((word, i) => {
         const start = i / words.length;
         const end = start + 1.6 / words.length;

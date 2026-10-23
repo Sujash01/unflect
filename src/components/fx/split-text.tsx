@@ -20,29 +20,56 @@ export function SplitText({ text, className, delay = 0, stagger = 0.055, mode = 
   const reduce = useReducedMotion();
   const words = text.split(" ");
 
+  if (mode === "mount") {
+    return (
+      <span className={className}>
+        <span className="sr-only">{text}</span>
+        <span aria-hidden="true">
+          {words.map((word, i) => {
+            const isAccent = accent.some((a) => word.replace(/[.,]/g, "").toLowerCase() === a.toLowerCase());
+            return (
+              <span key={i} className="split-word">
+                <span
+                  className={`split-word-rise ${isAccent ? "text-indigo-bright" : ""}`}
+                  style={{ animationDelay: `${delay + i * stagger}s` }}
+                >
+                  {word}
+                  {i < words.length - 1 ? "\u00A0" : ""}
+                </span>
+              </span>
+            );
+          })}
+        </span>
+      </span>
+    );
+  }
+
   return (
-    <motion.span
-      className={className}
-      aria-label={text}
-      initial="hidden"
-      {...(mode === "mount" ? { animate: "shown" } : { whileInView: "shown", viewport: { once: true, amount: 0.4 } })}
-      transition={{ staggerChildren: reduce ? 0 : stagger, delayChildren: delay }}
-    >
-      {words.map((word, i) => {
-        const isAccent = accent.some((a) => word.replace(/[.,]/g, "").toLowerCase() === a.toLowerCase());
-        return (
-          <span key={i} className="split-word" aria-hidden="true">
-            <motion.span
-              className={isAccent ? "text-indigo-bright" : undefined}
-              variants={{ hidden: reduce ? { y: 0 } : { y: "110%" }, shown: { y: 0 } }}
-              transition={{ duration: reduce ? 0 : 0.95, ease: EASE }}
-            >
-              {word}
-              {i < words.length - 1 ? "\u00A0" : ""}
-            </motion.span>
-          </span>
-        );
-      })}
-    </motion.span>
+    <span className={className}>
+      <span className="sr-only">{text}</span>
+      <motion.span
+        aria-hidden="true"
+        initial="hidden"
+        whileInView="shown"
+        viewport={{ once: true, amount: 0.4 }}
+        transition={{ staggerChildren: reduce ? 0 : stagger, delayChildren: delay }}
+      >
+        {words.map((word, i) => {
+          const isAccent = accent.some((a) => word.replace(/[.,]/g, "").toLowerCase() === a.toLowerCase());
+          return (
+            <span key={i} className="split-word">
+              <motion.span
+                className={isAccent ? "text-indigo-bright" : undefined}
+                variants={{ hidden: reduce ? { y: 0 } : { y: "110%" }, shown: { y: 0 } }}
+                transition={{ duration: reduce ? 0 : 0.95, ease: EASE }}
+              >
+                {word}
+                {i < words.length - 1 ? "\u00A0" : ""}
+              </motion.span>
+            </span>
+          );
+        })}
+      </motion.span>
+    </span>
   );
 }

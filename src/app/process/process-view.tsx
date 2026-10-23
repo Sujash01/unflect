@@ -48,13 +48,13 @@ export function ProcessView() {
                       aria-current={isActive ? "step" : undefined}
                       className={cn(
                         "group flex w-full items-baseline gap-5 border-b border-line py-6 text-left transition-all duration-300",
-                        isActive ? "opacity-100" : "opacity-40 hover:opacity-80",
+                        isActive ? "opacity-100" : "opacity-60 hover:opacity-90",
                       )}
                     >
                       <span
                         className={cn(
                           "font-mono text-[11px] tracking-[0.03em]",
-                          isActive ? "text-indigo" : "text-muted",
+                          isActive ? "text-indigo" : "text-muted-strong",
                         )}
                       >
                         {stage.index}

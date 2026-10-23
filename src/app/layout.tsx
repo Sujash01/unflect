@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
+import dynamic from "next/dynamic";
 import { Inter, Inter_Tight } from "next/font/google";
 
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -11,7 +11,10 @@ import { SmoothScroll } from "@/components/fx/smooth-scroll";
 import { ScrollProgress } from "@/components/fx/scroll-progress";
 import { ScrollManager } from "@/components/layout/scroll-manager";
 import { RouteLoader } from "@/components/layout/route-loader";
-import { ExitIntentModal } from "@/components/ui/exit-intent-modal";
+
+const ExitIntentModal = dynamic(
+  () => import("@/components/ui/exit-intent-modal").then((mod) => mod.ExitIntentModal),
+);
 import { site } from "@/content/site";
 import { siteConfig } from "@/config/site";
 import { services } from "@/content/services";
@@ -184,17 +187,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-navy font-sans text-bone antialiased">
-        <Script id="theme-init" strategy="beforeInteractive">
-          {`try {
-            const saved = localStorage.getItem("theme");
-            document.documentElement.classList.toggle(
-              "dark",
-              saved !== "light"
-            );
-          } catch (_) {
-            document.documentElement.classList.add("dark");
-          }`}
-        </Script>
+        <script
+          id="theme-init"
+          dangerouslySetInnerHTML={{
+            __html: `try{var s=localStorage.getItem("theme");document.documentElement.classList.toggle("dark",s!=="light")}catch(_){document.documentElement.classList.add("dark")}`,
+          }}
+        />
 
         <script
           type="application/ld+json"

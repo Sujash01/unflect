@@ -58,7 +58,15 @@ export function AccountHeaderButton() {
       }
     };
 
-    void load();
+    let idleId: number | null = null;
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      idleId = (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(() => void load(), { timeout: 2000 });
+    } else {
+      timerId = setTimeout(() => void load(), 200);
+    }
+
     const interval = window.setInterval(load, 10 * 60 * 1000);
     const onVisible = () => {
       if (document.visibilityState === "visible") void load();
@@ -67,6 +75,12 @@ export function AccountHeaderButton() {
 
     return () => {
       active = false;
+      if (idleId !== null && typeof window !== "undefined" && "cancelIdleCallback" in window) {
+        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
+      }
+      if (timerId !== null) {
+        clearTimeout(timerId);
+      }
       window.clearInterval(interval);
       document.removeEventListener("visibilitychange", onVisible);
     };
@@ -81,6 +95,7 @@ export function AccountHeaderButton() {
     return (
       <Link
         href="/account"
+        prefetch={false}
         aria-label="Account"
         aria-busy={isNavigating ? "true" : undefined}
         onClick={() => {
@@ -101,6 +116,7 @@ export function AccountHeaderButton() {
   return (
     <Link
       href="/login"
+      prefetch={false}
       aria-busy={isNavigatingLogin ? "true" : undefined}
       onClick={() => {
         if (pathname !== "/login") setNavigatingTo("/login");
