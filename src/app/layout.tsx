@@ -183,14 +183,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${heading.variable} ${inter.variable}`}
+      className={`dark ${heading.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-dvh bg-navy font-sans text-bone antialiased">
         <script
           id="theme-init"
           dangerouslySetInnerHTML={{
-            __html: `try{var s=localStorage.getItem("theme");document.documentElement.classList.toggle("dark",s!=="light")}catch(_){document.documentElement.classList.add("dark")}`,
+            __html: `try{var s=localStorage.getItem("theme");if(s==="light"){document.documentElement.classList.remove("dark")}}catch(_){}`,
           }}
         />
 

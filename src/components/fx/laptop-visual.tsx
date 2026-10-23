@@ -27,9 +27,9 @@ export function LaptopVisual() {
   return (
     <motion.div
       className="relative mx-auto w-full max-w-[38rem] px-[4%]"
-      initial={reduce ? false : { opacity: 0, y: 28 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1.1, delay: 0.3, ease: EASE }}
+      transition={{ duration: 1.1, ease: EASE }}
     >
       {/* Soft room light and ground shadow */}
       <div aria-hidden="true" className="absolute inset-x-[6%] top-[4%] h-[70%] rounded-full bg-[radial-gradient(ellipse,rgba(78,140,163,0.12),transparent_68%)] blur-3xl" />
@@ -53,9 +53,9 @@ export function LaptopVisual() {
 
               {/* Site nav */}
               <motion.div
-                initial={reduce ? false : { opacity: 0 }}
+                initial={false}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.9, delay: 1.1 }}
+                transition={{ duration: 0.9 }}
                 className="absolute inset-x-[5cqw] top-[3.4cqw] flex items-center justify-between"
               >
                 <span className="flex items-center gap-[1.1cqw] [&>svg]:h-[3.1cqw] [&>svg]:w-[3.1cqw]">
@@ -73,33 +73,33 @@ export function LaptopVisual() {
               {/* Centrepiece: mark + name */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pt-[3cqw]">
                 <motion.span
-                  initial={reduce ? false : { opacity: 0, scale: 0.88 }}
+                  initial={false}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 1.1, delay: 0.7, ease: EASE }}
+                  transition={{ duration: 1.1, ease: EASE }}
                   className="block [&>svg]:h-[13cqw] [&>svg]:w-[13cqw] [&>svg]:drop-shadow-[0_0_18px_rgba(78,140,163,0.28)]"
                 >
                   <Logo size={64} />
                 </motion.span>
                 <motion.p
-                  initial={reduce ? false : { opacity: 0, y: 8 }}
+                  initial={false}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.9, delay: 0.95, ease: EASE }}
+                  transition={{ duration: 0.9, ease: EASE }}
                   className="mt-[2.4cqw] pl-[0.2em] font-display text-[7.2cqw] font-medium leading-none tracking-[0.2em] text-bone"
                 >
                   UNFLECT
                 </motion.p>
                 <motion.p
-                  initial={reduce ? false : { opacity: 0 }}
+                  initial={false}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.9, delay: 1.25 }}
+                  transition={{ duration: 0.9 }}
                   className="mt-[2cqw] text-[1.9cqw] text-muted-strong"
                 >
                   Software for the way your business actually works.
                 </motion.p>
                 <motion.p
-                  initial={reduce ? false : { opacity: 0 }}
+                  initial={false}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.9, delay: 1.4 }}
+                  transition={{ duration: 0.9 }}
                   className="mt-[3.2cqw] flex items-center gap-[1.8cqw] text-[1.5cqw] text-muted"
                 >
                   <span>Web</span>
