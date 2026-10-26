@@ -14,17 +14,12 @@ export function ScrollManager() {
   const pathname = usePathname();
   const firstPath = useRef(pathname);
   const popNavigation = useRef(false);
-  const lastUpdateTime = useRef(0);
 
   useEffect(() => {
     const previousRestoration = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
 
-    const replaceScrollPosition = () => {
-      const now = Date.now();
-      if (now - lastUpdateTime.current < 200) return;
-      lastUpdateTime.current = now;
-
+    const saveScrollPosition = () => {
       const state = (window.history.state ?? {}) as HistoryState;
       window.history.replaceState(
         { ...state, [POSITION_KEY]: Math.max(0, window.scrollY) },
@@ -33,23 +28,30 @@ export function ScrollManager() {
       );
     };
 
-    // Only update history state during scroll, not synchronously on initial mount
-    let frame = 0;
-    const remember = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(replaceScrollPosition);
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const onScroll = () => {
+      clearTimeout(timer);
+      timer = setTimeout(saveScrollPosition, 150);
     };
+
     const onPopState = () => {
       popNavigation.current = true;
     };
 
-    window.addEventListener("scroll", remember, { passive: true });
+    const onPageHide = () => {
+      clearTimeout(timer);
+      saveScrollPosition();
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("popstate", onPopState);
+    window.addEventListener("pagehide", onPageHide);
 
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", remember);
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("popstate", onPopState);
+      window.removeEventListener("pagehide", onPageHide);
       window.history.scrollRestoration = previousRestoration;
     };
   }, []);

@@ -30,6 +30,7 @@ export function SiteFooter() {
           <div className="flex flex-col items-start gap-6">
             <Link
               href="/"
+              prefetch={false}
               aria-label={`${site.name} — home`}
               className="inline-flex w-fit rounded-[14px] p-1"
             >

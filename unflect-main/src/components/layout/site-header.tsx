@@ -49,6 +49,7 @@ export function SiteHeader() {
       >
         <Link
           href="/"
+          prefetch={false}
           aria-label={`${site.name} — home`}
           className="inline-flex shrink-0 items-center rounded-full px-1 py-1 sm:px-1.5 sm:py-1.5 transition-opacity hover:opacity-80"
         >

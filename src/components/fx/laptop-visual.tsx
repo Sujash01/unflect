@@ -32,8 +32,14 @@ export function LaptopVisual() {
       transition={{ duration: 1.1, ease: EASE }}
     >
       {/* Soft room light and ground shadow */}
-      <div aria-hidden="true" className="absolute inset-x-[6%] top-[4%] h-[70%] rounded-full bg-[radial-gradient(ellipse,rgba(78,140,163,0.12),transparent_68%)] blur-3xl" />
-      <div aria-hidden="true" className="absolute inset-x-[10%] -bottom-5 h-12 rounded-[100%] bg-black/55 blur-2xl" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-[6%] top-[4%] h-[70%] rounded-full bg-[radial-gradient(ellipse,rgba(40,92,112,0.12),transparent_68%)] dark:bg-[radial-gradient(ellipse,rgba(78,140,163,0.12),transparent_68%)] blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-[10%] -bottom-5 h-12 rounded-[100%] bg-black/25 dark:bg-black/55 blur-2xl"
+      />
 
       <div style={{ perspective: 1800 }} className="relative">
         <motion.div
@@ -42,14 +48,23 @@ export function LaptopVisual() {
           aria-label="An open laptop showing the UNFLECT logo and name"
         >
           {/* Lid */}
-          <div className="relative rounded-t-[1.15rem] border border-white/[0.13] bg-gradient-to-b from-[#2b2d30] to-[#17181a] px-[2.4%] pb-[5.4%] pt-[2.4%] shadow-[0_40px_90px_-40px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.08)]">
+          <div className="relative rounded-t-[1.15rem] border border-black/10 dark:border-white/[0.13] bg-gradient-to-b from-[#2b2d30] to-[#17181a] px-[2.4%] pb-[5.4%] pt-[2.4%] shadow-[0_30px_70px_-30px_rgba(26,25,22,0.38),inset_0_1px_0_rgba(255,255,255,0.12)] dark:shadow-[0_40px_90px_-40px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.08)]">
             {/* Camera */}
             <span aria-hidden="true" className="absolute left-1/2 top-[1%] h-[0.3rem] w-[0.3rem] -translate-x-1/2 rounded-full bg-[#0a0a0b] ring-1 ring-white/10" />
 
             {/* Screen */}
-            <div aria-hidden="true" className="@container relative aspect-[16/10] overflow-hidden rounded-[0.45rem] bg-[#06080a] ring-1 ring-black">
-              <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-10%,rgba(78,140,163,0.2),transparent_60%),linear-gradient(180deg,#0b1216,#06080a)]" />
-              <div aria-hidden="true" className="absolute inset-0 bg-grid-fine opacity-[0.22] [mask-image:radial-gradient(ellipse_at_50%_55%,black,transparent_72%)]" />
+            <div
+              aria-hidden="true"
+              className="@container relative aspect-[16/10] overflow-hidden rounded-[0.45rem] bg-[#FAF8F5] ring-1 ring-black/15 dark:bg-[#06080a] dark:ring-black"
+            >
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_-12%,rgba(40,92,112,0.16),transparent_65%),radial-gradient(ellipse_at_85%_80%,rgba(78,140,163,0.08),transparent_55%),linear-gradient(180deg,#FAF8F5_0%,#F1ECE3_100%)] dark:bg-[radial-gradient(ellipse_at_50%_-10%,rgba(78,140,163,0.2),transparent_60%),linear-gradient(180deg,#0b1216,#06080a)]"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-grid-fine opacity-40 dark:opacity-[0.22] [mask-image:radial-gradient(ellipse_at_50%_55%,black,transparent_75%)]"
+              />
 
               {/* Site nav */}
               <motion.div
@@ -66,7 +81,9 @@ export function LaptopVisual() {
                   <span>Services</span>
                   <span>Work</span>
                   <span>Process</span>
-                  <span className="rounded-full bg-bone px-[1.8cqw] py-[0.8cqw] font-medium text-[#0A0A0A]">Start a project</span>
+                  <span className="rounded-full bg-bone px-[1.8cqw] py-[0.8cqw] font-medium text-navy shadow-sm">
+                    Start a project
+                  </span>
                 </span>
               </motion.div>
 
@@ -76,7 +93,7 @@ export function LaptopVisual() {
                   initial={false}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1.1, ease: EASE }}
-                  className="block [&>svg]:h-[13cqw] [&>svg]:w-[13cqw] [&>svg]:drop-shadow-[0_0_18px_rgba(78,140,163,0.28)]"
+                  className="block [&>svg]:h-[13cqw] [&>svg]:w-[13cqw] drop-shadow-[0_4px_16px_rgba(40,92,112,0.18)] dark:drop-shadow-[0_0_18px_rgba(78,140,163,0.28)]"
                 >
                   <Logo size={64} />
                 </motion.span>
@@ -111,13 +128,16 @@ export function LaptopVisual() {
               </div>
 
               {/* Glass reflection */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.055),transparent_34%)]" />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.45)_0%,rgba(255,255,255,0.08)_32%,transparent_45%)] dark:bg-[linear-gradient(115deg,rgba(255,255,255,0.055),transparent_34%)]"
+              />
             </div>
 
             {/* Chin badge */}
-            <span className="absolute bottom-[1.5%] left-1/2 flex -translate-x-1/2 items-center gap-[0.4rem] opacity-60">
-              <Logo size={10} />
-              <span className="text-[0.5rem] font-medium tracking-[0.3em] text-bone">UNFLECT</span>
+            <span className="absolute bottom-[1.5%] left-1/2 flex -translate-x-1/2 items-center gap-[0.4rem] opacity-55">
+              <Logo size={10} variant="current" className="text-[#D9DAD4]" />
+              <span className="text-[0.5rem] font-medium tracking-[0.3em] text-[#D9DAD4]">UNFLECT</span>
             </span>
           </div>
 

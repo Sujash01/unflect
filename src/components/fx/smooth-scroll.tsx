@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Lenis from "lenis";
 import { setScrollController } from "@/lib/scroll";
 
 /**
@@ -31,27 +32,20 @@ export function SmoothScroll() {
       return;
     }
 
-    let lenis: InstanceType<typeof import("lenis").default> | null = null;
-    let raf = 0;
-    let isCancelled = false;
-
-    import("lenis").then(({ default: LenisClass }) => {
-      if (isCancelled) return;
-
-      lenis = new LenisClass({
-        duration: 1.15,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        smoothWheel: true,
-      });
-
-      setScrollController(lenis);
-
-      const loop = (time: number) => {
-        lenis?.raf(time);
-        raf = requestAnimationFrame(loop);
-      };
-      raf = requestAnimationFrame(loop);
+    const lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
     });
+
+    setScrollController(lenis);
+
+    let raf = 0;
+    const loop = (time: number) => {
+      lenis.raf(time);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
 
     const onClick = (event: MouseEvent) => {
       const anchor = (event.target as HTMLElement | null)?.closest?.(
@@ -69,11 +63,10 @@ export function SmoothScroll() {
     document.addEventListener("click", onClick);
 
     return () => {
-      isCancelled = true;
       document.removeEventListener("click", onClick);
       if (raf) cancelAnimationFrame(raf);
       setScrollController(null);
-      lenis?.destroy();
+      lenis.destroy();
     };
   }, [enabled]);
 
