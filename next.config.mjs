@@ -25,6 +25,26 @@ const nextConfig = {
         destination: "/work",
         permanent: true,
       },
+      {
+        source: "/services/web",
+        destination: "/services/other-services",
+        permanent: true,
+      },
+      {
+        source: "/services/systems",
+        destination: "/services/systems-integration",
+        permanent: true,
+      },
+      {
+        source: "/services/integrations",
+        destination: "/services/systems-integration",
+        permanent: true,
+      },
+      {
+        source: "/other-services",
+        destination: "/services/other-services",
+        permanent: true,
+      },
     ];
   },
   experimental: {

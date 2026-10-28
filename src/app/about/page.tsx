@@ -16,9 +16,9 @@ import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "About Our Software Studio & Engineering Approach",
+  title: "About UNFLECT · Business Automation & Systems Integration Studio",
   description:
-    "Learn why UNFLECT exists, how our remote-first engineering studio operates, and our direct, hype-free approach to building custom business software.",
+    "Learn how UNFLECT helps businesses automate repetitive operations, connect existing software systems, and build reliable workflows that reduce manual effort.",
   path: "/about",
 });
 

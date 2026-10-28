@@ -1,11 +1,21 @@
 /**
- * The three primary service categories.
+ * The core business automation and systems integration service categories.
  *
- * Presented as one coherent software offering, not three separate agencies.
- * Each entry renders both a summary (cards, homepage) and a full detail page.
+ * Presented as one coherent engineering offering:
+ * 1. Business Automation
+ * 2. WhatsApp Automation
+ * 3. Systems Integration
+ * 4. AI-Powered Workflows
+ *
+ * Secondary software development services (websites, portals, dashboards)
+ * are grouped under Other Services (/services/other-services).
  */
 
-export type ServiceSlug = "web" | "systems" | "integrations";
+export type ServiceSlug =
+  | "business-automation"
+  | "whatsapp-automation"
+  | "systems-integration"
+  | "ai-workflows";
 
 export type ServiceProcessStage = {
   readonly stage: string;
@@ -44,267 +54,271 @@ export type Service = {
 
 export const services = [
   {
-    slug: "web",
+    slug: "business-automation",
     index: "01",
-    name: "Web",
+    name: "Business Automation",
     summary:
-      "Custom web applications, customer portals and commerce platforms built for a clear operational purpose.",
+      "Automated operations, lead workflows, notifications, approvals and scheduled reporting.",
     promise:
-      "A web product that does a specific job for your customers, and does it well.",
+      "Remove repetitive manual tasks from operations so your team can focus on growth.",
     intro:
-      "Most businesses need a web presence that does more than describe them. It needs to sell, to serve, to manage, or to operate. We design and build web software around one of those jobs — rather than around a template or a feature list.",
+      "Most operational friction comes from routine, repetitive tasks that consume hours every week: re-entering lead data, routing approvals through inboxes, sending status notifications, and compiling reports by hand. We design and build business automations that execute these workflows reliably in the background.",
     whoItsFor: [
-      "Businesses needing customer-facing software with real functional utility — not a static brochure.",
-      "Founders and operational teams launching SaaS products, digital client tools, or member platforms.",
-      "Companies whose customers currently have to phone or email for basic account changes and updates.",
-      "Commercial brands whose sales model has outgrown standard off-the-shelf templates and plug-ins.",
+      "Operations teams bogged down by repetitive manual data entry, status updates, and copy-paste routines.",
+      "Growing businesses needing reliable lead management, enquiry routing, and notification workflows.",
+      "Teams spending hours weekly compiling recurring operational reports from spreadsheets and separate platforms.",
+      "Organizations where approval workflows stall because requests sit in personal email inboxes.",
     ],
     whenToChoose:
-      "Choose Web when the primary challenge is user-facing: your customers or public users need a fast, reliable web application, portal, or commerce interface to interact with your business.",
+      "Choose Business Automation when routine operational tasks, manual lead handling, or repetitive administrative processes are slowing down your team and creating operational bottlenecks.",
     capabilities: [
-      "Business websites built to a clear commercial purpose",
-      "E-commerce platforms with the checkout and catalogue behaviour your customers expect",
-      "Customer portals with authenticated, self-service access",
-      "Web applications for operational and team workflows",
-      "SaaS products and subscription platforms",
-      "Responsive layouts designed for mobile first, not shrunk from desktop",
-      "Content models your team can actually maintain",
+      "Automated lead intake, validation, and CRM distribution",
+      "Multi-step approval pipelines and escalation notifications",
+      "Automated operational data entry and record creation",
+      "Scheduled reporting, document generation, and email summaries",
+      "Trigger-based alerts for exceptions, deadlines, and status changes",
+      "Error handling, retry logic, and monitoring for every workflow",
+      "Full documentation and handover so your team owns the system",
     ],
     problems: [
-      "The website looks credible but does not convert or cannot be edited",
-      "The current platform cannot support how the business actually sells",
-      "Customers have to phone or email for things the product should handle",
-      "The site has to become an application, but it was built as a brochure",
-      "Performance and accessibility are blocking real usage on mobile",
+      "Staff spend hours daily on repetitive, manual copy-pasting across tools",
+      "Leads and customer inquiries sit unaddressed because routing is manual",
+      "Operational approvals stall when people miss emails or forget to follow up",
+      "Reporting requires manual data compilation that is days out of date",
+      "Human error and missed steps create compliance or operational risk",
     ],
     outcomes: [
-      "A web presence that works as a business tool, not a decoration",
-      "Customers and users can complete their task without calling you",
-      "Your team can update content, pricing and structure without a developer",
-      "A codebase that is fast, accessible and maintainable after handover",
+      "Hours of manual effort saved every week across the operations team",
+      "Consistent, fast response times for new inquiries and internal requests",
+      "Transparent, auditable workflows where nothing falls through the cracks",
+      "Automations that run 24/7 without requiring manual human oversight",
     ],
     examples: [
       {
-        title: "E-commerce platform",
+        title: "Lead management automation",
         detail:
-          "Catalogue, search, checkout, payments and order management built around your products and your operational reality.",
+          "Capture, qualify, validate, and route inbound customer enquiries directly into your CRM with instant team notifications.",
       },
       {
-        title: "Customer portal",
+        title: "Approval & notification pipeline",
         detail:
-          "Authenticated access where customers view their account, documents, requests and history in one place.",
+          "Structured multi-stage approval workflow replacing email chains with automatic status tracking and escalation alerts.",
       },
       {
-        title: "Business web application",
+        title: "Operational data entry automation",
         detail:
-          "A web application replacing a spreadsheet-and-email process that no longer scales with the team.",
+          "Automated extraction and sync of operational records across databases, spreadsheets, and accounting tools.",
       },
     ],
     processStages: [
       {
         stage: "01 Discover",
         summary:
-          "We map user journeys, commercial requirements, performance targets, and mobile constraints before designing any interface.",
+          "We audit your repetitive operational tasks, manual handoffs, and data flows to identify highest-impact automation points.",
       },
       {
         stage: "02 Define",
         summary:
-          "We specify page architecture, authentication models, checkout states, and acceptance criteria.",
+          "We map out logic rules, trigger conditions, fallback procedures, exception alerts, and system boundaries.",
       },
       {
         stage: "03 Build",
         summary:
-          "We develop responsive, accessible components in demonstrable increments with regular client review.",
+          "We build and test resilient workflow automations with automated retry policies, validation, and audit logging.",
       },
       {
         stage: "04 Deploy",
         summary:
-          "Production launch to client cloud infrastructure with full DNS, SSL, and performance verification.",
+          "Controlled staging rollout, live data verification, security checks, and operational team handover.",
       },
       {
         stage: "05 Evolve",
         summary:
-          "Performance tuning, security patch updates, and feature iteration based on real user interactions.",
+          "Monitoring execution metrics, error rates, and expanding automation scope as business volume increases.",
       },
     ],
     related: [
-      { label: "Systems", href: "/services/systems" },
-      { label: "Integrations", href: "/services/integrations" },
+      { label: "WhatsApp Automation", href: "/services/whatsapp-automation" },
+      { label: "Systems Integration", href: "/services/systems-integration" },
+      { label: "AI-Powered Workflows", href: "/services/ai-workflows" },
+      { label: "Other Services", href: "/services/other-services" },
     ],
-    contactQueryType: "web",
+    contactQueryType: "automation",
     seo: {
-      title: "Custom Web Application Development Services",
+      title: "Business Automation Services & Workflow Automation",
       description:
-        "Custom web application development services by UNFLECT: customer portals, SaaS platforms, bespoke business tools, and responsive web products built for operational utility.",
+        "Business automation services by UNFLECT: streamline repetitive operations, lead management, approval pipelines, data entry, and scheduled reporting.",
     },
   },
   {
-    slug: "systems",
+    slug: "whatsapp-automation",
     index: "02",
-    name: "Systems",
+    name: "WhatsApp Automation",
     summary:
-      "Internal dashboards, operations management systems and admin platforms that replace fragile spreadsheets.",
+      "Customer enquiry triage, appointment booking workflows, confirmations and reminders on WhatsApp.",
     promise:
-      "Internal software that removes the manual work your business has outgrown.",
+      "Reliable conversational workflows that handle routine enquiries and bookings without manual coordination.",
     intro:
-      "Most operational friction is not a people problem. It is a tooling problem — work split across spreadsheets, inboxes and systems that were never designed to talk to each other. We build the internal software that replaces that friction.",
+      "WhatsApp is where your customers already communicate. We build structured WhatsApp business automations that handle inbound customer enquiries, qualification, appointment booking, rescheduling, and reminder sequences — connected directly to your existing CRM, calendars, and backend software. WhatsApp is implemented as one powerful communication channel within your broader systems architecture.",
     whoItsFor: [
-      "Operations teams running core workflows across fragile, unversioned spreadsheets.",
-      "Businesses where staff re-enter the same operational data across multiple disconnected tools.",
-      "Leadership teams lacking live visibility because reporting requires hours of manual aggregation.",
-      "Companies handling sensitive client or operational records without clear audit trails or role permissions.",
+      "Service businesses and consultancies receiving high volumes of repetitive inquiries over WhatsApp.",
+      "Teams losing bookings or revenue due to delayed responses to inbound customer messages.",
+      "Companies needing automated appointment scheduling, instant confirmations, and timely reminder sequences.",
+      "Businesses wanting to connect WhatsApp interactions directly to their existing CRM or scheduling calendar.",
     ],
     whenToChoose:
-      "Choose Systems when the primary challenge is internal: your team's day-to-day operations are slowed down by manual workarounds, spreadsheets, or off-the-shelf software that doesn't fit your workflow.",
+      "Choose WhatsApp Automation when customer communication, appointment booking, or enquiry triage is a primary touchpoint and manual messaging is creating delays, missed opportunities, or customer drop-off.",
     capabilities: [
-      "Internal business tools for recurring operational work",
-      "Dashboards that report from real data, not manual entry",
-      "Admin platforms for managing users, content and configuration",
-      "Management systems for workflows, approvals, stock, scheduling or case handling",
-      "Role-based access control and audit trails",
-      "Data migration from existing spreadsheets and legacy tools",
-      "Documentation and handover so your team owns what we build",
+      "Automated customer enquiry triage, FAQs, and service information",
+      "End-to-end appointment scheduling, rescheduling, and cancellations",
+      "Automated appointment reminders and confirmation sequences",
+      "Two-way integration with Google Calendar, Calendly, CRMs, and databases",
+      "Intelligent escalation to human team members when specialized assistance is needed",
+      "Official WhatsApp Business API setup and compliant template messaging",
+      "Event tracking for delivery, read rates, and completion conversions",
     ],
     problems: [
-      "Core operations run on spreadsheets nobody fully trusts",
-      "Staff repeat the same manual data entry across multiple systems",
-      "Managers make decisions from information that is days out of date",
-      "Existing software was bought for a different business and does not fit",
-      "Permissions and visibility are unclear, which creates risk",
+      "Customers wait hours for a reply to basic questions about services, hours, or availability",
+      "Manual back-and-forth messaging to find an open calendar slot frustrates clients",
+      "No-shows and late cancellations impact revenue because reminders are sent manually or forgotten",
+      "Inquiry details discussed on WhatsApp never make it into the company's central CRM",
+      "Staff spend half their workday answering the same ten repetitive customer questions",
     ],
     outcomes: [
-      "Manual steps removed from the processes that cost you the most time",
-      "One place where operational data lives, with a clear owner",
-      "Decisions made on current information rather than remembered information",
-      "Access control and audit history appropriate to the sensitivity of the data",
+      "Instant response to customer enquiries 24 hours a day, 7 days a week",
+      "Frictionless self-service booking that updates calendars and CRM records automatically",
+      "Significantly reduced appointment no-shows via automated reminder sequences",
+      "Team focuses only on high-value conversations while routine queries are automated",
     ],
     examples: [
       {
-        title: "Operations dashboard",
+        title: "Automated appointment booking",
         detail:
-          "Live visibility across the metrics that drive the business, assembled from the systems you already run.",
+          "Interactive calendar selection, slot verification, booking confirmation, and calendar sync entirely within WhatsApp.",
       },
       {
-        title: "Management system",
+        title: "Customer enquiry triage",
         detail:
-          "Approvals, allocation, status tracking and reporting for a workflow currently handled over email.",
+          "Automated routing of incoming enquiries based on service interest, collecting key details before handing off to team.",
       },
       {
-        title: "Admin platform",
+        title: "Automated reminder sequence",
         detail:
-          "A controlled back office for the users, records and configuration behind your customer-facing product.",
+          "Timely WhatsApp reminders with one-tap confirmation or rescheduling links to protect booked revenue.",
       },
     ],
     processStages: [
       {
         stage: "01 Discover",
         summary:
-          "We shadow the operational workflow to uncover true bottlenecks, shadow spreadsheets, and failure points.",
+          "We review customer messaging journeys, common enquiry patterns, calendar workflows, and integration requirements.",
       },
       {
         stage: "02 Define",
         summary:
-          "We specify relational data schemas, role permissions (RBAC), approval states, and migration rules.",
+          "We map conversational flows, fallback routes, human escalation triggers, and approved message templates.",
       },
       {
         stage: "03 Build",
         summary:
-          "We construct internal tools and dashboards prioritising speed, validation, and zero data loss.",
+          "We configure the WhatsApp Business API, build webhook handlers, and connect your CRM and calendar systems.",
       },
       {
         stage: "04 Deploy",
         summary:
-          "Production data migration, backup verification, staging checks, and operational handover.",
+          "Sandbox testing, template approvals, compliance checks, and live cutover with active monitoring.",
       },
       {
         stage: "05 Evolve",
         summary:
-          "Query tuning, workflow adjustments as transaction volume grows, and scheduled operational upkeep.",
+          "Message response optimization, flow refinements based on user interactions, and expanded workflow capabilities.",
       },
     ],
     related: [
-      { label: "Web", href: "/services/web" },
-      { label: "Integrations", href: "/services/integrations" },
+      { label: "Business Automation", href: "/services/business-automation" },
+      { label: "Systems Integration", href: "/services/systems-integration" },
+      { label: "AI-Powered Workflows", href: "/services/ai-workflows" },
+      { label: "Other Services", href: "/services/other-services" },
     ],
-    contactQueryType: "systems",
+    contactQueryType: "whatsapp",
     seo: {
-      title: "Internal Business Tools & Custom Systems Development",
+      title: "WhatsApp Business Automation & Appointment Booking Workflows",
       description:
-        "Internal business tools, operational dashboards, and custom systems development by UNFLECT. Replace fragile spreadsheets and automate manual back-office workflows.",
+        "WhatsApp business automation services by UNFLECT: automated customer enquiry routing, appointment scheduling workflows, reminder sequences, and CRM integrations.",
     },
   },
   {
-    slug: "integrations",
+    slug: "systems-integration",
     index: "03",
-    name: "Integrations",
+    name: "Systems Integration",
     summary:
-      "APIs, CRM/ERP synchronisation, payment connections and automated data pipelines.",
+      "APIs, CRM/ERP synchronisation, database pipelines and messaging platform connectivity.",
     promise:
-      "Your systems talking to each other, reliably, without anyone copying data by hand.",
+      "Your software systems talking to each other reliably without anyone copying data by hand.",
     intro:
-      "You already run on software that works. The problem is that those systems do not talk to each other — so people do. Integration work removes the manual bridge between the tools you rely on, and makes each one more useful.",
+      "Most businesses already rely on software that works — CRMs, ERPs, accounting tools, databases, spreadsheets, and messaging platforms. The problem is that these tools operate in isolation, requiring manual copy-pasting and file exports. We build robust systems integrations that connect your software ecosystem into a synchronized operational pipeline.",
     whoItsFor: [
-      "Businesses that already pay for good software (CRMs, ERPs, accounting tools) that cannot talk to each other.",
-      "Teams spending hours weekly manually exporting and re-importing CSV files between systems.",
-      "Companies whose billing, inventory, or customer status records frequently drift out of sync.",
-      "Organizations with mission-critical webhooks or APIs that fail silently without alerting.",
+      "Businesses using separate tools (CRMs, ERPs, billing, calendars, databases) that cannot communicate automatically.",
+      "Teams wasting hours every week manually exporting CSVs and re-importing data across systems.",
+      "Companies struggling with data drift, inconsistent customer records, or mismatched inventory.",
+      "Organizations with brittle webhooks or third-party connections that fail silently without alerts.",
     ],
     whenToChoose:
-      "Choose Integrations when you already have software that works, but your tools are isolated and require manual human effort to keep data consistent.",
+      "Choose Systems Integration when you have existing software systems that function well individually, but disconnected data and manual handoffs are causing delays, errors, and operational friction.",
     capabilities: [
-      "APIs and webhooks between your systems and ours",
-      "Payment system integration — checkout, subscriptions, reconciliation",
-      "CRM integration so sales and operations work from the same record",
-      "Third-party service connectivity for the tools you already pay for",
-      "Data synchronisation with clear rules for what wins on conflict",
-      "Migration of data between systems",
-      "Error handling, retry behaviour and monitoring for every connection",
+      "Custom REST APIs, webhooks, and secure event-driven architectures",
+      "Bidirectional CRM, ERP, and accounting platform synchronisation",
+      "Calendar, database, and spreadsheet automation pipelines",
+      "Conflict resolution rules and source-of-truth priority definitions",
+      "Idempotent processing, automated retry mechanisms, and dead-letter queues",
+      "Real-time logging, error tracking, and connection health alerting",
+      "Full documentation and credentials handover so you own every integration",
     ],
     problems: [
-      "The same information is entered in more than one place",
-      "Payments, stock or customer records drift out of step between systems",
-      "The team exports data manually to make two tools talk",
-      "A vendor API changed and the internal process quietly stopped working",
-      "Nobody trusts the numbers because the sources disagree",
+      "Staff re-type the exact same customer or order information into multiple separate platforms",
+      "Payments, client status, or inventory counts drift out of alignment across tools",
+      "Manual CSV export/import routines break whenever column headers or formats change",
+      "A third-party API update silently broke an internal connection days before anyone noticed",
+      "Leadership cannot get reliable reporting because data sources disagree",
     ],
     outcomes: [
-      "Data entered once and used everywhere it is needed",
-      "Fewer transcription errors and fewer reconciliation arguments",
-      "Each system becomes more useful because it no longer works in isolation",
-      "Connection failures surface visibly instead of failing silently",
+      "Operational data entered once and updated everywhere instantly",
+      "Complete elimination of repetitive manual CSV exports and transcription errors",
+      "Resilient connections that handle network blips and rate limits gracefully with automated retries",
+      "Immediate visibility into connection status with automated alerting when attention is required",
     ],
     examples: [
       {
-        title: "Payment integration",
+        title: "CRM and ERP synchronization",
         detail:
-          "Checkout and subscription handling wired into your own systems, with clear records of every transaction.",
+          "Keep customer profiles, orders, and fulfillment status in sync between front-end channels and central ERP.",
       },
       {
-        title: "CRM synchronisation",
+        title: "Automated payment and accounting pipeline",
         detail:
-          "Customer and order data kept consistent between your CRM and your operational software.",
+          "Connect payment gateways with bookkeeping and billing platforms for automated transaction reconciliation.",
       },
       {
-        title: "Data synchronisation",
+        title: "Database and spreadsheet bridge",
         detail:
-          "Scheduled and event-driven movement of data between systems, with documented rules and error handling.",
+          "Scheduled and event-driven data movement between cloud databases and operational spreadsheets with conflict handling.",
       },
     ],
     processStages: [
       {
         stage: "01 Discover",
         summary:
-          "We catalog vendor APIs, rate limits, payload formats, authentication mechanisms, and data drift points.",
+          "We catalog vendor APIs, authentication protocols, rate limits, payload formats, and data drift points.",
       },
       {
         stage: "02 Define",
         summary:
-          "We define schema mappings, conflict resolution rules (source-of-truth priority), and failure retry behaviors.",
+          "We specify schema mappings, source-of-truth priority, conflict resolution rules, and retry policies.",
       },
       {
         stage: "03 Build",
         summary:
-          "We build secure integration services, idempotent webhook listeners, queue workers, and error monitoring.",
+          "We construct secure integration microservices, webhook listeners, queues, and continuous health monitors.",
       },
       {
         stage: "04 Deploy",
@@ -314,71 +328,174 @@ export const services = [
       {
         stage: "05 Evolve",
         summary:
-          "Vendor API version updates, payload migration handling, and continuous connectivity health monitoring.",
+          "API version migrations, schema updates, payload adjustments, and continuous uptime monitoring.",
       },
     ],
     related: [
-      { label: "Web", href: "/services/web" },
-      { label: "Systems", href: "/services/systems" },
+      { label: "Business Automation", href: "/services/business-automation" },
+      { label: "WhatsApp Automation", href: "/services/whatsapp-automation" },
+      { label: "AI-Powered Workflows", href: "/services/ai-workflows" },
+      { label: "Other Services", href: "/services/other-services" },
     ],
     contactQueryType: "integrations",
     seo: {
-      title: "API Integration Services & Business Workflow Automation",
+      title: "Systems Integration Services & Software API Connectivity",
       description:
-        "API integration services and business workflow automation by UNFLECT: connect CRMs, ERPs, payment gateways, and third-party tools with automated, reliable data pipelines.",
+        "Systems integration services by UNFLECT: connect CRMs, ERPs, databases, spreadsheets, and custom APIs for reliable data synchronization and zero manual handoffs.",
+    },
+  },
+  {
+    slug: "ai-workflows",
+    index: "04",
+    name: "AI-Powered Workflows",
+    summary:
+      "Practical AI for enquiry classification, document data extraction and operational triage.",
+    promise:
+      "Pragmatic AI applied where it reduces real operational friction — with human verification built in.",
+    intro:
+      "Not every operational problem requires artificial intelligence. But where unstructured data slows down operations — unclassified emails, scanned invoices, complex inquiry briefs, or document summaries — practical AI workflows can eliminate hours of tedious human triage. We integrate focused AI models into existing business systems with clear boundaries, confidence scoring, and human escalation.",
+    whoItsFor: [
+      "Businesses handling large volumes of unstructured customer inquiries, support tickets, or emails.",
+      "Teams spending hours manually reviewing documents, invoices, or forms to extract specific data fields.",
+      "Operations managers who want smart summarization and triage without rewriting their entire tech stack.",
+      "Organizations looking for practical, measurable AI utility rather than experimental generative hype.",
+    ],
+    whenToChoose:
+      "Choose AI-Powered Workflows when your team spends excessive time manually reading, categorizing, summarizing, or extracting data from unstructured text, documents, or incoming requests.",
+    capabilities: [
+      "Automated customer inquiry classification and intent routing",
+      "Document information extraction from invoices, receipts, PDFs, and forms",
+      "Operational ticket and email summarization with action item extraction",
+      "Confidence scoring and automated human-in-the-loop review queues",
+      "Integration with existing CRMs, ticketing systems, and databases",
+      "Strict data privacy boundaries ensuring client information is not used for model training",
+      "Structured JSON output validation to prevent hallucinated or invalid schema updates",
+    ],
+    problems: [
+      "Customer service staff spend hours reading and manually tagging inbound requests",
+      "Data from PDF invoices, contracts, or forms is transcribed by hand into internal software",
+      "Urgent or high-value customer issues get buried under routine inquiries",
+      "Operational summaries require hours of manual reading across disconnected channels",
+      "Fear of AI errors or hallucinations prevents teams from adopting useful automation",
+    ],
+    outcomes: [
+      "Instant categorization and priority routing of all inbound messages and tickets",
+      "Structured data extracted accurately from documents directly into your database",
+      "Human operators review only edge cases or low-confidence predictions",
+      "Predictable, controlled automation that respects existing business processes and data security",
+    ],
+    examples: [
+      {
+        title: "Enquiry classification and routing",
+        detail:
+          "Analyze incoming customer briefs, classify urgency and intent, and route to the correct team with pre-drafted context.",
+      },
+      {
+        title: "Document data extraction",
+        detail:
+          "Parse unstructured PDF forms, invoices, and contracts into structured database records with confidence thresholds.",
+      },
+      {
+        title: "Operations triage assistant",
+        detail:
+          "Summarize multi-channel customer communications into concise action points for internal operations teams.",
+      },
+    ],
+    processStages: [
+      {
+        stage: "01 Discover",
+        summary:
+          "We analyze unstructured data sources, volume patterns, accuracy requirements, and identify low-risk, high-value tasks.",
+      },
+      {
+        stage: "02 Define",
+        summary:
+          "We define prompt schemas, structured output formats, confidence thresholds, and human review fallback workflows.",
+      },
+      {
+        stage: "03 Build",
+        summary:
+          "We build secure AI pipeline services, validation layers, database sinks, and human-in-the-loop escalation queues.",
+      },
+      {
+        stage: "04 Deploy",
+        summary:
+          "Side-by-side verification with human benchmark data, security checks, and gradual production activation.",
+      },
+      {
+        stage: "05 Evolve",
+        summary:
+          "Prompt refinements, evaluation benchmarking against ongoing edge cases, and workflow capability expansion.",
+      },
+    ],
+    related: [
+      { label: "Business Automation", href: "/services/business-automation" },
+      { label: "WhatsApp Automation", href: "/services/whatsapp-automation" },
+      { label: "Systems Integration", href: "/services/systems-integration" },
+      { label: "Other Services", href: "/services/other-services" },
+    ],
+    contactQueryType: "ai",
+    seo: {
+      title: "Practical AI Automation Services & Intelligent Workflows",
+      description:
+        "AI-powered business automation by UNFLECT: practical enquiry classification, document data extraction, summarization, and intelligent workflow routing without unnecessary complexity.",
     },
   },
 ] as const satisfies readonly Service[];
 
-export const servicesBySlug: Record<ServiceSlug, Service> = {
-  web: services[0],
-  systems: services[1],
+export const servicesBySlug: Record<string, Service> = {
+  "business-automation": services[0],
+  "whatsapp-automation": services[1],
+  "systems-integration": services[2],
+  "ai-workflows": services[3],
+  // Legacy slug aliases to prevent runtime issues
+  systems: services[2],
   integrations: services[2],
 };
 
 export function getService(slug: string): Service | undefined {
-  return servicesBySlug[slug as ServiceSlug];
+  return servicesBySlug[slug];
 }
 
 export const servicesComparison = [
   {
-    slug: "web" as const,
+    slug: "business-automation" as const,
     index: "01",
-    name: "Web",
-    summary: "Customer-facing web applications, portals, and commerce platforms.",
-    bestFor: "Customer interaction, transactions, client self-service, SaaS products.",
+    name: "Business Automation",
+    summary: "Automated operations, lead routing, approvals, and scheduled reporting.",
+    bestFor: "Operational back-office, lead workflows, eliminating manual copy-pasting.",
     whenToChoose:
-      "When the user is external (customer, client, or member) and needs a fast, direct interface to interact with your business.",
+      "When internal operations are constrained by repetitive manual tasks, spreadsheet data entry, or slow manual approval chains.",
     typicalDeliverables: [
-      "Custom web applications & SaaS",
-      "Customer self-service portals",
-      "Bespoke e-commerce & checkouts",
-      "Accessible, mobile-first frontends",
+      "Automated lead intake & CRM distribution",
+      "Multi-stage approval & notification pipelines",
+      "Automated data entry & document generation",
+      "Scheduled operational reports & summaries",
     ],
-    contactHref: "/contact?type=web",
+    contactHref: "/contact?type=automation",
   },
   {
-    slug: "systems" as const,
+    slug: "whatsapp-automation" as const,
     index: "02",
-    name: "Systems",
-    summary: "Internal dashboards, operations systems, and admin platforms.",
-    bestFor: "Operational back-office, team workflows, replacing manual spreadsheets.",
+    name: "WhatsApp Automation",
+    summary: "Customer enquiry triage, appointment booking workflows, and reminders.",
+    bestFor: "Customer conversational touchpoints, self-service bookings, timely reminders.",
     whenToChoose:
-      "When internal operations are constrained by spreadsheets, duplicate manual entry, or lack of role-based permissions.",
+      "When customer inquiries and appointment scheduling over WhatsApp consume staff time or result in missed bookings and drop-offs.",
     typicalDeliverables: [
-      "Live operational dashboards",
-      "Workflow & approval management tools",
-      "Role-based admin portals (RBAC)",
-      "Automated spreadsheet migrations",
+      "Automated customer enquiry qualification & FAQs",
+      "End-to-end appointment booking & calendar sync",
+      "Automated reminder & confirmation sequences",
+      "Seamless escalation to live team members",
     ],
-    contactHref: "/contact?type=systems",
+    contactHref: "/contact?type=whatsapp",
   },
   {
-    slug: "integrations" as const,
+    slug: "systems-integration" as const,
     index: "03",
-    name: "Integrations",
-    summary: "APIs, CRM/ERP synchronisation, payment connections, and data pipelines.",
-    bestFor: "Connecting distinct software tools so data syncs without human copying.",
+    name: "Systems Integration",
+    summary: "APIs, CRM/ERP synchronisation, database pipelines, and tool connectivity.",
+    bestFor: "Connecting distinct software systems so data syncs without human copying.",
     whenToChoose:
       "When your existing software tools work well individually, but cannot communicate or stay in sync automatically.",
     typicalDeliverables: [
@@ -388,5 +505,21 @@ export const servicesComparison = [
       "Reliable retry & error monitoring pipelines",
     ],
     contactHref: "/contact?type=integrations",
+  },
+  {
+    slug: "ai-workflows" as const,
+    index: "04",
+    name: "AI-Powered Workflows",
+    summary: "Practical AI for enquiry classification, document data extraction, and triage.",
+    bestFor: "Unstructured text, document parsing, automated triage with human oversight.",
+    whenToChoose:
+      "When staff spend excessive hours reading, categorizing, summarizing, or extracting data from incoming documents or messages.",
+    typicalDeliverables: [
+      "Inbound enquiry & ticket intent classification",
+      "Document information extraction (PDFs, invoices)",
+      "Automated triage & action item summarization",
+      "Confidence-scored human-in-the-loop review queues",
+    ],
+    contactHref: "/contact?type=ai",
   },
 ] as const;

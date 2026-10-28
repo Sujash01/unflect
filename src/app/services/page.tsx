@@ -6,9 +6,9 @@ import { services } from "@/content/services";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Custom Software Development Services",
+  title: "Business Automation & Systems Integration Services | UNFLECT",
   description:
-    "Explore UNFLECT's custom software development services: bespoke web applications, customer portals, internal business systems, and automated API integrations.",
+    "Explore UNFLECT's business automation and systems integration services: workflow automation, WhatsApp business workflows, systems integration, and AI-powered automation.",
   path: "/services",
 });
 
@@ -35,9 +35,9 @@ export default function ServicesPage() {
       },
       {
         "@type": "ItemList",
-        name: "Custom Software Development Services",
+        name: "Business Automation & Systems Integration Services",
         description:
-          "UNFLECT provides three connected software disciplines: Web, Systems, and Integrations.",
+          "UNFLECT provides core automation disciplines: Business Automation, WhatsApp Automation, Systems Integration, and AI-Powered Workflows, alongside secondary development services.",
         itemListElement: services.map((service, index) => ({
           "@type": "ListItem",
           position: index + 1,

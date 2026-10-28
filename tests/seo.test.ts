@@ -9,13 +9,13 @@ import { site } from "@/content/site";
 describe("SEO - Metadata Generation & Canonicals", () => {
   it("generates an absolute homepage title without duplicating brand template", () => {
     const meta = pageMetadata({
-      title: "UNFLECT · Custom Software Development Company",
-      description: "Custom software development company.",
+      title: "Business Automation & Systems Integration | UNFLECT",
+      description: "Business automation and systems integration company.",
       path: "/",
     });
 
     expect(meta.title).toEqual({
-      absolute: "UNFLECT · Custom Software Development Company",
+      absolute: "Business Automation & Systems Integration | UNFLECT",
     });
     expect(meta.alternates?.canonical).toBe(site.url);
     expect(meta.openGraph?.url).toBe(site.url);
@@ -23,28 +23,28 @@ describe("SEO - Metadata Generation & Canonicals", () => {
 
   it("generates absolute canonical URLs for sub-pages", () => {
     const meta = pageMetadata({
-      title: "Custom Software Development Services",
+      title: "Business Automation & Systems Integration Services | UNFLECT",
       description: "Services overview.",
       path: "/services",
     });
 
-    expect(meta.title).toBe("Custom Software Development Services");
+    expect(meta.title).toBe("Business Automation & Systems Integration Services | UNFLECT");
     expect(meta.alternates?.canonical).toBe(`${site.url}/services`);
     expect(meta.openGraph?.url).toBe(`${site.url}/services`);
   });
 
   it("populates OpenGraph and Twitter cards correctly", () => {
     const meta = pageMetadata({
-      title: "Custom Web Application Development Services",
-      description: "Web development services description.",
-      path: "/services/web",
+      title: "WhatsApp Business Automation & Appointment Booking Workflows",
+      description: "WhatsApp automation services description.",
+      path: "/services/whatsapp-automation",
     });
 
     const og = meta.openGraph as Record<string, unknown> | undefined;
     const tw = meta.twitter as Record<string, unknown> | undefined;
 
     expect(og?.type).toBe("website");
-    expect(og?.title).toBe("Custom Web Application Development Services");
+    expect(og?.title).toBe("WhatsApp Business Automation & Appointment Booking Workflows");
     expect(tw?.card).toBe("summary_large_image");
   });
 });
@@ -56,6 +56,7 @@ describe("SEO - Sitemap Route Coverage", () => {
   it("includes all primary public marketing pages", () => {
     expect(urls).toContain(site.url);
     expect(urls).toContain(`${site.url}/services`);
+    expect(urls).toContain(`${site.url}/services/other-services`);
     expect(urls).toContain(`${site.url}/work`);
     expect(urls).toContain(`${site.url}/process`);
     expect(urls).toContain(`${site.url}/about`);
@@ -133,12 +134,14 @@ describe("SEO - Service Distinctness and Search Intent", () => {
   });
 
   it("verifies targeted non-branded keywords are present in service SEO titles", () => {
-    const web = services.find((s) => s.slug === "web");
-    const systems = services.find((s) => s.slug === "systems");
-    const integrations = services.find((s) => s.slug === "integrations");
+    const businessAuto = services.find((s) => s.slug === "business-automation");
+    const whatsapp = services.find((s) => s.slug === "whatsapp-automation");
+    const systemsInt = services.find((s) => s.slug === "systems-integration");
+    const aiWorkflows = services.find((s) => s.slug === "ai-workflows");
 
-    expect(web?.seo.title.toLowerCase()).toContain("web application");
-    expect(systems?.seo.title.toLowerCase()).toContain("internal business tools");
-    expect(integrations?.seo.title.toLowerCase()).toContain("api integration");
+    expect(businessAuto?.seo.title.toLowerCase()).toContain("business automation");
+    expect(whatsapp?.seo.title.toLowerCase()).toContain("whatsapp");
+    expect(systemsInt?.seo.title.toLowerCase()).toContain("systems integration");
+    expect(aiWorkflows?.seo.title.toLowerCase()).toContain("ai");
   });
 });

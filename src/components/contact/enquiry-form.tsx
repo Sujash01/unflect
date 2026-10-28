@@ -24,6 +24,9 @@ const TEXT_LIMITS = { goal: 2000, problem: 2000, details: 2000 } as const;
 function resolveProjectTypeParam(param: string | null): string {
   if (!param) return "";
   const normalized = param.toLowerCase().trim();
+  if (normalized === "automation" || normalized === "business-automation") return "internal-system";
+  if (normalized === "whatsapp" || normalized === "whatsapp-automation") return "integration";
+  if (normalized === "ai" || normalized === "ai-workflows") return "internal-system";
   if (normalized === "web" || normalized === "web-application") return "web-application";
   if (
     normalized === "systems" ||
@@ -32,7 +35,7 @@ function resolveProjectTypeParam(param: string | null): string {
   ) {
     return "internal-system";
   }
-  if (normalized === "integrations" || normalized === "integration") return "integration";
+  if (normalized === "integrations" || normalized === "integration" || normalized === "systems-integration") return "integration";
   if (normalized === "ecommerce") return "ecommerce";
   if (normalized === "customer-portal" || normalized === "portal") return "customer-portal";
   if (normalized === "admin-platform" || normalized === "admin") return "admin-platform";

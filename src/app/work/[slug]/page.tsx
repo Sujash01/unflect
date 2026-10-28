@@ -115,6 +115,8 @@ export default async function CaseStudyPage({ params }: Params) {
   if (!study) notFound();
 
   const service = servicesBySlug[study.service];
+  const serviceName = service?.name ?? (study.service === "web" ? "Web Application" : "Systems Integration");
+  const serviceHref = study.service === "web" ? "/services/other-services" : `/services/systems-integration`;
 
   const projectShortName = study.title.split(" — ")[0] || study.title;
 
@@ -139,7 +141,7 @@ export default async function CaseStudyPage({ params }: Params) {
           logo: `${site.url}/brand/logo.png`,
         },
         datePublished: study.completedAt ? new Date(study.completedAt).toISOString() : "2026-01-01T00:00:00Z",
-        about: service.name,
+        about: serviceName,
       },
       {
         "@type": "BreadcrumbList",
@@ -217,11 +219,11 @@ export default async function CaseStudyPage({ params }: Params) {
         <Container>
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              href={`/services/${study.service}`}
+              href={serviceHref}
               className="transition-opacity hover:opacity-80"
-              title={`View ${service.name} development services`}
+              title={`View ${serviceName} services`}
             >
-              <Tag tone="signal">{service.name} Development</Tag>
+              <Tag tone="signal">{serviceName}</Tag>
             </Link>
             <StatusBadge status={study.status} label={study.statusLabel} />
             {study.completedAt ? (

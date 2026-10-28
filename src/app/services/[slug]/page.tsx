@@ -189,7 +189,7 @@ export default async function ServiceDetailPage({ params }: Params) {
       </section>
 
       {/* Real-world case study connection */}
-      {caseStudies.filter((s) => s.service === service.slug && s.status !== "coming_soon").length > 0 ? (
+      {caseStudies.filter((s) => ((s.service as string) === (service.slug as string) || (service.slug === "systems-integration" && (s.service === "systems" || s.service === "integrations"))) && s.status !== "coming_soon").length > 0 ? (
         <section
           aria-labelledby="case-study-heading"
           className="border-t border-line py-20 sm:py-28"
@@ -212,7 +212,7 @@ export default async function ServiceDetailPage({ params }: Params) {
 
             <div className="mt-12 space-y-6">
               {caseStudies
-                .filter((s) => s.service === service.slug && s.status !== "coming_soon")
+                .filter((s) => ((s.service as string) === (service.slug as string) || (service.slug === "systems-integration" && (s.service === "systems" || s.service === "integrations"))) && s.status !== "coming_soon")
                 .map((study) => (
                   <div
                     key={study.slug}
@@ -372,9 +372,9 @@ export default async function ServiceDetailPage({ params }: Params) {
       >
         <Container>
           <h2 id="other-services-heading" className="text-title">
-            The other two disciplines
+            Other automation disciplines
           </h2>
-          <ul className="mt-8 grid gap-6 sm:grid-cols-2">
+          <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {others.map((other, index) => (
               <li key={other.slug} className="flex">
                 <Link

@@ -4,9 +4,9 @@ import { HomeSections } from "@/components/home/home-sections";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "UNFLECT · Custom Software Development Company",
+  title: "Business Automation & Systems Integration | UNFLECT",
   description:
-    "UNFLECT is a custom software development company. We engineer bespoke web applications, internal business tools, operations platforms, and workflow automation integrations.",
+    "UNFLECT helps businesses automate repetitive tasks, connect software systems, streamline workflows, and implement practical AI-powered automation.",
   path: "/",
 });
 

@@ -36,11 +36,11 @@ export const siteConfig = {
   domain: "unflect.in",
   url: "https://unflect.in",
   remoteFirst: true,
-  tagline: "We build software that solves real business problems.",
+  tagline: "Automate Work. Connect Your Systems.",
   positioning:
-    "A small software studio that builds custom web products, internal systems and integrations.",
+    "UNFLECT helps businesses automate repetitive work, connect their software systems, and build reliable workflows that reduce manual effort.",
   description:
-    "UNFLECT designs, builds and supports custom software for businesses — web platforms, internal systems and integrations. Discover, define, build, deploy, evolve.",
+    "UNFLECT helps businesses automate repetitive tasks, connect software systems, streamline workflows, and implement practical AI-powered automation.",
   locale: "en_GB",
 
   /** Location & address */

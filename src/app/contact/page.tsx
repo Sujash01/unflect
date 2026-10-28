@@ -9,9 +9,9 @@ import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Start a Custom Software Project · Contact Us",
+  title: "Start an Automation or Integration Project · Contact UNFLECT",
   description:
-    "Discuss your custom software project with UNFLECT. Share your operational requirements and get a considered engineering response within two business days.",
+    "Discuss your business automation, systems integration, or workflow requirements with UNFLECT. Get a considered response on scope, architecture, and fit.",
   path: "/contact",
 });
 

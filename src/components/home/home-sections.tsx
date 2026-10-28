@@ -39,7 +39,7 @@ export function HomeSections() {
             Philosophy
           </p>
           <ScrollWords
-            text="Good software doesn't ask businesses to change themselves. We build around the way work actually happens."
+            text="Good automation doesn't ask businesses to change themselves. We connect systems around the way work actually happens."
             accent={["actually"]}
             className="max-w-5xl font-display text-[clamp(2.4rem,5.4vw,4.8rem)] leading-[1.06] tracking-[-0.02em] text-bone"
           />
@@ -75,10 +75,10 @@ export function HomeSections() {
               Engineering
             </p>
             <h2 className="mt-4 font-display text-3xl tracking-[-0.02em] text-bone sm:text-4xl">
-              Stack we work with.
+              Stack we integrate with.
             </h2>
             <p className="mt-3 text-sm leading-6 text-muted-strong">
-              Only tools and frameworks actually used across our working projects — no inflated technology lists.
+              Tools, APIs, and frameworks actually used across our production systems — no inflated technology lists.
             </p>
           </div>
 

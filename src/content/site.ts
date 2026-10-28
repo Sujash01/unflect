@@ -57,9 +57,11 @@ export const footerNavigation = {
     { label: "Contact", href: "/contact" },
   ],
   services: [
-    { label: "Web", href: "/services/web" },
-    { label: "Systems", href: "/services/systems" },
-    { label: "Integrations", href: "/services/integrations" },
+    { label: "Business Automation", href: "/services/business-automation" },
+    { label: "WhatsApp Automation", href: "/services/whatsapp-automation" },
+    { label: "Systems Integration", href: "/services/systems-integration" },
+    { label: "AI-Powered Workflows", href: "/services/ai-workflows" },
+    { label: "Other Services", href: "/services/other-services" },
   ],
   legal: [
     { label: "Privacy", href: "/privacy" },
@@ -69,10 +71,10 @@ export const footerNavigation = {
 
 export const brandStatements = {
   positioning: siteConfig.positioning,
-  hero: "Software for the way your business actually works.",
-  offering: "Web + Systems + Integrations",
+  hero: "Automate Work. Connect Your Systems.",
+  offering: "Business Automation + Systems + Integrations",
   process: "Discover → Define → Build → Deploy → Evolve",
   philosophy: "Solve the problem first.",
   ai: "AI assists; people answer.",
-  detail: "UNFLECT understands the problem before it builds the solution.",
+  detail: "UNFLECT helps businesses automate repetitive work, connect disconnected tools, and operate more efficiently.",
 } as const;

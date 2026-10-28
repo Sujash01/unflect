@@ -111,7 +111,7 @@ export function LaptopVisual() {
                   transition={{ duration: 0.9 }}
                   className="mt-[2cqw] text-[1.9cqw] text-muted-strong"
                 >
-                  Software for the way your business actually works.
+                  Automate Work. Connect Your Systems.
                 </motion.p>
                 <motion.p
                   initial={false}
@@ -119,9 +119,9 @@ export function LaptopVisual() {
                   transition={{ duration: 0.9 }}
                   className="mt-[3.2cqw] flex items-center gap-[1.8cqw] text-[1.5cqw] text-muted"
                 >
-                  <span>Web</span>
+                  <span>Automation</span>
                   <span aria-hidden="true" className="h-[0.4cqw] w-[0.4cqw] rounded-full bg-muted/60" />
-                  <span>Systems</span>
+                  <span>Workflows</span>
                   <span aria-hidden="true" className="h-[0.4cqw] w-[0.4cqw] rounded-full bg-muted/60" />
                   <span>Integrations</span>
                 </motion.p>

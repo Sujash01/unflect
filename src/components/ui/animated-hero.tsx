@@ -9,7 +9,7 @@ import { Marquee } from "@/components/fx/marquee";
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
 
-const TICKER = ["Web products", "Internal systems", "Integrations", "Discover", "Define", "Build", "Deploy", "Evolve"];
+const TICKER = ["Business automation", "Systems integration", "Workflow automation", "WhatsApp automation", "AI workflows", "Connect tools", "Reduce manual effort"];
 
 export function Hero() {
   const reduce = useReducedMotion();
@@ -32,15 +32,15 @@ export function Hero() {
       <div className="container-page relative grid min-h-[100svh] items-center gap-10 pb-28 pt-24 sm:pb-32 sm:pt-28 lg:grid-cols-[minmax(0,1.08fr)_minmax(19rem,0.92fr)] lg:gap-8">
         <div>
           <div className="glass-chip inline-flex items-center gap-2.5 rounded-full px-4 py-2">
-            <span className="label-mono text-indigo-bright">Custom software development company · Remote-first studio</span>
+            <span className="label-mono text-indigo-bright">Business automation & systems integration · Remote-first studio</span>
           </div>
 
           <h1 className="mt-8 max-w-4xl font-display text-[clamp(2.8rem,6.1vw,5.7rem)] leading-[0.98] tracking-[-0.025em]">
-            <SplitText text="Software for the way your business actually works." mode="mount" delay={0.15} accent={["actually"]} />
+            <SplitText text="Automate Work. Connect Your Systems." mode="mount" delay={0.15} accent={["Systems."]} />
           </h1>
 
           <p className="mt-8 max-w-xl text-lg leading-8 text-muted-strong">
-            UNFLECT is a custom software development company. We engineer bespoke web applications, internal business tools, and workflow integrations designed around your actual operations.
+            We build business automations and software integrations that reduce manual work, connect disconnected tools, and help teams operate more efficiently.
           </p>
 
           <motion.div
@@ -50,7 +50,7 @@ export function Hero() {
             className="mt-5 flex h-6 items-center gap-3 font-mono text-[11px] tracking-[0.03em] text-steel"
           >
             <span aria-hidden="true" className="h-px w-8 bg-steel/60" />
-            <TypingAnimation words={["Web products", "Internal systems", "Integrations", "Business software"]} loop className="text-steel" />
+            <TypingAnimation words={["Business process automation", "WhatsApp automation", "Systems integration", "AI-powered workflows"]} loop className="text-steel" />
           </motion.div>
 
           <motion.div

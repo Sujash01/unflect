@@ -114,14 +114,14 @@ export function ServiceBlock({
               <Reveal delay={110} className="flex">
                 <Module className="w-full p-7" interactive={false}>
                   <ModuleLabel>What we build</ModuleLabel>
-                  <MarkerList className="mt-5" tone={service.slug === "web" ? "indigo" : "violet"} items={service.capabilities} />
+                  <MarkerList className="mt-5" tone={service.slug === "business-automation" ? "indigo" : "violet"} items={service.capabilities} />
                 </Module>
               </Reveal>
 
               <Reveal delay={150} className="flex">
                 <Module className="w-full p-7" interactive={false}>
                   <ModuleLabel>Problems it addresses</ModuleLabel>
-                  <MarkerList className="mt-5" tone={service.slug === "web" ? "indigo" : "violet"} items={service.problems} />
+                  <MarkerList className="mt-5" tone={service.slug === "business-automation" ? "indigo" : "violet"} items={service.problems} />
                 </Module>
               </Reveal>
             </div>

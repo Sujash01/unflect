@@ -33,15 +33,15 @@ export const team = siteConfig.team;
 export const studioLocation = {
   location: siteConfig.location,
   statement:
-    "UNFLECT is a small custom software studio. The person you speak with is the person who actually designs and builds your software — no account managers, no layers, and no outsourced handoffs.",
+    "UNFLECT is a business automation and systems integration studio. The person you speak with is the person who actually designs, automates, and connects your systems — no account managers, no layers, and no outsourced handoffs.",
 };
 
 export const aboutIntro = {
-  heading: "UNFLECT exists to solve business problems through thoughtfully built software.",
+  heading: "UNFLECT helps businesses automate repetitive work, connect their software systems, and build reliable workflows.",
   body: [
-    "Most software problems are not technology problems. A process has grown past the tools that support it. Two systems hold the same information and neither knows about the other. A platform was bought for a different business and now everybody works around it. Someone has been doing the manual part by hand for so long that it has become invisible.",
-    "Off-the-shelf software is genuinely good at the problems it was designed to solve. Where a business is different \u2014 in how it sells, how it operates, how it is regulated, or simply in the detail that matters to it \u2014 the gap has to be closed deliberately. That is the work UNFLECT does.",
-    "We are not interested in shipping the most software. We are interested in the software solving the actual problem, being maintainable after we leave, and being honest about what it does and does not do.",
+    "Most operational friction is not a technology problem. A process has grown past the tools that support it. Two systems hold the same information and neither knows about the other. Staff spend hours copying and pasting data by hand. Inquiries sit unanswered because routing is manual.",
+    "Off-the-shelf software is genuinely good at the specific tasks it was built for. Where a business is different \u2014 in its operational workflows, how it communicates with customers, or how tools must exchange data \u2014 the connections have to be built deliberately. That is the work UNFLECT does.",
+    "We build automations and integrations that reduce manual effort, connect disconnected tools, and help teams operate efficiently \u2014 leaving behind reliable systems that clients truly own.",
   ],
 } as const;
 

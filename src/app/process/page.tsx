@@ -5,9 +5,9 @@ import { ProcessView } from "./process-view";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Our Software Development Process: Discover to Deploy",
+  title: "Our Automation & Integration Delivery Process | UNFLECT",
   description:
-    "Explore UNFLECT's structured software development process: Discover, Define, Build, Deploy, and Evolve. Clear milestones, direct engineering communication, and complete code ownership.",
+    "Explore UNFLECT's structured delivery process: Discover, Define, Build, Deploy, and Evolve. From workflow mapping to reliable automation and system integrations.",
   path: "/process",
 });
 

@@ -63,7 +63,7 @@ export default async function OpengraphImage() {
               UNFLECT
             </div>
             <div style={{ color: "#A5AAA6", fontSize: "17px", marginTop: "6px" }}>
-              Web · Systems · Integrations · Studio
+              Business Automation · Systems Integration · AI Workflows
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@ export default async function OpengraphImage() {
               letterSpacing: "-0.03em",
             }}
           >
-            We build software that solves real business problems.
+            Automate Work. Connect Your Systems.
           </div>
           <div
             style={{
@@ -89,7 +89,7 @@ export default async function OpengraphImage() {
               marginTop: "20px",
             }}
           >
-            A small software studio that builds custom web products, internal systems and integrations.
+            UNFLECT helps businesses automate repetitive work, connect their software systems, and build reliable workflows that reduce manual effort.
           </div>
           <div
             style={{

@@ -40,9 +40,9 @@ const principles = [
 ];
 
 export const metadata = pageMetadata({
-  title: "Software Case Studies & Engineering Portfolio",
+  title: "Systems & Engineering Portfolio · Projects | UNFLECT",
   description:
-    "Explore real software engineered by UNFLECT: web marketplaces, business intelligence platforms, and internal tools with honest project documentation.",
+    "Explore systems and software built by UNFLECT: creator platforms, business intelligence dashboards, and operational tools with truthful project documentation.",
   path: "/work",
 });
 
